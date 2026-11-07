@@ -719,7 +719,7 @@ test('cross-tab data is validated and unrelated storage events leave the basket 
   await expect(page.locator('#cartNotice')).toBeHidden();
   await second.evaluate(key => localStorage.setItem(key, '{invalid'), STORAGE_KEY);
   await expectEmpty(page);
-  await expect(page.locator('#cartNotice')).toContainText('invalid or unreadable');
+  await expect(page.locator('#cartNotice')).toContainText('invalid');
   expect(await savedBasket(second)).toBeNull();
   // Valid legacy rows still use the same normalization as startup loading.
   await second.evaluate(({ key, item }) => localStorage.setItem(key, JSON.stringify([
@@ -829,7 +829,7 @@ test('storage unavailable at startup still allows visit-only additions, removals
   await reloadAndOpen(page);
   await expectEmpty(page);
   await expect(page.locator('#cartNotice')).toBeVisible();
-  await expect(page.locator('#cartNotice')).toContainText('unreadable');
+  await expect(page.locator('#cartNotice')).toContainText('could not be accessed');
 
   await page.locator('#cartModal .close').click();
   await addProduct(page, headphones.name);
@@ -852,8 +852,65 @@ test('storage unavailable at startup still allows visit-only additions, removals
   await reloadAndOpen(page);
   await expectEmpty(page);
   await expect(page.locator('#cartNotice')).toBeVisible();
-  await expect(page.locator('#cartNotice')).toContainText('unreadable');
+  await expect(page.locator('#cartNotice')).toContainText('could not be accessed');
 });
+
+for (const failure of ['storage getter', 'getItem']) {
+  test(`startup access denied by ${failure} leaves saved basket untouched`, async ({ page }) => {
+    const raw = JSON.stringify([planner]);
+    await page.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key: STORAGE_KEY, raw });
+    await page.addInitScript(({ key, failure }) => {
+      const storage = window.localStorage;
+      const read = storage.getItem.bind(storage);
+      let removals = 0;
+      Storage.prototype.removeItem = () => { removals++; };
+      window.inspectBlockedBasket = () => ({ raw: read(key), removals });
+      if (failure === 'storage getter') {
+        Object.defineProperty(window, 'localStorage', {
+          configurable: true,
+          get() { throw new DOMException('Storage access denied', 'SecurityError'); },
+        });
+      } else {
+        Storage.prototype.getItem = () => { throw new DOMException('Storage access denied', 'SecurityError'); };
+      }
+    }, { key: STORAGE_KEY, failure });
+
+    for (let visit = 0; visit < 2; visit++) {
+      await reloadAndOpen(page);
+      await expectEmpty(page);
+      await expect(page.locator('#cartNotice')).toHaveText(
+        'Saved basket could not be accessed in this browser. Your basket is empty for this visit.');
+      await expect(page.locator('#toast')).toHaveText(
+        'Saved basket could not be accessed. No saved data was cleared.');
+      expect(await page.evaluate(() => window.inspectBlockedBasket())).toEqual({ raw, removals: 0 });
+    }
+  });
+}
+
+for (const [label, raw] of [['invalid JSON', '{invalid'], ['invalid basket structure', '{}']]) {
+  test(`startup ${label} with failed cleanup reports retained data`, async ({ page }) => {
+    await page.evaluate(({ key, raw }) => localStorage.setItem(key, raw), { key: STORAGE_KEY, raw });
+    await page.addInitScript(() => {
+      Storage.prototype.removeItem = () => { throw new DOMException('Storage access denied', 'SecurityError'); };
+    });
+
+    for (let visit = 0; visit < 2; visit++) {
+      await reloadAndOpen(page);
+      await expectEmpty(page);
+      await expect(page.locator('#cartNotice')).toHaveText(
+        'Saved basket data was invalid, but could not be cleared in this browser. Your basket is empty for this visit.');
+      await expect(page.locator('#toast')).toHaveText('Invalid saved basket data could not be cleared.');
+      expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(raw);
+    }
+    // Cleanup failing must not prevent shopping or replacing invalid data
+    // when saving is still available.
+    await page.locator('#cartModal .close').click();
+    await addProduct(page, planner.name);
+    await reloadAndOpen(page);
+    await expectBasket(page, [planner]);
+    await expect(page.locator('#cartNotice')).toBeHidden();
+  });
+}
 
 test('receiving another tab’s basket does not hide a local save-error notice or write it back', async ({ page, context }) => {
   const { second, errors } = await openSecondTab(context);
@@ -883,7 +940,7 @@ for (const [label, raw] of invalidData) {
     await expectEmpty(page);
     await expect(page.locator('#cartNotice')).toBeVisible();
     await expect(page.locator('#cartNotice')).toHaveText(
-      'Saved basket data was invalid or unreadable, so it was cleared. Your basket is empty.');
+      'Saved basket data was invalid, so it was cleared. Your basket is empty.');
     expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBeNull();
     await reloadAndOpen(page);
     await expectEmpty(page);

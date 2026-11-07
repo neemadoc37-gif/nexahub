@@ -176,8 +176,15 @@ function persistCart(){
  catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
 }
 function loadCart(){
+ let saved;
+ try{saved=localStorage.getItem(CART_STORAGE_KEY)}
+ catch(error){
+  cart=[];
+  setCartStatus('Saved basket could not be accessed in this browser. Your basket is empty for this visit.');
+  toast('Saved basket could not be accessed. No saved data was cleared.');
+  return;
+ }
  try{
-  const saved=localStorage.getItem(CART_STORAGE_KEY);
   if(saved===null){cart=[];return}
   const parsed=JSON.parse(saved);
   const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
@@ -200,8 +207,13 @@ function loadCart(){
   cart=restored;
  }catch(error){
   cart=[];
-  try{localStorage.removeItem(CART_STORAGE_KEY)}catch(removeError){}
-  setCartStatus('Saved basket data was invalid or unreadable, so it was cleared. Your basket is empty.');
+  try{localStorage.removeItem(CART_STORAGE_KEY)}
+  catch(removeError){
+   setCartStatus('Saved basket data was invalid, but could not be cleared in this browser. Your basket is empty for this visit.');
+   toast('Invalid saved basket data could not be cleared.');
+   return;
+  }
+  setCartStatus('Saved basket data was invalid, so it was cleared. Your basket is empty.');
   toast('Saved basket data was invalid and has been cleared.');
  }
 }
