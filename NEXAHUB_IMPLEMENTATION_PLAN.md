@@ -81,7 +81,9 @@ oversell; customer, seller and admin views agree after cancellations/refunds.
 
 ## Priority 5 — brand refinement and release acceptance
 - Apply navy/champagne/ivory while retaining existing layout and functionality.
-- Integrate approved NexaHub logo/favicon; approved asset not supplied yet.
+- Approved NexaHub logo from the supplied share link is integrated in the header
+  and footer, with bag-emblem favicon and Apple touch icon. Overall palette
+  refinement remains outstanding.
 - Run complete automated suite plus real signed-in customer/seller/admin tests.
 - Verify desktop/mobile, Safari/Firefox, keyboard/screen-reader behavior and failure paths.
 - Review security, session protection, rate limiting, dependency control and deployment configuration.
@@ -93,8 +95,8 @@ oversell; customer, seller and admin views agree after cancellations/refunds.
 3. Owner-controlled real account validation through private sign-in, never chat credentials.
 4. Payment merchant/provider approval and business/country/payout requirements;
    credentials must use secure workspace configuration when integration is selected.
-5. Approved logo/favicon assets and the trusted owner identity through an appropriate
-   secure provisioning process before any owner role is granted.
+5. Trusted owner identity through an appropriate secure provisioning process
+   before any owner role is granted. Approved logo artwork has now been supplied.
 
 ## Current progress
 - Reviewed completion audit and current account implementation.

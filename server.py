@@ -6,6 +6,14 @@ from urllib.parse import urlsplit
 
 
 INDEX = Path(__file__).with_name("index.html")
+BRAND = INDEX.parent / "assets" / "brand"
+# Explicit public assets only; never expose a directory or arbitrary workspace path.
+BRAND_ASSETS = {
+    "/assets/brand/nexahub-logo.webp": (BRAND / "nexahub-logo.webp", "image/webp"),
+    "/assets/brand/favicon.png": (BRAND / "favicon.png", "image/png"),
+    "/assets/brand/apple-touch-icon.png": (BRAND / "apple-touch-icon.png", "image/png"),
+    "/favicon.ico": (BRAND / "favicon.png", "image/png"),
+}
 
 
 class StorefrontHandler(BaseHTTPRequestHandler):
@@ -16,12 +24,18 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         self.serve_page(head_only=True)
 
     def serve_page(self, head_only=False):
-        if urlsplit(self.path).path not in ("/", "/index.html"):
+        path = urlsplit(self.path).path
+        if path in ("/", "/index.html"):
+            file_path, content_type = INDEX, "text/html; charset=utf-8"
+        elif path in BRAND_ASSETS:
+            file_path, content_type = BRAND_ASSETS[path]
+        else:
             self.send_error(404)
             return
-        content = INDEX.read_bytes()
+        content = file_path.read_bytes()
         self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Type", content_type)
+        self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()

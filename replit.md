@@ -21,7 +21,7 @@
 ## Project scope
 The imported site remains in `index.html`, including its existing CSS and
 JavaScript. `server.py` uses only Python's standard library and serves only
-the storefront, not workspace files. Refresh Preview after editing the HTML;
+the storefront and explicitly whitelisted brand images, not arbitrary workspace files. Refresh Preview after editing the HTML;
 responses are not cached.
 
 Search, category filters, dialogs, and the sample basket are client-side.
@@ -44,8 +44,9 @@ provisioning triggers with the read-only `supabase/verify-auth.sql` script.
 - Keep the tagline: "Your World. One Hub."
 - Approved direction: premium deep navy, muted champagne gold and ivory;
   avoid bright/flashy colours, purple and pink. Preserve existing structure.
-- Use approved NexaHub logo/favicon assets when supplied; do not label an
-  invented replacement as approved. Prioritize secure working flows over cosmetics.
+- The user supplied the approved NexaHub navy/gold bag-and-globe artwork.
+  Use that branding, not an invented replacement. Prioritize secure working
+  flows over cosmetics.
 - Develop the global multi-vendor marketplace in stages.
 - Use Supabase email/password and Google authentication.
 - Use secure backend functions for sensitive marketplace operations.
