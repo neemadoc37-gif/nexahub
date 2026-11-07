@@ -40,6 +40,21 @@ async function savedBasket(page) {
   return page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
 }
 
+async function expectBasket(page, items) {
+  await expect(page.locator('.basket-row')).toHaveCount(items.length);
+  await expect(page.locator('#cartCount')).toHaveText(
+    String(items.reduce((sum, item) => sum + item.quantity, 0)));
+  for (const item of items) {
+    await expect(page.getByLabel(`Quantity of ${item.name}`, { exact: true }))
+      .toHaveText(String(item.quantity));
+    await expect(page.getByLabel(`Line total for ${item.name}`, { exact: true }))
+      .toHaveText(`KSh ${(item.price * item.quantity).toLocaleString('en-KE')}`);
+  }
+  await expect(page.locator('#cartItems > p')).toHaveText(
+    `Total: KSh ${items.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString('en-KE')}`);
+  expect(await savedBasket(page)).toEqual(items);
+}
+
 async function expectEmpty(page) {
   await expect(page.locator('#cartCount')).toHaveText('0');
   await expect(page.locator('#cartItems')).toHaveText('Your basket is empty.');
@@ -64,6 +79,121 @@ test('restores items, quantities, line totals and basket total after reload', as
   await expect(page.getByLabel(`Line total for ${planner.name}`, { exact: true })).toHaveText('KSh 850');
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
   await expect(page.locator('#cartNotice')).toBeHidden();
+});
+
+test('quantity increases and decreases update both rows and persist totals after reload', async ({ page }) => {
+  await addProduct(page, headphones.name);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  const increase = page.getByRole('button', { name: `Increase quantity of ${headphones.name}`, exact: true });
+  const decrease = page.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true });
+
+  await increase.focus();
+  await page.keyboard.press('Enter');
+  await expect(increase).toBeFocused();
+  await expectBasket(page, [headphones, planner]);
+  // A second keyboard activation must still reach the replacement button.
+  await page.keyboard.press('Space');
+  await expect(increase).toBeFocused();
+  await expectBasket(page, [{ ...headphones, quantity: 3 }, planner]);
+  await page.keyboard.press('Shift+Tab');
+  await expect(decrease).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(decrease).toBeFocused();
+  await expectBasket(page, [headphones, planner]);
+
+  await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+  const result = [headphones, { ...planner, quantity: 2 }];
+  await expectBasket(page, result);
+  await reloadAndOpen(page);
+  await expectBasket(page, result);
+});
+
+test('quantity cannot fall below one and keyboard focus moves to the usable increase control', async ({ page }) => {
+  await addProduct(page, headphones.name);
+  await addProduct(page, headphones.name);
+  await openBasket(page);
+  const decrease = page.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true });
+  const increase = page.getByRole('button', { name: `Increase quantity of ${headphones.name}`, exact: true });
+  const minimum = [{ ...headphones, quantity: 1 }];
+
+  await decrease.focus();
+  await page.keyboard.press('Enter');
+  await expect(decrease).toBeDisabled();
+  await expect(increase).toBeFocused();
+  // Native activation of the disabled button must not remove or decrement the row.
+  await decrease.evaluate(button => button.click());
+  await expectBasket(page, minimum);
+  await reloadAndOpen(page);
+  await expectBasket(page, minimum);
+  await expect(decrease).toBeDisabled();
+
+  await increase.focus();
+  await page.keyboard.press('Space');
+  await expect(increase).toBeFocused();
+  await expect(decrease).toBeEnabled();
+  await page.keyboard.press('Shift+Tab');
+  await expect(decrease).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(increase).toBeFocused();
+  await expectBasket(page, minimum);
+});
+
+test('combined 100-item limit disables every increase and recovers after a decrease', async ({ page }) => {
+  // Seed just below the boundary; cross it only through the real controls.
+  const nearLimit = [{ ...headphones, quantity: 60 }, { ...planner, quantity: 39 }];
+  await page.evaluate(({ key, items }) => localStorage.setItem(key, JSON.stringify(items)),
+    { key: STORAGE_KEY, items: nearLimit });
+  await reloadAndOpen(page);
+  await expectBasket(page, nearLimit);
+  const increases = page.getByRole('button', { name: /^Increase quantity of / });
+  const plannerIncrease = page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true });
+  const plannerDecrease = page.getByRole('button', { name: `Decrease quantity of ${planner.name}`, exact: true });
+  for (const button of await increases.all()) await expect(button).toBeEnabled();
+
+  await plannerIncrease.focus();
+  await page.keyboard.press('Enter');
+  await expect(plannerDecrease).toBeFocused();
+  const fullBasket = [nearLimit[0], { ...planner, quantity: 40 }];
+  await expectBasket(page, fullBasket);
+  for (const button of await increases.all()) {
+    await expect(button).toBeDisabled();
+    await button.evaluate(element => element.click());
+  }
+  await expectBasket(page, fullBasket);
+  await reloadAndOpen(page);
+  await expectBasket(page, fullBasket);
+  for (const button of await increases.all()) await expect(button).toBeDisabled();
+
+  // Product-card additions, including a new row, share the same combined cap.
+  await page.locator('#cartModal .close').click();
+  for (const name of [headphones.name, 'Everyday travel backpack']) {
+    await addProduct(page, name);
+    await expect(page.locator('#toast')).toHaveText('Your sample basket has reached its item limit.');
+  }
+  await openBasket(page);
+  await expectBasket(page, fullBasket);
+
+  const headphonesDecrease = page.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true });
+  await headphonesDecrease.focus();
+  await page.keyboard.press('Space');
+  await expect(headphonesDecrease).toBeFocused();
+  const belowLimit = [{ ...headphones, quantity: 59 }, fullBasket[1]];
+  await expectBasket(page, belowLimit);
+  for (const button of await increases.all()) await expect(button).toBeEnabled();
+  await reloadAndOpen(page);
+  await expectBasket(page, belowLimit);
+  for (const button of await increases.all()) await expect(button).toBeEnabled();
+
+  // Capacity released in one row can be used by a different row.
+  await plannerIncrease.focus();
+  await page.keyboard.press('Space');
+  await expect(plannerDecrease).toBeFocused();
+  const result = [belowLimit[0], { ...planner, quantity: 41 }];
+  await expectBasket(page, result);
+  await reloadAndOpen(page);
+  await expectBasket(page, result);
+  for (const button of await increases.all()) await expect(button).toBeDisabled();
 });
 
 test('removal updates count and total and stays removed after reload', async ({ page }) => {
