@@ -740,6 +740,89 @@ async function expectVisitOnlyWarning(page) {
     'Basket changes are available for this visit, but could not be saved in this browser.');
 }
 
+async function blockBasketSaving(page, failure) {
+  // Faults and their restoration are document-local; reload uses real storage.
+  await page.evaluate(({ failure, key }) => {
+    if (failure === 'writes fail') {
+      const setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function(storageKey, value) {
+        if (storageKey === key) throw new DOMException('Storage full', 'QuotaExceededError');
+        return setItem.call(this, storageKey, value);
+      };
+      window.restoreBasketStorage = () => { Storage.prototype.setItem = setItem; };
+    } else {
+      const descriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
+      Object.defineProperty(window, 'localStorage', {
+        configurable: true,
+        get() { throw new DOMException('Storage access denied', 'SecurityError'); },
+      });
+      window.restoreBasketStorage = () => {
+        if (descriptor) Object.defineProperty(window, 'localStorage', descriptor);
+        else delete window.localStorage;
+      };
+    }
+  }, { failure, key: STORAGE_KEY });
+}
+
+for (const failure of ['writes fail', 'access unavailable']) {
+  for (const clearAll of [false, true]) {
+    for (const recovery of ['reload', 'same-document save']) {
+      test(`undo ${clearAll ? 'clearing' : 'row removal'} with storage ${failure} preserves visit-only edits until ${recovery}`, async ({ page }) => {
+        await addProduct(page, headphones.name);
+        await addProduct(page, headphones.name);
+        await addProduct(page, planner.name);
+        await openBasket(page);
+        const original = [headphones, planner];
+        await expectBasket(page, original);
+        await blockBasketSaving(page, failure);
+
+        await page.getByRole('button', {
+          name: clearAll ? 'Clear basket' : `Remove ${headphones.name} from basket`,
+          exact: true,
+        }).click();
+        if (clearAll) await expectEmpty(page);
+        else await expectBasketContents(page, [planner]);
+        await expectVisitOnlyWarning(page);
+
+        await page.getByRole('button', { name: 'Undo', exact: true }).click();
+        await expectBasketContents(page, original);
+        await expect(page.locator('#cartUndo')).toBeHidden();
+        await expectVisitOnlyWarning(page);
+
+        // A post-Undo edit distinguishes the usable in-memory basket from the
+        // saved original, even though Undo itself restored the same quantities.
+        await page.getByRole('button', { name: `Increase quantity of ${headphones.name}`, exact: true }).click();
+        const visitOnly = [{ ...headphones, quantity: 3 }, planner];
+        await expectBasketContents(page, visitOnly);
+        await expectVisitOnlyWarning(page);
+        await page.locator('#cartModal .close').click();
+        await openBasket(page);
+        await expectBasketContents(page, visitOnly);
+        await expectVisitOnlyWarning(page);
+        if (failure === 'writes fail') expect(await savedBasket(page)).toEqual(original);
+
+        if (recovery === 'reload') {
+          await reloadAndOpen(page);
+          await expectBasket(page, original);
+          await expect(page.locator('#cartNotice')).toBeHidden();
+        } else {
+          // Restoring storage alone must not claim that unsaved edits were saved.
+          await page.evaluate(() => window.restoreBasketStorage());
+          expect(await savedBasket(page)).toEqual(original);
+          await expectVisitOnlyWarning(page);
+          await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+          const saved = [{ ...headphones, quantity: 3 }, { ...planner, quantity: 2 }];
+          await expectBasket(page, saved);
+          await expect(page.locator('#cartNotice')).toBeHidden();
+          await reloadAndOpen(page);
+          await expectBasket(page, saved);
+          await expect(page.locator('#cartNotice')).toBeHidden();
+        }
+      });
+    }
+  }
+}
+
 for (const failure of ['writes fail', 'access unavailable']) {
   for (const operation of ['add', 'remove', 'clear']) {
     test(`${operation} remains usable for this visit when storage ${failure}, without promising persistence`, async ({ page }) => {
@@ -753,20 +836,7 @@ for (const failure of ['writes fail', 'access unavailable']) {
 
       // Patch only this document, after saving a known basket. Reload removes
       // the fault, so the actual persisted state can be checked independently.
-      await page.evaluate(({ failure, key }) => {
-        if (failure === 'writes fail') {
-          const setItem = Storage.prototype.setItem;
-          Storage.prototype.setItem = function(storageKey, value) {
-            if (storageKey === key) throw new DOMException('Storage full', 'QuotaExceededError');
-            return setItem.call(this, storageKey, value);
-          };
-        } else {
-          Object.defineProperty(window, 'localStorage', {
-            configurable: true,
-            get() { throw new DOMException('Storage access denied', 'SecurityError'); },
-          });
-        }
-      }, { failure, key: STORAGE_KEY });
+      await blockBasketSaving(page, failure);
 
       if (operation === 'add') {
         await page.locator('#cartModal .close').click();
