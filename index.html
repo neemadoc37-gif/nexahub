@@ -6,9 +6,10 @@
 <meta name="description" content="Discover products, digital downloads, services and travel experiences on NexaHub.">
 <style>
 :root{--teal:#087e8b;--teal2:#0aa6a6;--blue:#1769aa;--orange:#ff9f1c;--green:#27ae60;--navy:#172b3a;--muted:#647582;--line:#e7edf0;--bg:#f6f9fa;--white:#fff;--shadow:0 12px 35px rgba(23,43,58,.08)}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--navy);background:#fff}button,input{font:inherit}button{cursor:pointer}.topbar{background:var(--navy);color:#eaf5f6;text-align:center;padding:8px 16px;font-size:12px}.topbar b{color:#ffc15c}.header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}.headinner{max-width:1200px;margin:auto;padding:15px 22px;display:flex;align-items:center;gap:25px}.logo{font-weight:900;font-size:25px;letter-spacing:-1.2px;color:var(--teal);white-space:nowrap}.logo span{color:var(--orange)}.search{flex:1;display:flex;border:1px solid #dce5e8;border-radius:12px;overflow:hidden;background:#f9fbfc}.search input{border:0;background:transparent;padding:13px 15px;outline:0;min-width:0;flex:1}.search button{border:0;background:var(--teal);color:#fff;padding:0 20px;font-weight:700}.headactions{display:flex;gap:10px;align-items:center}.ghost{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 13px;color:var(--navy);font-weight:650}.primary{border:0;background:var(--teal);color:white;border-radius:10px;padding:11px 16px;font-weight:750}.primary:hover,.search button:hover{background:#066b76}.nav{max-width:1200px;margin:auto;padding:0 22px 12px;display:flex;gap:24px;overflow:auto}.nav button{border:0;background:none;color:#526673;font-size:13px;font-weight:700;white-space:nowrap;padding:3px 0}.nav button.active,.nav button:hover{color:var(--teal)}main{max-width:1200px;margin:auto;padding:28px 22px 70px}.hero{border-radius:24px;overflow:hidden;background:linear-gradient(110deg,#e9f8f7 0%,#eef6ff 58%,#fff5e7 100%);padding:48px;display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:center;min-height:350px}.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid #d8eeee;color:var(--teal);border-radius:30px;padding:7px 12px;font-size:12px;font-weight:800}.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.04;letter-spacing:-2px;margin:18px 0 14px;max-width:580px}.hero h1 em{font-style:normal;color:var(--teal)}.hero p{font-size:16px;color:#536976;line-height:1.65;max-width:520px}.heroBtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:23px}.hero .primary,.hero .ghost{padding:13px 18px}.heroart{height:245px;position:relative;display:flex;align-items:center;justify-content:center}.orb{width:235px;height:235px;border-radius:50%;background:linear-gradient(135deg,#c6eeee,#d8eaff);display:flex;align-items:center;justify-content:center;font-size:100px;box-shadow:inset 0 0 0 18px rgba(255,255,255,.42)}.float{position:absolute;background:white;padding:12px 15px;border-radius:14px;box-shadow:var(--shadow);font-size:13px;font-weight:750}.f1{top:12px;right:0}.f2{bottom:16px;left:0}.f3{bottom:3px;right:8px;color:var(--green)}.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 36px}.trust div{border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;gap:11px;align-items:center;color:#526673;font-size:12px}.trust strong{display:block;color:var(--navy);font-size:13px}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:35px 0 17px}.sectionhead h2{font-size:24px;letter-spacing:-.7px;margin:0}.sectionhead p{margin:5px 0 0;color:var(--muted);font-size:13px}.textlink{border:0;background:none;color:var(--teal);font-weight:800}.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:13px}.cat{border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center;background:#fff;transition:.2s}.cat:hover,.product:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.cat .emoji{font-size:30px;display:block;margin-bottom:10px}.cat strong{font-size:13px}.cat small{display:block;color:var(--muted);margin-top:4px;font-size:11px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.chip{border:1px solid var(--line);background:white;color:#526673;border-radius:25px;padding:8px 13px;font-size:12px;font-weight:700}.chip.selected{background:#e8f7f6;border-color:#b9e4e1;color:var(--teal)}.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.2s;background:white}.productart{height:155px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}.tag{position:absolute;top:12px;left:12px;background:#fff;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:800;color:var(--teal)}.productbody{padding:14px}.productbody small{color:var(--muted);font-size:11px}.productbody h3{font-size:14px;margin:7px 0;min-height:36px}.rating{color:#f2a526;font-size:12px}.price{font-size:17px;font-weight:850;margin:10px 0}.price span{font-size:11px;color:var(--muted);font-weight:500}.add{width:100%;border:1px solid #b9dfdf;background:#f1fbfa;color:var(--teal);padding:10px;border-radius:9px;font-weight:800}.add:hover{background:var(--teal);color:#fff}.promo{margin:38px 0;border-radius:20px;padding:28px 32px;background:linear-gradient(100deg,#e9f7f7,#eff5ff);display:flex;align-items:center;justify-content:space-between;gap:20px}.promo h2{margin:0 0 7px;font-size:23px}.promo p{margin:0;color:var(--muted);font-size:13px}.promo .primary{white-space:nowrap}.servicegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.service{border:1px solid var(--line);border-radius:15px;padding:18px;display:flex;gap:14px;align-items:center}.serviceicon{width:54px;height:54px;display:grid;place-items:center;background:#edf7fa;border-radius:14px;font-size:26px}.service h3{font-size:14px;margin:0 0 5px}.service p{font-size:12px;color:var(--muted);margin:0}.footer{background:#102c3a;color:#dce8eb;padding:42px 22px}.footinner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}.footer .logo{color:#75d4d0}.footer p,.footer a{color:#b7c8ce;font-size:12px;line-height:1.8;text-decoration:none}.footer h4{margin:0 0 12px;color:white}.footbottom{max-width:1200px;margin:25px auto 0;border-top:1px solid #35505d;padding-top:17px;color:#9fb2ba;font-size:11px}.modalback{display:none;position:fixed;inset:0;background:#0b2636a8;z-index:30;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}.modal{background:white;border-radius:18px;padding:25px;width:min(440px,100%);box-shadow:var(--shadow)}.modal h2{margin:0 0 8px}.modal p{font-size:13px;color:var(--muted);line-height:1.5}.modal input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:7px 0 12px}.modal .primary{width:100%}.close{float:right;border:0;background:#f0f4f5;border-radius:50%;width:30px;height:30px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:30px;z-index:40;display:none;font-size:13px}.toast.show{display:block}
+ *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--navy);background:#fff}button,input{font:inherit}button{cursor:pointer}.topbar{background:var(--navy);color:#eaf5f6;text-align:center;padding:8px 16px;font-size:12px}.topbar b{color:#ffc15c}.header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}.headinner{max-width:1200px;margin:auto;padding:15px 22px;display:flex;align-items:center;gap:25px}.logo{font-weight:900;font-size:25px;letter-spacing:-1.2px;color:var(--teal);white-space:nowrap}.logo span{color:var(--orange)}.search{flex:1;display:flex;border:1px solid #dce5e8;border-radius:12px;overflow:hidden;background:#f9fbfc}.search input{border:0;background:transparent;padding:13px 15px;outline:0;min-width:0;flex:1}.search button{border:0;background:var(--teal);color:#fff;padding:0 20px;font-weight:700}.headactions{display:flex;gap:10px;align-items:center}.ghost{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 13px;color:var(--navy);font-weight:650}.primary{border:0;background:var(--teal);color:white;border-radius:10px;padding:11px 16px;font-weight:750}.primary:hover,.search button:hover{background:#066b76}.nav{max-width:1200px;margin:auto;padding:0 22px 12px;display:flex;gap:24px;overflow:auto}.nav button{border:0;background:none;color:#526673;font-size:13px;font-weight:700;white-space:nowrap;padding:3px 0}.nav button.active,.nav button:hover{color:var(--teal)}main{max-width:1200px;margin:auto;padding:28px 22px 70px}.hero{border-radius:24px;overflow:hidden;background:linear-gradient(110deg,#e9f8f7 0%,#eef6ff 58%,#fff5e7 100%);padding:48px;display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:center;min-height:350px}.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid #d8eeee;color:var(--teal);border-radius:30px;padding:7px 12px;font-size:12px;font-weight:800}.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.04;letter-spacing:-2px;margin:18px 0 14px;max-width:580px}.hero h1 em{font-style:normal;color:var(--teal)}.hero p{font-size:16px;color:#536976;line-height:1.65;max-width:520px}.heroBtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:23px}.hero .primary,.hero .ghost{padding:13px 18px}.heroart{height:245px;position:relative;display:flex;align-items:center;justify-content:center}.orb{width:235px;height:235px;border-radius:50%;background:linear-gradient(135deg,#c6eeee,#d8eaff);display:flex;align-items:center;justify-content:center;font-size:100px;box-shadow:inset 0 0 0 18px rgba(255,255,255,.42)}.float{position:absolute;background:white;padding:12px 15px;border-radius:14px;box-shadow:var(--shadow);font-size:13px;font-weight:750}.f1{top:12px;right:0}.f2{bottom:16px;left:0}.f3{bottom:3px;right:8px;color:var(--green)}.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 36px}.trust div{border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;gap:11px;align-items:center;color:#526673;font-size:12px}.trust strong{display:block;color:var(--navy);font-size:13px}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:35px 0 17px}.sectionhead h2{font-size:24px;letter-spacing:-.7px;margin:0}.sectionhead p{margin:5px 0 0;color:var(--muted);font-size:13px}.textlink{border:0;background:none;color:var(--teal);font-weight:800}.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:13px}.cat{border:1px solid var(--line);border-radius:16px;padding:18px 10px;text-align:center;background:#fff;transition:.2s}.cat:hover,.product:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.cat .emoji{font-size:30px;display:block;margin-bottom:10px}.cat strong{font-size:13px}.cat small{display:block;color:var(--muted);margin-top:4px;font-size:11px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.chip{border:1px solid var(--line);background:white;color:#526673;border-radius:25px;padding:8px 13px;font-size:12px;font-weight:700}.chip.selected{background:#e8f7f6;border-color:#b9e4e1;color:var(--teal)}.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.2s;background:white}.productart{height:155px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}.tag{position:absolute;top:12px;left:12px;background:#fff;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:800;color:var(--teal)}.productbody{padding:14px}.productbody small{color:var(--muted);font-size:11px}.productbody h3{font-size:14px;margin:7px 0;min-height:36px}.rating{color:#f2a526;font-size:12px}.price{font-size:17px;font-weight:850;margin:10px 0}.price span{font-size:11px;color:var(--muted);font-weight:500}.add{width:100%;border:1px solid #b9dfdf;background:#f1fbfa;color:var(--teal);padding:10px;border-radius:9px;font-weight:800}.add:hover{background:var(--teal);color:#fff}.promo{margin:38px 0;border-radius:20px;padding:28px 32px;background:linear-gradient(100deg,#e9f7f7,#eff5ff);display:flex;align-items:center;justify-content:space-between;gap:20px}.promo h2{margin:0 0 7px;font-size:23px}.promo p{margin:0;color:var(--muted);font-size:13px}.promo .primary{white-space:nowrap}.servicegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.service{border:1px solid var(--line);border-radius:15px;padding:18px;display:flex;gap:14px;align-items:center}.serviceicon{width:54px;height:54px;display:grid;place-items:center;background:#edf7fa;border-radius:14px;font-size:26px}.service h3{font-size:14px;margin:0 0 5px}.service p{font-size:12px;color:var(--muted);margin:0}.footer{background:#102c3a;color:#dce8eb;padding:42px 22px}.footinner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}.footer .logo{color:#75d4d0}.footer p,.footer a{color:#b7c8ce;font-size:12px;line-height:1.8;text-decoration:none}.footer h4{margin:0 0 12px;color:white}.footbottom{max-width:1200px;margin:25px auto 0;border-top:1px solid #35505d;padding-top:17px;color:#9fb2ba;font-size:11px}.modalback{display:none;position:fixed;inset:0;background:#0b2636a8;z-index:30;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}.modal{background:white;border-radius:18px;padding:25px;width:min(440px,100%);max-height:calc(100vh - 36px);overflow:auto;box-shadow:var(--shadow)}.modal h2{margin:0 0 8px}.modal p{font-size:13px;color:var(--muted);line-height:1.5}.modal input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:7px 0 12px}.modal .primary{width:100%}.close{float:right;border:0;background:#f0f4f5;border-radius:50%;width:30px;height:30px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:30px;z-index:40;display:none;font-size:13px}.toast.show{display:block}
 @media(max-width:850px){.headinner{flex-wrap:wrap;gap:12px}.search{order:3;flex-basis:100%}.headactions{margin-left:auto}.hero{padding:30px;grid-template-columns:1fr}.heroart{height:190px}.orb{width:175px;height:175px;font-size:75px}.trust{grid-template-columns:repeat(2,1fr)}.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.servicegrid{grid-template-columns:1fr 1fr}.footinner{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){main{padding:18px 14px 50px}.headinner{padding:12px 14px}.nav{padding:0 14px 10px;gap:18px}.hero{padding:25px 20px}.hero h1{font-size:38px}.heroart{height:160px}.orb{width:145px;height:145px;font-size:65px}.trust{gap:8px}.trust div{padding:10px;font-size:10px}.trust strong{font-size:11px}.categories{grid-template-columns:repeat(3,1fr);gap:8px}.cat{padding:14px 5px}.cat .emoji{font-size:25px}.cat strong{font-size:11px}.products{gap:10px}.productart{height:125px;font-size:50px}.productbody{padding:11px}.productbody h3{font-size:12px}.servicegrid{grid-template-columns:1fr}.promo{padding:22px;display:block}.promo .primary{margin-top:15px}.footinner{grid-template-columns:1fr 1fr}.logo{font-size:22px}}
+[hidden]{display:none!important}.auth-google{width:100%;margin:12px 0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;color:var(--navy);font-weight:700}.auth-divider{text-align:center;color:var(--muted);font-size:12px;margin:5px 0}.auth-message{border-radius:9px;padding:10px 12px;margin:12px 0;font-size:13px;line-height:1.45;background:#edf7fa;color:#245564}.auth-message.error{background:#fff1ef;color:#8d3026}.auth-message:empty{display:none}.form-label{display:block;font-size:12px;font-weight:700;color:#526673;margin-top:8px}.auth-links{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}.auth-link{border:0;background:none;color:var(--teal);padding:5px 0;font-size:13px;font-weight:700}.dashboard-card{border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0}.dashboard-card h3{margin:0 0 10px;font-size:15px}.dashboard-email{overflow-wrap:anywhere}.account-buttons{display:flex;gap:10px}.account-buttons>*{flex:1}@media(max-width:520px){.account-buttons{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -17,7 +18,7 @@
  <div class="headinner">
   <div class="logo">Nexa<span>Hub</span></div>
   <div class="search"><input id="searchInput" placeholder="Search products, services, digital downloads..."><button onclick="searchProducts()">Search</button></div>
-  <div class="headactions"><button class="ghost" onclick="openModal('accountModal')">Sign in</button><button class="ghost" onclick="showCart()">🛒 <span id="cartCount">0</span></button></div>
+  <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost" onclick="showCart()">🛒 <span id="cartCount">0</span></button></div>
  </div>
  <nav class="nav">
   <button class="active" onclick="filterCategory('All',this)">Discover</button><button onclick="filterCategory('Shopping',this)">Shopping</button><button onclick="filterCategory('Digital',this)">Digital products</button><button onclick="filterCategory('Services',this)">Services</button><button onclick="filterCategory('Travel',this)">Travel & stays</button><button onclick="toast('Seller registration will be available in the full platform.')">Become a seller</button>
@@ -61,7 +62,7 @@
  </section>
 </main>
 <footer class="footer"><div class="footinner"><div><div class="logo">Nexa<span>Hub</span></div><p>Your World. One Hub.<br>A marketplace for products, digital goods, services and experiences.</p></div><div><h4>Explore</h4><p><a href="#marketplace">Shopping</a><br><a href="#marketplace">Digital products</a><br><a href="#marketplace">Services</a><br><a href="#marketplace">Travel</a></p></div><div><h4>Sell on NexaHub</h4><p><a href="#" onclick="openModal('sellerModal');return false">Become a seller</a><br>Seller support<br>Marketplace guidelines</p></div><div><h4>Help & information</h4><p>Help centre<br>Contact us<br>Privacy policy<br>Terms of service</p></div></div><div class="footbottom">© 2026 NexaHub. All rights reserved. Sample storefront preview — live payments and bookings are not yet connected.</div></footer>
-<div class="modalback" id="accountModal"><div class="modal"><button class="close" onclick="closeModal('accountModal')">×</button><h2>Welcome to NexaHub</h2><p>Sign in or create an account to manage your shopping and bookings.</p><input placeholder="Email address" type="email"><input placeholder="Password" type="password"><button class="primary" onclick="toast('Account sign-in will be enabled after secure authentication setup.')">Continue</button><p>Authentication is a preview in this build; no account is created yet.</p></div></div>
+<div class="modalback" id="accountModal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading"><button class="close" type="button" aria-label="Close account dialog" onclick="closeModal('accountModal')">×</button><h2 id="accountHeading">Welcome to NexaHub</h2><p id="accountIntro">Sign in or create an account to manage your NexaHub profile.</p><div id="authMessage" class="auth-message" role="status" aria-live="polite"></div><div id="authPanel"><form id="authForm" novalidate><label class="form-label" for="authName" id="authNameLabel" hidden>Your name</label><input id="authName" type="text" maxlength="120" autocomplete="name" placeholder="Full name" hidden><label class="form-label" for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="username" maxlength="254" required placeholder="you@example.com"><label class="form-label" for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"><button id="authSubmit" class="primary" type="submit">Sign in</button></form><button id="googleSignIn" class="auth-google" type="button">Continue with Google</button><div class="auth-links"><button id="authModeToggle" class="auth-link" type="button">Create an account</button><button id="resetPassword" class="auth-link" type="button">Forgot password?</button></div></div><div id="recoveryPanel" hidden><form id="recoveryForm"><input id="recoveryEmail" type="email" autocomplete="username" aria-label="Account email" hidden><label class="form-label" for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><label class="form-label" for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Enter the new password again"><button id="updatePassword" class="primary" type="submit">Update password</button></form></div><div id="dashboardPanel" hidden><p>Signed in as <strong id="profileEmail" class="dashboard-email"></strong></p><form id="profileForm"><div class="dashboard-card"><h3>Your customer profile</h3><label class="form-label" for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required><label class="form-label" for="profilePhone">Phone (optional)</label><input id="profilePhone" type="tel" maxlength="32" autocomplete="tel"><label class="form-label" for="profileCountry">Country (optional)</label><input id="profileCountry" type="text" maxlength="80" autocomplete="country-name"></div><button id="saveProfile" class="primary" type="submit">Save profile</button></form><div class="dashboard-card"><h3>Your orders</h3><p>Order history will appear here after marketplace ordering is connected. No orders are being simulated.</p></div><button id="signOut" class="ghost" type="button" style="width:100%">Sign out</button></div></section></div>
 <div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
 <div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
@@ -69,73 +70,269 @@
 <script>
 const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
 const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
- const nexahubSupabase = window.supabase.createClient(NEXAHUB_SUPABASE_URL, NEXAHUB_SUPABASE_KEY);
-  const CART_STORAGE_KEY='nexahub.sampleBasket.v1';
-  const MAX_CART_ITEMS=100;
-  let cart=[];
-  let cartStatus='';
-  function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
-  function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
-  function updateCartCount(){document.getElementById('cartCount').textContent=cart.length}
-  function persistCart(){
-   try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));setCartStatus('')}
-   catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
-  }
-  function loadCart(){
-   try{
-    const saved=localStorage.getItem(CART_STORAGE_KEY);
-    if(saved===null)return;
-    const parsed=JSON.parse(saved);
-    const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
-     item&&typeof item==='object'&&!Array.isArray(item)&&
-     typeof item.name==='string'&&item.name.trim().length>0&&item.name.length<=120&&
-     typeof item.price==='number'&&Number.isSafeInteger(item.price)&&item.price>0
-    );
-    if(!valid)throw new Error('Invalid saved basket');
-    cart=parsed.map(item=>({name:item.name.trim(),price:item.price}));
-   }catch(error){
-    cart=[];
-    try{localStorage.removeItem(CART_STORAGE_KEY)}catch(removeError){}
-    setCartStatus('Saved basket data was invalid or unreadable, so it was cleared. Your basket is empty.');
-    toast('Saved basket data was invalid and has been cleared.');
+const CART_STORAGE_KEY='nexahub.sampleBasket.v1';
+const MAX_CART_ITEMS=100;
+let nexahubSupabase=null;
+let cart=[];
+let cartStatus='';
+let authMode='signin';
+let currentUser=null;
+let isPasswordRecovery=false;
+
+function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
+function updateCartCount(){document.getElementById('cartCount').textContent=cart.length}
+function persistCart(){
+ try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));setCartStatus('')}
+ catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
+}
+function loadCart(){
+ try{
+  const saved=localStorage.getItem(CART_STORAGE_KEY);
+  if(saved===null)return;
+  const parsed=JSON.parse(saved);
+  const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
+   item&&typeof item==='object'&&!Array.isArray(item)&&
+   typeof item.name==='string'&&item.name.trim().length>0&&item.name.length<=120&&
+   typeof item.price==='number'&&Number.isSafeInteger(item.price)&&item.price>0
+  );
+  if(!valid)throw new Error('Invalid saved basket');
+  cart=parsed.map(item=>({name:item.name.trim(),price:item.price}));
+ }catch(error){
+  cart=[];
+  try{localStorage.removeItem(CART_STORAGE_KEY)}catch(removeError){}
+  setCartStatus('Saved basket data was invalid or unreadable, so it was cleared. Your basket is empty.');
+  toast('Saved basket data was invalid and has been cleared.');
+ }
+}
+function renderCart(){
+ const el=document.getElementById('cartItems');
+ const clearButton=document.getElementById('clearBasket');
+ el.replaceChildren();
+ clearButton.hidden=cart.length===0;
+ if(!cart.length){const empty=document.createElement('p');empty.textContent='Your basket is empty.';el.appendChild(empty);return}
+ cart.forEach((item,index)=>{
+  const row=document.createElement('div');
+  row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #eee;padding:8px 0';
+  const name=document.createElement('span');name.textContent=item.name;
+  const price=document.createElement('b');price.textContent='KSh '+item.price.toLocaleString();
+  const remove=document.createElement('button');remove.type='button';remove.className='ghost';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+item.name+' from basket');
+  remove.addEventListener('click',()=>removeCartItem(index));
+  row.append(name,price,remove);el.appendChild(row);
+ });
+ const total=document.createElement('p');
+ const totalLabel=document.createElement('b');
+ totalLabel.textContent='Total: KSh '+cart.reduce((sum,item)=>sum+item.price,0).toLocaleString();
+ total.appendChild(totalLabel);el.appendChild(total);
+}
+function addCart(name,price){
+ if(cart.length>=MAX_CART_ITEMS){toast('Your sample basket has reached its item limit.');return}
+ cart.push({name,price});persistCart();updateCartCount();renderCart();toast(name+' added to your basket.')
+}
+function removeCartItem(index){
+ if(!Number.isInteger(index)||index<0||index>=cart.length)return;
+ cart.splice(index,1);persistCart();updateCartCount();renderCart()
+}
+function clearCart(){
+ cart=[];persistCart();updateCartCount();renderCart();toast('Your basket has been cleared.')
+}
+function showCart(){renderCart();openModal('cartModal')}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showAccount(){clearAuthMessage();openModal('accountModal');if(currentUser)loadCustomerProfile()}
+function setAuthMessage(message,type='info'){
+ const box=document.getElementById('authMessage');
+ box.textContent=message;
+ box.className='auth-message'+(type==='error'?' error':'');
+ box.setAttribute('role',type==='error'?'alert':'status');
+}
+function clearAuthMessage(){setAuthMessage('')}
+function setAuthBusy(busy){
+ document.querySelectorAll('#authForm button,#googleSignIn,#authModeToggle,#resetPassword,#recoveryForm button,#profileForm button,#signOut').forEach(button=>button.disabled=busy);
+ document.getElementById('authSubmit').textContent=busy?'Please wait…':authMode==='signup'?'Create account':'Sign in';
+}
+function setAuthMode(mode){
+ authMode=mode;
+ const signingUp=mode==='signup';
+ document.getElementById('authName').hidden=!signingUp;
+ document.getElementById('authNameLabel').hidden=!signingUp;
+ document.getElementById('authName').required=signingUp;
+ document.getElementById('authPassword').autocomplete=signingUp?'new-password':'current-password';
+ document.getElementById('authModeToggle').textContent=signingUp?'Already have an account? Sign in':'Create an account';
+ document.getElementById('accountHeading').textContent=signingUp?'Create your NexaHub account':'Welcome to NexaHub';
+ document.getElementById('accountIntro').textContent=signingUp?'Create an account to manage your NexaHub profile.':'Sign in or create an account to manage your NexaHub profile.';
+ document.getElementById('authSubmit').textContent=signingUp?'Create account':'Sign in';
+ clearAuthMessage();
+}
+function renderAuthState(user){
+ currentUser=user||null;
+ document.getElementById('accountButton').textContent=currentUser?'My account':'Sign in';
+ document.getElementById('recoveryEmail').value=currentUser?.email||'';
+ document.getElementById('authPanel').hidden=!!currentUser||isPasswordRecovery;
+ document.getElementById('recoveryPanel').hidden=!isPasswordRecovery;
+ document.getElementById('dashboardPanel').hidden=!currentUser||isPasswordRecovery;
+ if(isPasswordRecovery){
+  document.getElementById('accountHeading').textContent='Choose a new password';
+  document.getElementById('accountIntro').textContent='Set a new password for your NexaHub account.';
+  return;
+ }
+ if(currentUser){
+  document.getElementById('accountHeading').textContent='Your NexaHub account';
+  document.getElementById('accountIntro').textContent='Manage your customer profile and account.';
+  document.getElementById('profileEmail').textContent=currentUser.email||'';
+  if(!document.getElementById('accountModal').classList.contains('show'))clearAuthMessage();
+ }else{
+  setAuthMode('signin');
+ }
+}
+async function loadCustomerProfile(){
+ if(!nexahubSupabase||!currentUser)return;
+ setAuthMessage('Loading your profile…');
+ const {data,error}=await nexahubSupabase.from('profiles')
+  .select('full_name, phone, country')
+  .eq('id',currentUser.id)
+  .maybeSingle();
+ if(error){
+  setAuthMessage('Sign-in works, but profile storage is not ready. Apply the database setup in SUPABASE_SETUP.md, then try again.','error');
+  return;
+ }
+ if(!data){
+  setAuthMessage('Your profile is not set up yet. Apply the profile database setup in SUPABASE_SETUP.md.','error');
+  return;
+ }
+ document.getElementById('profileName').value=data.full_name||currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||'';
+ document.getElementById('profilePhone').value=data.phone||'';
+ document.getElementById('profileCountry').value=data.country||'';
+ clearAuthMessage();
+}
+async function handleAuthSubmit(event){
+ event.preventDefault();
+ if(!nexahubSupabase){setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');return}
+ if(!event.currentTarget.reportValidity())return;
+ const email=document.getElementById('authEmail').value.trim();
+ const password=document.getElementById('authPassword').value;
+ const fullName=document.getElementById('authName').value.trim();
+ if(!email||!password||(authMode==='signup'&&!fullName)){setAuthMessage('Complete all required fields.','error');return}
+ if(password.length<8){setAuthMessage('Use a password with at least 8 characters.','error');return}
+ setAuthBusy(true);
+ try{
+  if(authMode==='signup'){
+   const {data,error}=await nexahubSupabase.auth.signUp({email,password,options:{data:{full_name:fullName},emailRedirectTo:window.location.origin}});
+   if(error)throw error;
+   if(data.session){
+    renderAuthState(data.session.user);
+    setAuthMessage('Your account is ready. Add any remaining profile details below.');
+    await loadCustomerProfile();
+   }else{
+    setAuthMessage('Account created. Check your email for a verification link, then sign in.');
    }
+  }else{
+   const {data,error}=await nexahubSupabase.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   renderAuthState(data.user);
+   await loadCustomerProfile();
   }
-  function renderCart(){
-   const el=document.getElementById('cartItems');
-   const clearButton=document.getElementById('clearBasket');
-   el.replaceChildren();
-   clearButton.hidden=cart.length===0;
-   if(!cart.length){const empty=document.createElement('p');empty.textContent='Your basket is empty.';el.appendChild(empty);return}
-   cart.forEach((item,index)=>{
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #eee;padding:8px 0';
-    const name=document.createElement('span');name.textContent=item.name;
-    const price=document.createElement('b');price.textContent='KSh '+item.price.toLocaleString();
-    const remove=document.createElement('button');remove.type='button';remove.className='ghost';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+item.name+' from basket');
-    remove.addEventListener('click',()=>removeCartItem(index));
-    row.append(name,price,remove);el.appendChild(row);
-   });
-   const total=document.createElement('p');
-   const totalLabel=document.createElement('b');
-   totalLabel.textContent='Total: KSh '+cart.reduce((sum,item)=>sum+item.price,0).toLocaleString();
-   total.appendChild(totalLabel);el.appendChild(total);
-  }
-  function addCart(name,price){
-   if(cart.length>=MAX_CART_ITEMS){toast('Your sample basket has reached its item limit.');return}
-   cart.push({name,price});persistCart();updateCartCount();renderCart();toast(name+' added to your basket.')
-  }
-  function removeCartItem(index){
-   if(!Number.isInteger(index)||index<0||index>=cart.length)return;
-   cart.splice(index,1);persistCart();updateCartCount();renderCart()
-  }
-  function clearCart(){
-   cart=[];persistCart();updateCartCount();renderCart();toast('Your basket has been cleared.')
-  }
-  function showCart(){renderCart();openModal('cartModal')}
-function openModal(id){document.getElementById(id).classList.add('show')}function closeModal(id){document.getElementById(id).classList.remove('show')}
+ }catch(error){setAuthMessage(error.message||'Unable to complete sign-in. Please try again.','error')}
+ finally{setAuthBusy(false)}
+}
+async function signInWithGoogle(){
+ if(!nexahubSupabase){setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');return}
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
+  if(error)throw error;
+ }catch(error){setAuthMessage(error.message||'Google sign-in could not be started.','error');setAuthBusy(false)}
+}
+async function sendPasswordReset(){
+ if(!nexahubSupabase){setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');return}
+ const email=document.getElementById('authEmail').value.trim();
+ if(!email){setAuthMessage('Enter your email address first, then choose “Forgot password?”.','error');document.getElementById('authEmail').focus();return}
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+  if(error)throw error;
+  setAuthMessage('If an account exists for that address, password-reset instructions will arrive by email.');
+ }catch(error){setAuthMessage(error.message||'Could not send the password-reset email.','error')}
+ finally{setAuthBusy(false)}
+}
+async function updateRecoveredPassword(event){
+ event.preventDefault();
+ if(!nexahubSupabase||!isPasswordRecovery)return;
+ const password=document.getElementById('newPassword').value;
+ const confirmation=document.getElementById('confirmPassword').value;
+ if(password.length<8){setAuthMessage('Use a password with at least 8 characters.','error');return}
+ if(password!==confirmation){setAuthMessage('The passwords do not match.','error');return}
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.auth.updateUser({password});
+  if(error)throw error;
+  isPasswordRecovery=false;
+  document.getElementById('recoveryForm').reset();
+  renderAuthState(currentUser);
+  setAuthMessage('Your password has been updated.');
+ }catch(error){setAuthMessage(error.message||'Could not update your password. Request a fresh reset link and try again.','error')}
+ finally{setAuthBusy(false)}
+}
+async function saveCustomerProfile(event){
+ event.preventDefault();
+ if(!nexahubSupabase||!currentUser)return;
+ const fullName=document.getElementById('profileName').value.trim();
+ if(!fullName){setAuthMessage('Enter your name before saving.','error');return}
+ const profile={
+  full_name:fullName,
+  phone:document.getElementById('profilePhone').value.trim(),
+  country:document.getElementById('profileCountry').value.trim()
+ };
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.from('profiles').update(profile).eq('id',currentUser.id);
+  if(error)throw error;
+  setAuthMessage('Your profile was saved.');
+ }catch(error){setAuthMessage(error.message||'Could not save your profile. Check the database setup and try again.','error')}
+ finally{setAuthBusy(false)}
+}
+async function signOut(){
+ if(!nexahubSupabase)return;
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.auth.signOut();
+  if(error)throw error;
+  renderAuthState(null);
+  setAuthMessage('You have signed out.');
+ }catch(error){setAuthMessage(error.message||'Could not sign out. Please try again.','error')}
+ finally{setAuthBusy(false)}
+}
 function filterCategory(cat,btn){document.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));if(btn&&btn.classList.contains('chip'))btn.classList.add('selected');document.querySelectorAll('#productGrid .product').forEach(p=>p.style.display=(cat==='All'||p.dataset.category===cat)?'':'none');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn&&btn.closest('.nav'))btn.classList.add('active')}
 function searchProducts(){let q=document.getElementById('searchInput').value.toLowerCase();let n=0;document.querySelectorAll('#productGrid .product').forEach(p=>{let ok=p.dataset.name.toLowerCase().includes(q)||p.dataset.category.toLowerCase().includes(q);p.style.display=ok?'':'none';if(ok)n++});document.getElementById('marketplace').scrollIntoView({behavior:'smooth'});toast(n+' matching item(s) found.')}
- loadCart();updateCartCount();renderCart();
+loadCart();updateCartCount();renderCart();
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchProducts()});
+document.getElementById('authForm').addEventListener('submit',handleAuthSubmit);
+document.getElementById('googleSignIn').addEventListener('click',signInWithGoogle);
+document.getElementById('resetPassword').addEventListener('click',sendPasswordReset);
+document.getElementById('authModeToggle').addEventListener('click',()=>setAuthMode(authMode==='signin'?'signup':'signin'));
+document.getElementById('profileForm').addEventListener('submit',saveCustomerProfile);
+document.getElementById('recoveryForm').addEventListener('submit',updateRecoveredPassword);
+document.getElementById('signOut').addEventListener('click',signOut);
+try{
+ if(window.supabase?.createClient){
+  nexahubSupabase=window.supabase.createClient(NEXAHUB_SUPABASE_URL,NEXAHUB_SUPABASE_KEY);
+  nexahubSupabase.auth.onAuthStateChange((event,session)=>{
+   if(event==='PASSWORD_RECOVERY'){
+    isPasswordRecovery=true;
+    openModal('accountModal');
+   }
+   renderAuthState(session?.user||null);
+  });
+  nexahubSupabase.auth.getSession().then(({data,error})=>{
+   if(error)setAuthMessage(error.message||'Unable to check your sign-in session.','error');
+   else renderAuthState(data.session?.user||null);
+  }).catch(()=>setAuthMessage('Unable to check your sign-in session. Check your connection and refresh.','error'));
+ }else{
+  setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');
+ }
+}catch(error){nexahubSupabase=null;setAuthMessage('Supabase authentication could not be initialized.','error')}
+const authReturnParams=new URLSearchParams(window.location.search);
+if(authReturnParams.get('type')==='recovery'||window.location.hash.includes('type=recovery'))isPasswordRecovery=true;
+if(isPasswordRecovery||authReturnParams.has('code')||window.location.hash.includes('access_token'))openModal('accountModal');
 </script>
 </body></html>

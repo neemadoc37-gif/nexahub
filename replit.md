@@ -13,10 +13,15 @@ the storefront, not workspace files. Refresh Preview after editing the HTML;
 responses are not cached.
 
 Search, category filters, dialogs, and the sample basket are client-side.
-The basket resets on refresh. Sign-in, seller registration, service enquiries,
-bookings, and checkout are explicitly previews, not live services.
+The sample basket persists in this browser and is not a live order.
 
-The page loads the Supabase JavaScript SDK from jsDelivr and initializes the
-existing external Supabase client, but currently makes no database or auth
-requests. Existing external service configuration has not been changed.
-Live authentication, payments, bookings, and persistence require separate work.
+Customer email/password and Google authentication use the existing Supabase
+project. Apply the SQL migration and provider setup in `SUPABASE_SETUP.md`
+before relying on account profiles or Google sign-in. The browser contains
+only Supabase's public publishable key; never add a service-role or provider
+secret to frontend code.
+
+Seller onboarding, listings management, paid checkout, secure digital
+downloads, service bookings, travel inventory, and admin tools remain
+unimplemented. Do not represent the marketplace sample cards as live products
+or the preview checkout as a payment.
