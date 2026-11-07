@@ -597,6 +597,67 @@ async function openSecondTab(context) {
   return { second, errors };
 }
 
+for (const decreaseTab of ['first', 'second']) {
+  test(`two tabs enforce the combined limit and recover after a decrease in the ${decreaseTab} tab`, async ({ page, context }) => {
+    const nearLimit = [{ ...headphones, quantity: 60 }, { ...planner, quantity: 39 }];
+    await page.evaluate(({ key, items }) => localStorage.setItem(key, JSON.stringify(items)),
+      { key: STORAGE_KEY, items: nearLimit });
+    await reloadAndOpen(page);
+    const { second, errors } = await openSecondTab(context);
+    await openBasket(second);
+    const tabs = [page, second];
+
+    async function expectBoth(items, atLimit) {
+      for (const tab of tabs) {
+        await expectBasket(tab, items);
+        const increases = tab.getByRole('button', { name: /^Increase quantity of / });
+        await expect(increases).toHaveCount(items.length);
+        for (const button of await increases.all()) {
+          if (atLimit) await expect(button).toBeDisabled();
+          else await expect(button).toBeEnabled();
+        }
+      }
+    }
+
+    async function expectFullBasketUnchanged(items) {
+      await expectBoth(items, true);
+      // Native disabled controls must not accept another item in either tab.
+      for (const tab of tabs) {
+        for (const button of await tab.getByRole('button', { name: /^Increase quantity of / }).all()) {
+          await button.evaluate(element => element.click());
+        }
+      }
+      await expectBoth(items, true);
+    }
+
+    await expectBoth(nearLimit, false);
+    // Both tabs are already open: reaching 100 must disable every increase
+    // in the receiving tab through the real storage event, without reloading.
+    await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+    const fullBasket = [nearLimit[0], { ...planner, quantity: 40 }];
+    await expectFullBasketUnchanged(fullBasket);
+
+    const decreasing = decreaseTab === 'first' ? page : second;
+    const increasing = decreaseTab === 'first' ? second : page;
+    await decreasing.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true }).click();
+    const belowLimit = [{ ...headphones, quantity: 59 }, fullBasket[1]];
+    // Await synchronization before the next write; concurrent-write conflict
+    // resolution is deliberately outside this sequential-edit scenario.
+    await expectBoth(belowLimit, false);
+    for (const tab of tabs) await reloadAndOpen(tab);
+    await expectBoth(belowLimit, false);
+
+    // The other tab can use exactly the one newly available slot, even on a
+    // different line: this is a combined cap, not a per-product cap.
+    await increasing.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+    const refilledBasket = [belowLimit[0], { ...planner, quantity: 41 }];
+    await expectFullBasketUnchanged(refilledBasket);
+    for (const tab of tabs) await reloadAndOpen(tab);
+    await expectFullBasketUnchanged(refilledBasket);
+    expect(errors, 'second tab has no uncaught JavaScript errors').toEqual([]);
+  });
+}
+
 test('two tabs share additions, quantity changes, removals and clearing without reloads', async ({ page, context }) => {
   const { second, errors } = await openSecondTab(context);
   await openBasket(second);
