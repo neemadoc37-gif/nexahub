@@ -35,6 +35,15 @@ Review the results before real customer testing:
 These settings cannot be proven using the app's anonymous publishable key.
 Do not modify policies or repeat migrations merely to run these checks.
 
+For the next marketplace implementation stage, also run
+`supabase/inspect-marketplace.sql`. It reads existing column definitions,
+constraints, indexes, policies, grants, trigger metadata and public function
+signatures. It does not select customer rows or change any database objects.
+Export the result grids for review before implementing schema-dependent
+catalog, order, seller or payment functions. Inspect exports for any private
+configuration embedded in custom definitions before sharing; never share
+passwords, keys or customer records.
+
 ## Email configuration
 
 Email signup is enabled; public settings report automatic email confirmation

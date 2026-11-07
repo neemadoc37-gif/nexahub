@@ -39,3 +39,33 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 402, height: 874 
     expect(pageErrors).toEqual([]);
   });
 }
+
+// Error URLs exercise local error handling only, never a successful login.
+for (const scenario of [
+  { name: 'expired confirmation query', path: '/?campaign=welcome&error=access_denied&error_code=otp_expired&error_description=private-detail', text: 'expired or is invalid' },
+  { name: 'cancelled Google fragment', path: '/#error=access_denied&error_description=private-detail', text: 'cancelled or access was denied' },
+  { name: 'unknown provider error', path: '/?error=server_error&error_description=%3Cimg%20src=x%20onerror=alert(1)%3E', text: 'could not be completed' },
+]) {
+  test(`auth return: ${scenario.name} is explained without exposing provider details`, async ({ page }) => {
+    const writes = [];
+    page.on('request', request => {
+      if (request.method() !== 'GET' && request.url().includes('.supabase.co/')) writes.push(request.method());
+    });
+    await page.goto(scenario.path);
+    await expect(page.locator('#accountModal')).toBeVisible();
+    await expect(page.locator('#authMessage')).toContainText(scenario.text);
+    await expect(page.locator('#authMessage')).toHaveAttribute('role', 'alert');
+    await expect(page.locator('#dashboardPanel')).toBeHidden();
+    await expect(page.locator('#googleSignIn')).toBeEnabled();
+    await expect(page.locator('#authMessage')).not.toContainText('private-detail');
+    expect(await page.locator('#authMessage img').count()).toBe(0);
+    const url = new URL(page.url());
+    expect(url.searchParams.has('error')).toBe(false);
+    expect(url.searchParams.has('error_description')).toBe(false);
+    expect(url.hash).toBe('');
+    if (scenario.name === 'expired confirmation query') expect(url.searchParams.get('campaign')).toBe('welcome');
+    await page.locator('#authModeToggle').click();
+    await expect(page.locator('#authMessage')).toBeEmpty();
+    expect(writes).toEqual([]);
+  });
+}

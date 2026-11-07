@@ -131,7 +131,32 @@ let cartStatus='';
 let authMode='signin';
 let currentUser=null;
 let isPasswordRecovery=false;
+const authReturnFailure=readAuthReturnFailure();
 
+function readAuthReturnFailure(){
+ const url=new URL(window.location.href);
+ const fragment=new URLSearchParams(url.hash.slice(1));
+ const sources=[url.searchParams,fragment];
+ if(!sources.some(params=>params.has('error')||params.has('error_code')))return null;
+ const codes=sources.flatMap(params=>[params.get('error_code'),params.get('error')]);
+ // Never display arbitrary provider descriptions or leave failed-return
+ // credentials in the address bar. Successful SDK callbacks are untouched.
+ const sensitive=['error','error_code','error_description','code','access_token','refresh_token','provider_token','provider_refresh_token','expires_in','expires_at','token_type','type'];
+ sensitive.forEach(key=>url.searchParams.delete(key));
+ if(sensitive.some(key=>fragment.has(key))){
+  sensitive.forEach(key=>fragment.delete(key));
+  url.hash=fragment.toString();
+ }
+ history.replaceState(history.state,'',url.pathname+url.search+url.hash);
+ if(codes.includes('otp_expired'))return 'This confirmation or password-reset link has expired or is invalid. Request a fresh link, or sign in if your email is already confirmed.';
+ if(codes.includes('access_denied'))return 'Sign-in was cancelled or access was denied. You can try again or sign in with your email and password.';
+ return 'The sign-in or confirmation link could not be completed. Try signing in again, or request a fresh confirmation or password-reset link.';
+}
+function showAuthReturnFailure(){
+ if(!authReturnFailure)return;
+ openModal('accountModal');
+ setAuthMessage(authReturnFailure,'error');
+}
 function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
 function cartQuantity(){return cart.reduce((sum,item)=>sum+item.quantity,0)}
@@ -423,10 +448,10 @@ async function handleAuthSubmit(event){
    if(error)throw error;
    if(data.session){
     renderAuthState(data.session.user);
-    setAuthMessage('Your account is ready. Add any remaining profile details below.');
+    setAuthMessage('Signed in. Checking your customer profile…');
     await loadCustomerProfile();
    }else{
-    setAuthMessage('Account created. Check your email for a verification link, then sign in.');
+    setAuthMessage('Check your email for a confirmation link if registration is available for this address. If you already have an account, sign in or choose “Forgot password?”.');
    }
   }else{
    const {data,error}=await nexahubSupabase.auth.signInWithPassword({email,password});
@@ -533,9 +558,14 @@ try{
   nexahubSupabase.auth.getSession().then(({data,error})=>{
    if(error)setAuthMessage(error.message||'Unable to check your sign-in session.','error');
    else renderAuthState(data.session?.user||null);
-  }).catch(()=>setAuthMessage('Unable to check your sign-in session. Check your connection and refresh.','error'));
+   showAuthReturnFailure();
+  }).catch(()=>{
+   setAuthMessage('Unable to check your sign-in session. Check your connection and refresh.','error');
+   showAuthReturnFailure();
+  });
  }else{
   setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');
+  if(authReturnFailure)openModal('accountModal');
  }
 }catch(error){nexahubSupabase=null;setAuthMessage('Supabase authentication could not be initialized.','error')}
 const authReturnParams=new URLSearchParams(window.location.search);

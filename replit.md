@@ -42,6 +42,10 @@ provisioning triggers with the read-only `supabase/verify-auth.sql` script.
 ## Product requirements
 - Preserve the imported NexaHub branding, design, and working features.
 - Keep the tagline: "Your World. One Hub."
+- Approved direction: premium deep navy, muted champagne gold and ivory;
+  avoid bright/flashy colours, purple and pink. Preserve existing structure.
+- Use approved NexaHub logo/favicon assets when supplied; do not label an
+  invented replacement as approved. Prioritize secure working flows over cosmetics.
 - Develop the global multi-vendor marketplace in stages.
 - Use Supabase email/password and Google authentication.
 - Use secure backend functions for sensitive marketplace operations.
