@@ -188,7 +188,7 @@ function renderAuthState(user){
 async function loadCustomerProfile(){
  if(!nexahubSupabase||!currentUser)return;
  setAuthMessage('Loading your profile…');
- const {data,error}=await nexahubSupabase.from('profiles')
+ const {data,error}=await nexahubSupabase.from('customer_profiles')
   .select('full_name, phone, country')
   .eq('id',currentUser.id)
   .maybeSingle();
@@ -285,7 +285,7 @@ async function saveCustomerProfile(event){
  };
  setAuthBusy(true);
  try{
-  const {error}=await nexahubSupabase.from('profiles').update(profile).eq('id',currentUser.id);
+  const {error}=await nexahubSupabase.from('customer_profiles').update(profile).eq('id',currentUser.id).select('id').single();
   if(error)throw error;
   setAuthMessage('Your profile was saved.');
  }catch(error){setAuthMessage(error.message||'Could not save your profile. Check the database setup and try again.','error')}

@@ -21,6 +21,22 @@ before relying on account profiles or Google sign-in. The browser contains
 only Supabase's public publishable key; never add a service-role or provider
 secret to frontend code.
 
+The customer account UI uses `customer_profiles`, not the legacy `profiles`
+table. This is intentional: the existing external table has a different
+schema, and its full purpose and policies have not been verified. Do not
+replace or alter it just to match the new account form.
+
+## Product requirements
+- Preserve the imported NexaHub branding, design, and working features.
+- Keep the tagline: "Your World. One Hub."
+- Develop the global multi-vendor marketplace in stages.
+- Use Supabase email/password and Google authentication.
+- Use secure backend functions for sensitive marketplace operations.
+- Never expose secret keys in frontend code or simulate users, payments, or
+  transactions as real outcomes.
+- Report configuration blockers and untested features accurately; do not call
+  the marketplace production-ready until its real flows have been tested.
+
 Seller onboarding, listings management, paid checkout, secure digital
 downloads, service bookings, travel inventory, and admin tools remain
 unimplemented. Do not represent the marketplace sample cards as live products

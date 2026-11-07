@@ -9,12 +9,10 @@ restricted by row-level security to the signed-in customer's own record.
 
 In the Supabase Dashboard for this project, open **SQL Editor**, review
 `supabase/migrations/202611070001_customer_profiles.sql`, and run it. The
-migration extends the existing `profiles` table without deleting profile data,
-enables row-level security, replaces existing profile policies with
-owner-only rules, and creates profile rows when new users register. It also
-backfills missing profiles for existing Auth users. Review the policy
-replacement before applying it if you have other trusted server-side code that
-depends on existing `profiles` policies.
+migration adds a separate `customer_profiles` table with owner-only access
+and creates profile rows when new users register. It also backfills missing
+profiles for existing Auth users. The existing `profiles` table, its data,
+and its policies are left untouched.
 
 Do not grant anonymous users access to customer profiles. Do not add a service
 role key to the web app.
