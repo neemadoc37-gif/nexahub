@@ -65,8 +65,11 @@
 <div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
 <div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><div id="cartItems"><p>Your basket is empty.</p></div><button class="primary" onclick="toast('Secure checkout is not connected in this preview.')">Continue to checkout</button><p>Sample basket only. No payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-let cart=[];function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
+const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
+ let cart=[];function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function addCart(name,price){cart.push({name,price});document.getElementById('cartCount').textContent=cart.length;toast(name+' added to your basket.')}
 function showCart(){let el=document.getElementById('cartItems');if(!cart.length)el.innerHTML='<p>Your basket is empty.</p>';else{el.innerHTML=cart.map(x=>'<p style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0"><span>'+x.name+'</span><b>KSh '+x.price.toLocaleString()+'</b></p>').join('')+'<p><b>Total: KSh '+cart.reduce((s,x)=>s+x.price,0).toLocaleString()+'</b></p>'}openModal('cartModal')}
 function openModal(id){document.getElementById(id).classList.add('show')}function closeModal(id){document.getElementById(id).classList.remove('show')}
