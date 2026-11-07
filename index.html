@@ -63,19 +63,79 @@
 <footer class="footer"><div class="footinner"><div><div class="logo">Nexa<span>Hub</span></div><p>Your World. One Hub.<br>A marketplace for products, digital goods, services and experiences.</p></div><div><h4>Explore</h4><p><a href="#marketplace">Shopping</a><br><a href="#marketplace">Digital products</a><br><a href="#marketplace">Services</a><br><a href="#marketplace">Travel</a></p></div><div><h4>Sell on NexaHub</h4><p><a href="#" onclick="openModal('sellerModal');return false">Become a seller</a><br>Seller support<br>Marketplace guidelines</p></div><div><h4>Help & information</h4><p>Help centre<br>Contact us<br>Privacy policy<br>Terms of service</p></div></div><div class="footbottom">© 2026 NexaHub. All rights reserved. Sample storefront preview — live payments and bookings are not yet connected.</div></footer>
 <div class="modalback" id="accountModal"><div class="modal"><button class="close" onclick="closeModal('accountModal')">×</button><h2>Welcome to NexaHub</h2><p>Sign in or create an account to manage your shopping and bookings.</p><input placeholder="Email address" type="email"><input placeholder="Password" type="password"><button class="primary" onclick="toast('Account sign-in will be enabled after secure authentication setup.')">Continue</button><p>Authentication is a preview in this build; no account is created yet.</p></div></div>
 <div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
-<div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><div id="cartItems"><p>Your basket is empty.</p></div><button class="primary" onclick="toast('Secure checkout is not connected in this preview.')">Continue to checkout</button><p>Sample basket only. No payment will be collected.</p></div></div>
+<div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
 const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
  const nexahubSupabase = window.supabase.createClient(NEXAHUB_SUPABASE_URL, NEXAHUB_SUPABASE_KEY);
- let cart=[];function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
-function addCart(name,price){cart.push({name,price});document.getElementById('cartCount').textContent=cart.length;toast(name+' added to your basket.')}
-function showCart(){let el=document.getElementById('cartItems');if(!cart.length)el.innerHTML='<p>Your basket is empty.</p>';else{el.innerHTML=cart.map(x=>'<p style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0"><span>'+x.name+'</span><b>KSh '+x.price.toLocaleString()+'</b></p>').join('')+'<p><b>Total: KSh '+cart.reduce((s,x)=>s+x.price,0).toLocaleString()+'</b></p>'}openModal('cartModal')}
+  const CART_STORAGE_KEY='nexahub.sampleBasket.v1';
+  const MAX_CART_ITEMS=100;
+  let cart=[];
+  let cartStatus='';
+  function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+  function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
+  function updateCartCount(){document.getElementById('cartCount').textContent=cart.length}
+  function persistCart(){
+   try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));setCartStatus('')}
+   catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
+  }
+  function loadCart(){
+   try{
+    const saved=localStorage.getItem(CART_STORAGE_KEY);
+    if(saved===null)return;
+    const parsed=JSON.parse(saved);
+    const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
+     item&&typeof item==='object'&&!Array.isArray(item)&&
+     typeof item.name==='string'&&item.name.trim().length>0&&item.name.length<=120&&
+     typeof item.price==='number'&&Number.isSafeInteger(item.price)&&item.price>0
+    );
+    if(!valid)throw new Error('Invalid saved basket');
+    cart=parsed.map(item=>({name:item.name.trim(),price:item.price}));
+   }catch(error){
+    cart=[];
+    try{localStorage.removeItem(CART_STORAGE_KEY)}catch(removeError){}
+    setCartStatus('Saved basket data was invalid or unreadable, so it was cleared. Your basket is empty.');
+    toast('Saved basket data was invalid and has been cleared.');
+   }
+  }
+  function renderCart(){
+   const el=document.getElementById('cartItems');
+   const clearButton=document.getElementById('clearBasket');
+   el.replaceChildren();
+   clearButton.hidden=cart.length===0;
+   if(!cart.length){const empty=document.createElement('p');empty.textContent='Your basket is empty.';el.appendChild(empty);return}
+   cart.forEach((item,index)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #eee;padding:8px 0';
+    const name=document.createElement('span');name.textContent=item.name;
+    const price=document.createElement('b');price.textContent='KSh '+item.price.toLocaleString();
+    const remove=document.createElement('button');remove.type='button';remove.className='ghost';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+item.name+' from basket');
+    remove.addEventListener('click',()=>removeCartItem(index));
+    row.append(name,price,remove);el.appendChild(row);
+   });
+   const total=document.createElement('p');
+   const totalLabel=document.createElement('b');
+   totalLabel.textContent='Total: KSh '+cart.reduce((sum,item)=>sum+item.price,0).toLocaleString();
+   total.appendChild(totalLabel);el.appendChild(total);
+  }
+  function addCart(name,price){
+   if(cart.length>=MAX_CART_ITEMS){toast('Your sample basket has reached its item limit.');return}
+   cart.push({name,price});persistCart();updateCartCount();renderCart();toast(name+' added to your basket.')
+  }
+  function removeCartItem(index){
+   if(!Number.isInteger(index)||index<0||index>=cart.length)return;
+   cart.splice(index,1);persistCart();updateCartCount();renderCart()
+  }
+  function clearCart(){
+   cart=[];persistCart();updateCartCount();renderCart();toast('Your basket has been cleared.')
+  }
+  function showCart(){renderCart();openModal('cartModal')}
 function openModal(id){document.getElementById(id).classList.add('show')}function closeModal(id){document.getElementById(id).classList.remove('show')}
 function filterCategory(cat,btn){document.querySelectorAll('.chip').forEach(x=>x.classList.remove('selected'));if(btn&&btn.classList.contains('chip'))btn.classList.add('selected');document.querySelectorAll('#productGrid .product').forEach(p=>p.style.display=(cat==='All'||p.dataset.category===cat)?'':'none');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn&&btn.closest('.nav'))btn.classList.add('active')}
 function searchProducts(){let q=document.getElementById('searchInput').value.toLowerCase();let n=0;document.querySelectorAll('#productGrid .product').forEach(p=>{let ok=p.dataset.name.toLowerCase().includes(q)||p.dataset.category.toLowerCase().includes(q);p.style.display=ok?'':'none';if(ok)n++});document.getElementById('marketplace').scrollIntoView({behavior:'smooth'});toast(n+' matching item(s) found.')}
+ loadCart();updateCartCount();renderCart();
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchProducts()});
 </script>
 </body></html>
