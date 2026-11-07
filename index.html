@@ -69,6 +69,7 @@
 <script>
 const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
 const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
+ const nexahubSupabase = window.supabase.createClient(NEXAHUB_SUPABASE_URL, NEXAHUB_SUPABASE_KEY);
  let cart=[];function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function addCart(name,price){cart.push({name,price});document.getElementById('cartCount').textContent=cart.length;toast(name+' added to your basket.')}
 function showCart(){let el=document.getElementById('cartItems');if(!cart.length)el.innerHTML='<p>Your basket is empty.</p>';else{el.innerHTML=cart.map(x=>'<p style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0"><span>'+x.name+'</span><b>KSh '+x.price.toLocaleString()+'</b></p>').join('')+'<p><b>Total: KSh '+cart.reduce((s,x)=>s+x.price,0).toLocaleString()+'</b></p>'}openModal('cartModal')}
