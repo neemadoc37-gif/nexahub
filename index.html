@@ -64,7 +64,7 @@
 </main>
 <footer class="footer"><div class="footinner"><div><div class="logo">Nexa<span>Hub</span></div><p>Your World. One Hub.<br>A marketplace for products, digital goods, services and experiences.</p></div><div><h4>Explore</h4><p><a href="#marketplace">Shopping</a><br><a href="#marketplace">Digital products</a><br><a href="#marketplace">Services</a><br><a href="#marketplace">Travel</a></p></div><div><h4>Sell on NexaHub</h4><p><a href="#" onclick="openModal('sellerModal');return false">Become a seller</a><br>Seller support<br>Marketplace guidelines</p></div><div><h4>Help & information</h4><p>Help centre<br>Contact us<br>Privacy policy<br>Terms of service</p></div></div><div class="footbottom">© 2026 NexaHub. All rights reserved. Sample storefront preview — live payments and bookings are not yet connected.</div></footer>
 <div class="modalback" id="accountModal">
- <section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading">
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading" tabindex="-1">
   <button class="close" type="button" aria-label="Close account dialog" onclick="closeModal('accountModal')">×</button>
   <h2 id="accountHeading">Welcome to NexaHub</h2>
   <p id="accountIntro">Sign in or create an account to manage your NexaHub profile.</p>
@@ -112,8 +112,8 @@
   </div>
  </section>
 </div>
-<div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
-<div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
+<div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
+<div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close basket dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -270,8 +270,61 @@ function clearCart(){
  offerCartUndo(removed,'Basket cleared.')
 }
 function showCart(){renderCart();openModal('cartModal')}
-function openModal(id){document.getElementById(id).classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
+let activeModal=null;
+let modalTrigger=null;
+const modalInertState=new Map();
+function isVisibleControl(element){
+ return element.isConnected&&!element.closest('[hidden],[inert]')&&element.getClientRects().length>0&&getComputedStyle(element).visibility!=='hidden';
+}
+function modalControls(){
+ return [...activeModal.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')]
+  .filter(element=>element.tabIndex>=0&&!element.matches(':disabled')&&isVisibleControl(element));
+}
+function focusModal(){(modalControls()[0]||activeModal.querySelector('.modal')).focus()}
+function openModal(id){
+ const modal=document.getElementById(id);
+ if(activeModal===modal)return;
+ // Dialogs replace each other rather than stacking; retain the original trigger.
+ if(activeModal)activeModal.classList.remove('show');
+ else modalTrigger=document.activeElement;
+ activeModal=modal;
+ modal.classList.add('show');
+ for(const sibling of document.body.children){
+  if(!modalInertState.has(sibling))modalInertState.set(sibling,sibling.inert);
+  sibling.inert=sibling!==modal;
+ }
+ focusModal();
+}
+function closeModal(id){
+ const modal=document.getElementById(id);
+ modal.classList.remove('show');
+ if(activeModal!==modal)return;
+ activeModal=null;
+ for(const [element,inert] of modalInertState)element.inert=inert;
+ modalInertState.clear();
+ const trigger=modalTrigger;modalTrigger=null;
+ if(trigger&&trigger!==document.body&&isVisibleControl(trigger)&&!trigger.matches(':disabled'))trigger.focus();
+ else{
+  // Auth callbacks can open a dialog without a trigger.
+  const fallback=document.getElementById('accountButton');
+  if(isVisibleControl(fallback))fallback.focus();
+ }
+}
+document.addEventListener('keydown',event=>{
+ if(!activeModal)return;
+ if(event.key==='Escape'){event.preventDefault();closeModal(activeModal.id);return}
+ if(event.key!=='Tab')return;
+ const controls=modalControls();
+ const first=controls[0],last=controls[controls.length-1];
+ const current=document.activeElement;
+ if(!controls.length){event.preventDefault();activeModal.querySelector('.modal').focus()}
+ else if(!controls.includes(current)){event.preventDefault();(event.shiftKey?last:first).focus()}
+ else if(event.shiftKey&&current===first){event.preventDefault();last.focus()}
+ else if(!event.shiftKey&&current===last){event.preventDefault();first.focus()}
+});
+document.addEventListener('focusin',event=>{
+ if(activeModal&&!activeModal.contains(event.target))focusModal();
+});
 function showAccount(){clearAuthMessage();openModal('accountModal');if(currentUser&&!isPasswordRecovery)loadCustomerProfile()}
 function setAuthMessage(message,type='info'){
  const box=document.getElementById('authMessage');
