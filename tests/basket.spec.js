@@ -119,6 +119,130 @@ const invalidData = [
   ['unsafe total', JSON.stringify([{ ...planner, price: Number.MAX_SAFE_INTEGER, quantity: 2 }])],
 ];
 
+for (const clearAll of [false, true]) {
+  test(`undo ${clearAll ? 'clearing' : 'row removal'} restores quantities, totals and saved state`, async ({ page }) => {
+    await addProduct(page, headphones.name);
+    await addProduct(page, headphones.name);
+    await addProduct(page, planner.name);
+    await openBasket(page);
+    await page.getByRole('button', { name: clearAll ? 'Clear basket' : `Remove ${headphones.name} from basket`, exact: true }).click();
+    expect(await savedBasket(page)).toEqual(clearAll ? [] : [planner]);
+    await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#cartUndo')).toBeHidden();
+    await expect(page.locator('#cartCount')).toHaveText('3');
+    await expect(page.getByLabel(`Quantity of ${headphones.name}`, { exact: true })).toHaveText('2');
+    await expect(page.getByLabel(`Line total for ${headphones.name}`, { exact: true })).toHaveText('KSh 6,998');
+    await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
+    expect(await savedBasket(page)).toEqual([headphones, planner]);
+    await reloadAndOpen(page);
+    await expect(page.locator('#cartCount')).toHaveText('3');
+    await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
+    await expect(page.locator('#cartModal')).toContainText('Sample basket only. Checkout is a preview; no payment will be collected.');
+    await page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true }).click();
+    await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+  });
+}
+
+test('undo expires after eight seconds and cannot restore the deletion later', async ({ page }) => {
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now()+1000));
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.clock.fastForward(7999);
+  await expect(page.locator('#cartUndo')).toBeVisible();
+  await page.clock.fastForward(1);
+  await expect(page.locator('#cartUndo')).toBeHidden();
+  await page.evaluate(() => undoCartRemoval());
+  await expectEmpty(page);
+  expect(await savedBasket(page)).toEqual([]);
+});
+
+test('only the latest deletion can be undone, with its own expiry', async ({ page }) => {
+  await page.clock.install();
+  await addProduct(page, headphones.name);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.clock.fastForward(4000);
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.clock.fastForward(4001);
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  expect(await savedBasket(page)).toEqual([planner]);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
+});
+
+test('undo merges restored items without overwriting subsequent basket edits', async ({ page }) => {
+  await addProduct(page, headphones.name);
+  await addProduct(page, headphones.name);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, headphones.name);
+  await addProduct(page, 'Everyday travel backpack');
+  await openBasket(page);
+  await page.getByRole('button', { name: `Increase quantity of ${headphones.name}`, exact: true }).click();
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  expect(await savedBasket(page)).toEqual([
+    { ...headphones, quantity: 4 }, planner,
+    { name: 'Everyday travel backpack', price: 2750, quantity: 1 },
+  ]);
+  await expect(page.locator('#cartCount')).toHaveText('6');
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 17,596');
+});
+
+test('undo refuses an over-limit restore without losing edits or the pending undo', async ({ page }) => {
+  await page.clock.install();
+  await page.evaluate(({ key, item }) => localStorage.setItem(key, JSON.stringify([
+    { ...item, quantity: 100 }
+  ])), { key: STORAGE_KEY, item: headphones });
+  await reloadAndOpen(page);
+  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect(page.locator('#cartUndoMessage')).toContainText('100-item limit');
+  expect(await savedBasket(page)).toEqual([planner]);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+});
+
+test('undo of a full basket keeps increases disabled at the limit', async ({ page }) => {
+  await page.evaluate(({ key, item }) => localStorage.setItem(key, JSON.stringify([
+    { ...item, quantity: 100 }
+  ])), { key: STORAGE_KEY, item: planner });
+  await reloadAndOpen(page);
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect(page.locator('#cartCount')).toHaveText('100');
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 85,000');
+  await expect(page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true })).toBeDisabled();
+  expect(await savedBasket(page)).toEqual([{ ...planner, quantity: 100 }]);
+});
+
+test('another tab receives an undo and invalidates an older pending undo', async ({ page, context }) => {
+  const { second, errors } = await openSecondTab(context);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await openBasket(second);
+  await expect(second.locator('#cartCount')).toHaveText('1');
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await expectEmpty(second);
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect(second.locator('#cartCount')).toHaveText('1');
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await expectEmpty(second);
+  await second.locator('#cartModal .close').click();
+  await addProduct(second, headphones.name);
+  await expect(page.locator('#cartUndo')).toBeHidden();
+  await page.evaluate(() => undoCartRemoval());
+  expect(await savedBasket(page)).toEqual([{ ...headphones, quantity: 1 }]);
+  expect(errors).toEqual([]);
+});
+
 async function openSecondTab(context) {
   const second = await context.newPage();
   await second.route('https://**/*', route => route.abort());

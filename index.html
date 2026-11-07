@@ -65,7 +65,7 @@
 <footer class="footer"><div class="footinner"><div><div class="logo">Nexa<span>Hub</span></div><p>Your World. One Hub.<br>A marketplace for products, digital goods, services and experiences.</p></div><div><h4>Explore</h4><p><a href="#marketplace">Shopping</a><br><a href="#marketplace">Digital products</a><br><a href="#marketplace">Services</a><br><a href="#marketplace">Travel</a></p></div><div><h4>Sell on NexaHub</h4><p><a href="#" onclick="openModal('sellerModal');return false">Become a seller</a><br>Seller support<br>Marketplace guidelines</p></div><div><h4>Help & information</h4><p>Help centre<br>Contact us<br>Privacy policy<br>Terms of service</p></div></div><div class="footbottom">© 2026 NexaHub. All rights reserved. Sample storefront preview — live payments and bookings are not yet connected.</div></footer>
 <div class="modalback" id="accountModal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading"><button class="close" type="button" aria-label="Close account dialog" onclick="closeModal('accountModal')">×</button><h2 id="accountHeading">Welcome to NexaHub</h2><p id="accountIntro">Sign in or create an account to manage your NexaHub profile.</p><div id="authMessage" class="auth-message" role="status" aria-live="polite"></div><div id="authPanel"><form id="authForm" novalidate><label class="form-label" for="authName" id="authNameLabel" hidden>Your name</label><input id="authName" type="text" maxlength="120" autocomplete="name" placeholder="Full name" hidden><label class="form-label" for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="username" maxlength="254" required placeholder="you@example.com"><label class="form-label" for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"><button id="authSubmit" class="primary" type="submit">Sign in</button></form><button id="googleSignIn" class="auth-google" type="button">Continue with Google</button><div class="auth-links"><button id="authModeToggle" class="auth-link" type="button">Create an account</button><button id="resetPassword" class="auth-link" type="button">Forgot password?</button></div></div><div id="recoveryPanel" hidden><form id="recoveryForm"><input id="recoveryEmail" type="email" autocomplete="username" aria-label="Account email" hidden><label class="form-label" for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><label class="form-label" for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Enter the new password again"><button id="updatePassword" class="primary" type="submit">Update password</button></form></div><div id="dashboardPanel" hidden><p>Signed in as <strong id="profileEmail" class="dashboard-email"></strong></p><form id="profileForm"><div class="dashboard-card"><h3>Your customer profile</h3><label class="form-label" for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required><label class="form-label" for="profilePhone">Phone (optional)</label><input id="profilePhone" type="tel" maxlength="32" autocomplete="tel"><label class="form-label" for="profileCountry">Country (optional)</label><input id="profileCountry" type="text" maxlength="80" autocomplete="country-name"></div><button id="saveProfile" class="primary" type="submit">Save profile</button></form><div class="dashboard-card"><h3>Your orders</h3><p>Order history will appear here after marketplace ordering is connected. No orders are being simulated.</p></div><button id="signOut" class="ghost" type="button" style="width:100%">Sign out</button></div></section></div>
 <div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
-<div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
+<div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -73,6 +73,9 @@ const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
 const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
 const CART_STORAGE_KEY='nexahub.sampleBasket.v1';
 const MAX_CART_ITEMS=100;
+const CART_UNDO_MS=8000;
+let cartUndo=null;
+let cartUndoTimer=null;
 let nexahubSupabase=null;
 let cart=[];
 let cartStatus='';
@@ -84,6 +87,41 @@ function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.c
 function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
 function cartQuantity(){return cart.reduce((sum,item)=>sum+item.quantity,0)}
 function updateCartCount(){document.getElementById('cartCount').textContent=cartQuantity()}
+function dismissCartUndo(){
+ clearTimeout(cartUndoTimer);cartUndoTimer=null;cartUndo=null;
+ if(document.activeElement===document.getElementById('undoBasket'))document.querySelector('#cartModal .close').focus();
+ document.getElementById('cartUndo').hidden=true;
+ document.getElementById('cartUndoMessage').textContent='';
+}
+function offerCartUndo(removed,message){
+ dismissCartUndo();
+ cartUndo={removed,expiresAt:Date.now()+CART_UNDO_MS};
+ document.getElementById('cartUndo').hidden=false;
+ document.getElementById('cartUndoMessage').textContent=message+' Undo within 8 seconds.';
+ cartUndoTimer=setTimeout(dismissCartUndo,CART_UNDO_MS);
+ document.getElementById('undoBasket').focus();
+}
+function undoCartRemoval(){
+ if(!cartUndo)return;
+ if(Date.now()>=cartUndo.expiresAt){dismissCartUndo();return}
+ const restored=cart.map(item=>({...item}));
+ for(const {item,index} of cartUndo.removed){
+  const existing=restored.find(row=>row.name===item.name&&row.price===item.price);
+  if(existing)existing.quantity+=item.quantity;
+  else restored.splice(Math.min(index,restored.length),0,{...item});
+ }
+ if(restored.reduce((sum,item)=>sum+item.quantity,0)>MAX_CART_ITEMS){
+  document.getElementById('cartUndoMessage').textContent='Cannot undo: your sample basket would exceed its 100-item limit.';
+  return;
+ }
+ if(!Number.isSafeInteger(restored.reduce((sum,item)=>sum+item.price*item.quantity,0))){
+  document.getElementById('cartUndoMessage').textContent='Cannot undo: the restored basket total is too large.';
+  return;
+ }
+ cart=restored;dismissCartUndo();persistCart();updateCartCount();renderCart();
+ document.getElementById('clearBasket').focus();
+ toast('Removed items restored to your sample basket.');
+}
 function persistCart(){
  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));setCartStatus('')}
  catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
@@ -149,7 +187,7 @@ window.addEventListener('storage',event=>{
  if(event.storageArea!==localStorage||(event.key!==CART_STORAGE_KEY&&event.key!==null))return;
  // Read the current value, not an older event's snapshot if writes were queued.
  // Loading does not save again or dismiss a local storage-error notice.
- loadCart();updateCartCount();renderCart();
+ dismissCartUndo();loadCart();updateCartCount();renderCart();
 });
 function addCart(name,price){
  if(cartQuantity()>=MAX_CART_ITEMS){toast('Your sample basket has reached its item limit.');return}
@@ -173,10 +211,15 @@ function changeCartQuantity(index,delta){
 }
 function removeCartItem(index){
  if(!Number.isInteger(index)||index<0||index>=cart.length)return;
- cart.splice(index,1);persistCart();updateCartCount();renderCart()
+ const item={...cart[index]};
+ cart.splice(index,1);persistCart();updateCartCount();renderCart();
+ offerCartUndo([{item,index}],item.name+' removed.')
 }
 function clearCart(){
- cart=[];persistCart();updateCartCount();renderCart();toast('Your basket has been cleared.')
+ if(!cart.length)return;
+ const removed=cart.map((item,index)=>({item:{...item},index}));
+ cart=[];persistCart();updateCartCount();renderCart();
+ offerCartUndo(removed,'Basket cleared.')
 }
 function showCart(){renderCart();openModal('cartModal')}
 function openModal(id){document.getElementById(id).classList.add('show')}
