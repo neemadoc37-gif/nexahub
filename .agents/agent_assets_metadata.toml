@@ -42,3 +42,17 @@ mtime_ms = 1794064063155
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:68cd49f6-f5c9-40db-8b24-2a07ca9c4e33/0fdee14f-5274-4dc9-ae82-e7c84d6f9500/daf82e59-ab3b-466f-a3e7-cb82dbc81e52"
 storage_version_token = "1794064071818537"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "YNhetZf0SHem5e95av4Nt"
+uri = "file://NEXAHUB_DELIVERY_DESIGN.md"
+type = "text"
+title = "Approved NexaHub Delivery Design"
+description = "Approved architecture, outstanding business decisions and explicit implementation/payment approval boundaries."
+logical_id = "1b63d981-2547-458f-b0fb-a7914f048376"
+content_hash = "sha256:9db2ec999d166a440ca69a9c918a10ec3becf487c235b4bcdaaa575ec0310ea1"
+size = 3810
+mtime_ms = 1794064742466
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:68cd49f6-f5c9-40db-8b24-2a07ca9c4e33/1b63d981-2547-458f-b0fb-a7914f048376/e0906865-490d-49a1-9065-1636b6aad1d5"
+storage_version_token = "1794064748954541"
+content_type = "text/markdown"

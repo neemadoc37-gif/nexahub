@@ -22,6 +22,12 @@ navy, champagne-gold and ivory design.
 
 **Why:** The user explicitly requested this scope before implementing payments.
 
-**How to apply:** Treat delivery as required marketplace scope, not a claimed
-implemented feature. Obtain approval for proposed delivery behavior and schema
-changes after inspection; do not assume rider verification or live payout access.
+The user approved the proposed delivery architecture **as design only**. This
+does not authorize implementation, migrations, live checkout or payouts. See
+`NEXAHUB_DELIVERY_DESIGN.md` for the approved design and unresolved choices.
+
+**Why:** The user explicitly selected “Approve design only.”
+
+**How to apply:** Preserve the approved architecture but treat delivery as
+unimplemented. Obtain separate approval for unresolved business rules and exact
+application/database changes after inspection; do not assume live payout access.
