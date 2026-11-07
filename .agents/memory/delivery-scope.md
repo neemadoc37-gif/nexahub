@@ -35,3 +35,10 @@ actual changes in Preview, preserving the website, database and branding.
 asking for design approval. Obtain approval for unresolved business rules and
 exact schema changes after inspection. Do not represent blocked forms as saved
 applications or status guides as actual tracking; do not assume payout access.
+
+Do not make further database changes without the user's approval.
+
+**Why:** The user explicitly required approval before further database changes.
+
+**How to apply:** Inspection may remain read-only; present proposed database
+changes and obtain approval before executing them.
