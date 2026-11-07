@@ -6,6 +6,18 @@
 - Open Preview to view the storefront.
 - No package installation or additional secrets are needed for this preview.
 
+## Repeatable basket checks
+- Run `npm ci` once to install the locked browser-test dependencies.
+- Run `npm test` (or `npm run test:basket`) to check saved baskets in Chromium.
+  The runner starts `python3 server.py` if port 5000 is not already serving.
+- Replit's Chromium is detected automatically. Elsewhere, run
+  `npx playwright install chromium` first, or set
+  `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to a compatible Chromium executable.
+- Tests use fresh browser contexts and block third-party requests; no customer
+  accounts, Supabase access, or secrets are required.
+- Failure screenshots and traces are written to the ignored
+  `generated-artifacts/playwright/` directory.
+
 ## Project scope
 The imported site remains in `index.html`, including its existing CSS and
 JavaScript. `server.py` uses only Python's standard library and serves only
