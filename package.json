@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:basket": "playwright test tests/basket.spec.js"
+    "test:basket": "playwright test tests/basket.spec.js",
+    "test:backend": "python3 -m unittest discover -s tests -p 'test_*.py' -v",
+    "test:all": "npm run test:backend && playwright test"
   },
   "repository": {
     "type": "git",

@@ -22,12 +22,16 @@ navy, champagne-gold and ivory design.
 
 **Why:** The user explicitly requested this scope before implementing payments.
 
-The user approved the proposed delivery architecture **as design only**. This
-does not authorize implementation, migrations, live checkout or payouts. See
-`NEXAHUB_DELIVERY_DESIGN.md` for the approved design and unresolved choices.
+The user subsequently authorized implementation of the reviewed payment and
+delivery features in the existing website, including visible customer, seller,
+rider, tracking and admin screens, **where safely possible**. This supersedes
+the earlier design-only restriction, but does not authorize live money transfers
+or uninspected database changes. Keep unresolved business rules gated.
 
-**Why:** The user explicitly selected “Approve design only.”
+**Why:** The user explicitly asked to implement the approved features and see
+actual changes in Preview, preserving the website, database and branding.
 
-**How to apply:** Preserve the approved architecture but treat delivery as
-unimplemented. Obtain separate approval for unresolved business rules and exact
-application/database changes after inspection; do not assume live payout access.
+**How to apply:** Implement independently verifiable parts without repeatedly
+asking for design approval. Obtain approval for unresolved business rules and
+exact schema changes after inspection. Do not represent blocked forms as saved
+applications or status guides as actual tracking; do not assume payout access.

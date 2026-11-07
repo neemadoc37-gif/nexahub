@@ -2,3 +2,4 @@
 - [Mobile geometry checks](mobile-geometry.md) — multiline inline text needs different hit-testing from buttons.
 - [Booking sources](booking-sources.md) — bookings must support both NexaHub sellers and external suppliers.
 - [NexaHub Delivery](delivery-scope.md) — independent verified riders, seller requests, order links, tracking/OTP and admin oversight; approval before changes.
+- [Payment boundaries](payment-scope.md) — existing Kenyan Paybill via Daraja; no Stripe/Whop/Shopify yet, verified settlement and explicit approval before live money.

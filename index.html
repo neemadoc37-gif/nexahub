@@ -15,6 +15,7 @@
 .basket-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;border-bottom:1px solid var(--line);padding:12px 0}.basket-name{overflow-wrap:anywhere}.basket-controls{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.basket-controls button{min-width:36px;min-height:36px}.basket-controls button:disabled{opacity:.45;cursor:not-allowed}.basket-quantity{min-width:24px;text-align:center}.basket-remove{margin-left:auto}
 #cartUndoMessage{overflow-wrap:anywhere}
 </style>
+<link rel="stylesheet" href="/assets/platform.css">
 </head>
 <body>
 <div class="topbar">Discover more. Shop smarter. <b>One world, one marketplace.</b></div>
@@ -24,16 +25,20 @@
   <div class="search"><input id="searchInput" placeholder="Search products, services, digital downloads..."><button onclick="searchProducts()">Search</button></div>
   <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost" onclick="showCart()">🛒 <span id="cartCount">0</span></button></div>
  </div>
- <nav class="nav">
-  <button class="active" onclick="filterCategory('All',this)">Discover</button><button onclick="filterCategory('Shopping',this)">Shopping</button><button onclick="filterCategory('Digital',this)">Digital products</button><button onclick="filterCategory('Services',this)">Services</button><button onclick="filterCategory('Travel',this)">Travel & stays</button><button onclick="toast('Seller registration will be available in the full platform.')">Become a seller</button>
+  <nav class="nav" aria-label="Marketplace categories">
+   <button class="active" onclick="filterCategory('All',this)">Discover</button><button onclick="filterCategory('Shopping',this)">Shopping</button><button onclick="filterCategory('Digital',this)">Digital products</button><button onclick="filterCategory('Services',this)">Services</button><button onclick="filterCategory('Travel',this)">Travel & stays</button><button onclick="window.Platform&&Platform.go('seller')">Become a seller</button>
  </nav>
 </header>
+ <nav class="platform-nav" aria-label="NexaHub workspaces">
+  <a href="/">Storefront</a><a href="?workspace=catalog">Live catalog</a><a href="?workspace=customer">My NexaHub</a><a href="?workspace=seller">Seller desk</a><a href="?workspace=rider">Rider desk</a><a href="?workspace=delivery">Delivery</a><a href="?workspace=payments">M-PESA readiness</a><a href="?workspace=admin">Admin</a>
+ </nav>
+ <main id="platformMount" class="platform-shell" hidden aria-live="polite"></main>
 <main>
- <section class="hero">
-  <div><span class="eyebrow">✦ ONE MARKETPLACE. ENDLESS POSSIBILITIES.</span><h1>Your world.<br><em>One hub.</em></h1><p>Shop great finds, discover digital products, connect with skilled professionals and plan your next experience—all in one place.</p><div class="heroBtns"><button class="primary" onclick="document.getElementById('marketplace').scrollIntoView({behavior:'smooth'})">Explore marketplace →</button><button class="ghost" onclick="toast('Seller onboarding is part of the next platform build.')">Start selling</button></div></div>
+  <section class="hero">
+   <div><span class="eyebrow">ONE MARKETPLACE. MANY POSSIBILITIES.</span><h1>Your world.<br><em>One hub.</em></h1><p>Shop great finds, discover digital products, connect with skilled professionals and plan your next experience—all in one place.</p><div class="heroBtns"><button class="primary" onclick="document.getElementById('marketplace').scrollIntoView({behavior:'smooth'})">Explore marketplace</button><button class="ghost" onclick="window.Platform&&Platform.go('seller')">Start selling</button><button class="ghost" onclick="window.Platform&&Platform.go('customer')">Open your workspace</button></div></div>
   <div class="heroart"><div class="orb">🌐</div><div class="float f1">🛍️ Shop worldwide</div><div class="float f2">📦 Digital delivery</div><div class="float f3">✓ One simple hub</div></div>
  </section>
- <section class="trust"><div>🔒 <span><strong>Safer shopping</strong>Secure checkout integration</span></div><div>🌍 <span><strong>Global discovery</strong>Explore across borders</span></div><div>⚡ <span><strong>Instant access</strong>Digital delivery support</span></div><div>🤝 <span><strong>Many possibilities</strong>Products, services and stays</span></div></section>
+  <section class="trust"><div>◈ <span><strong>Payment readiness</strong>Live checkout remains disabled</span></div><div>◎ <span><strong>Global discovery</strong>Explore across borders</span></div><div>↗ <span><strong>Digital access</strong>Eligible downloads after payment</span></div><div>◇ <span><strong>Many possibilities</strong>Products, services and stays</span></div></section>
  <div class="sectionhead"><div><h2>Explore by category</h2><p>Find what you need, all in one place.</p></div><button class="textlink" onclick="filterCategory('All')">View all →</button></div>
  <section class="categories">
   <button class="cat" onclick="filterCategory('Shopping')"><span class="emoji">🛍️</span><strong>Shopping</strong><small>Everyday finds</small></button>
@@ -110,14 +115,14 @@
     </div>
     <button id="saveProfile" class="primary" type="submit">Save profile</button>
    </form>
-   <div class="dashboard-card"><h3>Your orders</h3><p>Order history will appear here after marketplace ordering is connected. No orders are being simulated.</p></div>
+    <div class="dashboard-card"><h3>Your NexaHub activity</h3><p>Review orders, bookings and payments in your private customer workspace. Only records returned for your account are shown.</p><button class="ghost" type="button" onclick="closeModal('accountModal');window.Platform&&Platform.go('customer')">Open customer workspace</button></div>
    <button id="signOut" class="ghost" type="button" style="width:100%">Sign out</button>
   </div>
  </section>
 </div>
-<div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
+ <div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">Grow with NexaHub</h2><p>Visit the seller desk to check the server’s application readiness and view your account-scoped store information.</p><button class="primary" onclick="closeModal('sellerModal');window.Platform&&Platform.go('seller')">Open seller desk</button></div></div>
 <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close basket dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
-<div class="toast" id="toast"></div>
+ <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
@@ -411,6 +416,7 @@ function renderAuthState(user){
  }else{
   setAuthMode('signin');
  }
+  if(window.Platform)window.Platform.authChanged(currentUser);
 }
 async function loadCustomerProfile(){
  if(!nexahubSupabase||!currentUser)return;
@@ -573,5 +579,6 @@ try{
 const authReturnParams=new URLSearchParams(window.location.search);
 if(authReturnParams.get('type')==='recovery'||window.location.hash.includes('type=recovery'))isPasswordRecovery=true;
 if(isPasswordRecovery||authReturnParams.has('code')||window.location.hash.includes('access_token'))openModal('accountModal');
-</script>
+ </script>
+ <script src="/assets/platform.js" defer></script>
 </body></html>

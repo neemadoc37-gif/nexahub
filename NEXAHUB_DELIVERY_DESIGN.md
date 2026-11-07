@@ -1,7 +1,9 @@
 # NexaHub Delivery — approved design
 
-**Approval:** Design only. No implementation, migration, live checkout or payout
-authorization is granted by this approval.
+**Original approval:** Design only. The owner subsequently authorized safe
+implementation in the existing website, preserving the database and branding.
+This does not approve uninspected schema changes, live checkout or payouts.
+See `NEXAHUB_IMPLEMENTATION_STATUS.md` for what is actually implemented and gated.
 
 ## Approved scope
 

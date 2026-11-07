@@ -1,5 +1,8 @@
 # NexaHub Completion Audit
 
+> Historical audit snapshot. Subsequent visible workspace/API changes and their
+> current limitations are recorded in `NEXAHUB_IMPLEMENTATION_STATUS.md`.
+
 **Audit date:** 7 November 2026  
 **Brand:** NexaHub — “Your World. One Hub.”  
 **Conclusion:** Working sample storefront with a well-tested browser basket and implemented customer-account integration. **Not yet a functioning production-ready multi-vendor marketplace.**
