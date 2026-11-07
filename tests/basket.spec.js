@@ -119,6 +119,107 @@ const invalidData = [
   ['unsafe total', JSON.stringify([{ ...planner, price: Number.MAX_SAFE_INTEGER, quantity: 2 }])],
 ];
 
+async function openSecondTab(context) {
+  const second = await context.newPage();
+  await second.route('https://**/*', route => route.abort());
+  const errors = [];
+  second.on('pageerror', error => errors.push(error.message));
+  await second.goto('/');
+  return { second, errors };
+}
+
+test('two tabs share additions, quantity changes, removals and clearing without reloads', async ({ page, context }) => {
+  const { second, errors } = await openSecondTab(context);
+  await openBasket(second);
+  await addProduct(page, headphones.name);
+  await expect(second.locator('#cartCount')).toHaveText('1');
+  await expect(second.getByLabel(`Quantity of ${headphones.name}`, { exact: true })).toHaveText('1');
+  await expect(second.locator('#cartItems > p')).toHaveText('Total: KSh 3,499');
+  await second.getByRole('button', { name: `Increase quantity of ${headphones.name}`, exact: true }).click();
+  await expect(page.locator('#cartCount')).toHaveText('2');
+  await openBasket(page);
+  await expect(page.getByLabel(`Quantity of ${headphones.name}`, { exact: true })).toHaveText('2');
+  await expect(page.getByLabel(`Line total for ${headphones.name}`, { exact: true })).toHaveText('KSh 6,998');
+  await page.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true }).click();
+  await expect(second.getByLabel(`Quantity of ${headphones.name}`, { exact: true })).toHaveText('1');
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, planner.name);
+  await expect(second.locator('.basket-row')).toHaveCount(2);
+  await expect(second.locator('#cartCount')).toHaveText('2');
+  await expect(second.locator('#cartItems > p')).toHaveText('Total: KSh 4,349');
+  await second.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await openBasket(page);
+  await expect(page.locator('.basket-row')).toHaveCount(1);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+  await expect(page.locator('#cartItems')).not.toContainText(headphones.name);
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await expectEmpty(second);
+  await second.locator('#cartModal .close').click();
+  await addProduct(second, planner.name);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+  expect(await savedBasket(page)).toEqual([planner]);
+  expect(errors).toEqual([]);
+});
+
+for (const clearAll of [false, true]) {
+  test(`external ${clearAll ? 'localStorage clearing' : 'key removal'} empties the other tab`, async ({ page, context }) => {
+    const { second, errors } = await openSecondTab(context);
+    await openBasket(page);
+    await addProduct(second, planner.name);
+    await expect(page.locator('#cartCount')).toHaveText('1');
+    await second.evaluate(({ key, clearAll }) => {
+      if (clearAll) localStorage.clear();
+      else localStorage.removeItem(key);
+    }, { key: STORAGE_KEY, clearAll });
+    await expectEmpty(page);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('cross-tab data is validated and unrelated storage events leave the basket alone', async ({ page, context }) => {
+  const { second, errors } = await openSecondTab(context);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await second.evaluate(key => {
+    localStorage.setItem('unrelated-preference', 'changed');
+    sessionStorage.setItem(key, 'invalid');
+  }, STORAGE_KEY);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+  await expect(page.locator('#cartNotice')).toBeHidden();
+  await second.evaluate(key => localStorage.setItem(key, '{invalid'), STORAGE_KEY);
+  await expectEmpty(page);
+  await expect(page.locator('#cartNotice')).toContainText('invalid or unreadable');
+  expect(await savedBasket(second)).toBeNull();
+  // Valid legacy rows still use the same normalization as startup loading.
+  await second.evaluate(({ key, item }) => localStorage.setItem(key, JSON.stringify([
+    { name: ` ${item.name} `, price: item.price }, item
+  ])), { key: STORAGE_KEY, item: planner });
+  await expect(page.locator('.basket-row')).toHaveCount(1);
+  await expect(page.getByLabel(`Quantity of ${planner.name}`, { exact: true })).toHaveText('2');
+  await expect(page.locator('#cartCount')).toHaveText('2');
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 1,700');
+  expect(errors).toEqual([]);
+});
+
+test('receiving another tab’s basket does not hide a local save-error notice or write it back', async ({ page, context }) => {
+  const { second, errors } = await openSecondTab(context);
+  await page.evaluate(() => {
+    Storage.prototype.setItem = () => { throw new DOMException('Blocked', 'QuotaExceededError'); };
+  });
+  await addProduct(page, headphones.name);
+  await openBasket(page);
+  await expect(page.locator('#cartNotice')).toContainText('could not be saved');
+  await addProduct(second, planner.name);
+  await expect(page.locator('#cartCount')).toHaveText('1');
+  await expect(page.locator('#cartItems')).not.toContainText(headphones.name);
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
+  await expect(page.locator('#cartNotice')).toBeVisible();
+  await expect(page.locator('#cartNotice')).toContainText('could not be saved');
+  expect(await savedBasket(second)).toEqual([planner]);
+  expect(errors).toEqual([]);
+});
+
 for (const [label, raw] of invalidData) {
   test(`malformed saved data: ${label} is cleared safely`, async ({ page }) => {
     // Write once in this origin; an init script would reinsert corruption on

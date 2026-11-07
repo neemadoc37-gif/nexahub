@@ -91,7 +91,7 @@ function persistCart(){
 function loadCart(){
  try{
   const saved=localStorage.getItem(CART_STORAGE_KEY);
-  if(saved===null)return;
+  if(saved===null){cart=[];return}
   const parsed=JSON.parse(saved);
   const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
    item&&typeof item==='object'&&!Array.isArray(item)&&
@@ -145,6 +145,12 @@ function renderCart(){
  totalLabel.textContent='Total: KSh '+cart.reduce((sum,item)=>sum+item.price*item.quantity,0).toLocaleString();
  total.appendChild(totalLabel);el.appendChild(total);
 }
+window.addEventListener('storage',event=>{
+ if(event.storageArea!==localStorage||(event.key!==CART_STORAGE_KEY&&event.key!==null))return;
+ // Read the current value, not an older event's snapshot if writes were queued.
+ // Loading does not save again or dismiss a local storage-error notice.
+ loadCart();updateCartCount();renderCart();
+});
 function addCart(name,price){
  if(cartQuantity()>=MAX_CART_ITEMS){toast('Your sample basket has reached its item limit.');return}
  const existing=cart.find(item=>item.name===name&&item.price===price);
