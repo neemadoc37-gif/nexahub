@@ -47,8 +47,10 @@ published inventory; owner can approve/reject and audit actions.
 ## Priority 2 — durable orders, real checkout and approved payment providers
 - Confirm operator legal country, currencies, seller countries, tax/shipping,
   commissions and payout model before choosing payment rails.
-- Confirm approved international card and Kenya M-Pesa merchant/provider accounts.
-  Marketplace onboarding and supported-country restrictions must be established.
+- Current scope uses the owner's Kenyan M-PESA Paybill through Safaricom Daraja;
+  do not connect Stripe, Whop or Shopify yet. See `NEXAHUB_MPESA_DESIGN.md`.
+  International card integration is deferred, not represented as connected.
+  Confirm Safaricom collection permissions and B2C/Split payout approval.
 - Use server-priced quotes, product IDs, atomic stock checks and order snapshots.
 - Implement idempotent initiation/callback processing, verified payment status,
   receipts, transaction records, reconciliation, refunds and failure recovery.

@@ -28,3 +28,17 @@ mtime_ms = 1794057333420
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:68cd49f6-f5c9-40db-8b24-2a07ca9c4e33/17dd9a2d-9f81-4755-9053-b58f086bb9da/4f2cf586-8d9b-434f-9b4f-71f3eec7ac7a"
 storage_version_token = "1794057344591970"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "t7nkbVvg1xI4joVBOW8eW"
+uri = "file://NEXAHUB_MPESA_DESIGN.md"
+type = "text"
+title = "NexaHub M-PESA Design and Readiness"
+description = "Existing implementation findings, proposed secure payment and seller-payout flow, required credentials, approval checklist and testing gates."
+logical_id = "0fdee14f-5274-4dc9-ae82-e7c84d6f9500"
+content_hash = "sha256:33599f2fe5e5886f9d4a7aa7795fabb6b60195dcfe7c8da1f40725379628f8d4"
+size = 8596
+mtime_ms = 1794064063155
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:68cd49f6-f5c9-40db-8b24-2a07ca9c4e33/0fdee14f-5274-4dc9-ae82-e7c84d6f9500/daf82e59-ab3b-466f-a3e7-cb82dbc81e52"
+storage_version_token = "1794064071818537"
+content_type = "text/markdown"

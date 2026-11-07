@@ -52,6 +52,11 @@ provisioning triggers with the read-only `supabase/verify-auth.sql` script.
 - Use secure backend functions for sensitive marketplace operations.
 - Never expose secret keys in frontend code or simulate users, payments, or
   transactions as real outcomes.
+- Current payment choice: existing Kenyan M-PESA Paybill through Safaricom
+  Daraja. Do not connect Stripe, Whop or Shopify yet. Require verified payment
+  results, server-calculated commission, seller-specific balances/history and
+  owner-approved payouts through a Safaricom-approved B2C or Split arrangement.
+- Do not send real money or enable live checkout until tested and explicitly approved.
 - Report configuration blockers and untested features accurately; do not call
   the marketplace production-ready until its real flows have been tested.
 
