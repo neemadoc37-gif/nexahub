@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "LcWL2uZ9Z7fgr5mGC4pWI"
+uri = "file://NEXAHUB_COMPLETION_AUDIT.md"
+type = "text"
+title = "NexaHub Completion Audit"
+description = "Verified feature status, remaining blockers, Supabase inspection limits, and staged production-readiness requirements."
+logical_id = "95c1bf25-6053-4f71-9457-8b2f72ab57e0"
+content_hash = "sha256:f9cbed3a3261ecab6ab70816672de18a1140881f8e1462e425abdeed185e6a24"
+size = 21147
+mtime_ms = 1794056569604
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:68cd49f6-f5c9-40db-8b24-2a07ca9c4e33/95c1bf25-6053-4f71-9457-8b2f72ab57e0/f765b7be-e469-43c7-827f-606922ba1f97"
+storage_version_token = "1794056576067700"
+content_type = "text/markdown"
