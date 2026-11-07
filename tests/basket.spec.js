@@ -67,6 +67,167 @@ async function expectEmpty(page) {
   await expect(page.locator('#cartItems')).not.toContainText('Total:');
 }
 
+async function expectNoBasketOverflow(page) {
+  const layout = await page.locator('#cartModal .modal').evaluate(dialog => {
+    const rect = dialog.getBoundingClientRect();
+    return {
+      pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      dialogOverflow: dialog.scrollWidth - dialog.clientWidth,
+      left: rect.left,
+      right: rect.right,
+      viewportWidth: window.innerWidth,
+      // Check all rows, even those below the visible part of the dialog.
+      outsideDialog: [...dialog.querySelectorAll('.basket-row, .basket-row *')]
+        .filter(element => {
+          const box = element.getBoundingClientRect();
+          return box.left < rect.left - 1 || box.right > rect.right + 1;
+        }).map(element => element.className || element.tagName),
+    };
+  });
+  expect(layout.pageOverflow, 'page has no horizontal overflow').toBeLessThanOrEqual(1);
+  expect(layout.dialogOverflow, 'basket has no horizontal overflow').toBeLessThanOrEqual(1);
+  expect(layout.left).toBeGreaterThanOrEqual(0);
+  expect(layout.right).toBeLessThanOrEqual(layout.viewportWidth);
+  expect(layout.outsideDialog, 'row content stays inside the dialog').toEqual([]);
+}
+
+async function expectMobileReachable(locator) {
+  await locator.scrollIntoViewIfNeeded();
+  await expect(locator).toBeVisible();
+  await expect(locator).toBeInViewport({ ratio: 1 });
+  expect(await locator.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const dialog = element.closest('.modal').getBoundingClientRect();
+    const target = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+    return box.left >= dialog.left && box.right <= dialog.right &&
+      box.top >= dialog.top && box.bottom <= dialog.bottom &&
+      (target === element || element.contains(target));
+  }), 'element is inside the scrollport and not covered').toBe(true);
+}
+
+async function tapMobile(locator) {
+  await expectMobileReachable(locator);
+  await locator.tap();
+}
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }]) {
+  test.describe(`phone basket at ${viewport.width}px`, () => {
+    test.use({ viewport, isMobile: true, hasTouch: true });
+
+    test('long names, quantity changes, removal and clearing can be recovered with touch', async ({ page }) => {
+      // Freeze the Undo deadline so geometry assertions do not race its timer.
+      await page.clock.install();
+      await page.clock.pauseAt(new Date(Date.now() + 1000));
+      const longItem = {
+        name: `Sample extended product name ${'with detailed specifications '.repeat(3)}`.slice(0, 120).trim(),
+        price: 3499,
+        quantity: 2,
+      };
+      const unbrokenItem = { name: 'X'.repeat(120), price: 850, quantity: 1 };
+      const original = [longItem, unbrokenItem];
+      await page.evaluate(({ key, items }) => localStorage.setItem(key, JSON.stringify(items)),
+        { key: STORAGE_KEY, items: original });
+      await reloadAndOpen(page);
+      await expectBasket(page, original);
+      await expectNoBasketOverflow(page);
+      for (const item of original) {
+        await expectMobileReachable(page.getByText(item.name, { exact: true }));
+        await expectMobileReachable(page.getByLabel(`Line total for ${item.name}`, { exact: true }));
+        await expectMobileReachable(page.getByLabel(`Quantity of ${item.name}`, { exact: true }));
+      }
+
+      const increase = page.getByRole('button', { name: `Increase quantity of ${longItem.name}`, exact: true });
+      const decrease = page.getByRole('button', { name: `Decrease quantity of ${longItem.name}`, exact: true });
+      await tapMobile(increase);
+      await expectBasket(page, [{ ...longItem, quantity: 3 }, unbrokenItem]);
+      await tapMobile(decrease);
+      await expectBasket(page, original);
+      await expectNoBasketOverflow(page);
+
+      const undo = page.getByRole('button', { name: 'Undo', exact: true });
+      await tapMobile(page.getByRole('button', { name: `Remove ${longItem.name} from basket`, exact: true }));
+      await expectBasket(page, [unbrokenItem]);
+      await expectMobileReachable(page.locator('#cartUndo'));
+      await expectNoBasketOverflow(page);
+      await tapMobile(undo);
+      await expectBasket(page, original);
+      await expect(page.locator('#cartUndo')).toBeHidden();
+
+      await tapMobile(page.getByRole('button', { name: 'Clear basket', exact: true }));
+      await expectEmpty(page);
+      expect(await savedBasket(page)).toEqual([]);
+      await expectMobileReachable(page.locator('#cartUndo'));
+      await expectNoBasketOverflow(page);
+      await tapMobile(undo);
+      await expectBasket(page, original);
+      await expectNoBasketOverflow(page);
+      await expectMobileReachable(page.locator('#cartItems > p'));
+
+      const checkout = page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true });
+      await expect(page.locator('#cartModal')).toContainText(
+        'Sample basket only. Checkout is a preview; no payment will be collected.');
+      await tapMobile(checkout);
+      await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+      await expectBasket(page, original);
+      await reloadAndOpen(page);
+      await expectBasket(page, original);
+      await expectNoBasketOverflow(page);
+    });
+
+    test('a full large basket scrolls to controls, recovery, totals and preview checkout', async ({ page }) => {
+      await page.clock.install();
+      await page.clock.pauseAt(new Date(Date.now() + 1000));
+      // Twenty distinct rows reach the existing combined 100-item cap.
+      const items = Array.from({ length: 20 }, (_, index) => ({
+        name: `Sample product ${index + 1}: ${'LongDescription'.repeat(7)}`.slice(0, 120),
+        price: 850 + index,
+        quantity: 5,
+      }));
+      await page.evaluate(({ key, items }) => localStorage.setItem(key, JSON.stringify(items)),
+        { key: STORAGE_KEY, items });
+      await reloadAndOpen(page);
+      await expectBasket(page, items);
+      await expectNoBasketOverflow(page);
+      const dialog = page.locator('#cartModal .modal');
+      expect(await dialog.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+      for (const button of await page.getByRole('button', { name: /^Increase quantity of / }).all()) {
+        await expect(button).toBeDisabled();
+      }
+
+      const last = items[items.length - 1];
+      const decrease = page.getByRole('button', { name: `Decrease quantity of ${last.name}`, exact: true });
+      const increase = page.getByRole('button', { name: `Increase quantity of ${last.name}`, exact: true });
+      await tapMobile(decrease);
+      expect(await dialog.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+      await expectBasket(page, [...items.slice(0, -1), { ...last, quantity: 4 }]);
+      await tapMobile(increase);
+      await expectBasket(page, items);
+      await expect(increase).toBeDisabled();
+      await expectMobileReachable(page.getByLabel(`Quantity of ${last.name}`, { exact: true }));
+      await expectMobileReachable(page.getByLabel(`Line total for ${last.name}`, { exact: true }));
+
+      await tapMobile(page.getByRole('button', { name: `Remove ${last.name} from basket`, exact: true }));
+      await expectBasket(page, items.slice(0, -1));
+      await expectMobileReachable(page.locator('#cartUndo'));
+      await expectNoBasketOverflow(page);
+      await tapMobile(page.getByRole('button', { name: 'Undo', exact: true }));
+      await expectBasket(page, items);
+      await expect(increase).toBeDisabled();
+      await expectMobileReachable(page.locator('#cartItems > p'));
+      await expectMobileReachable(page.getByRole('button', { name: 'Clear basket', exact: true }));
+      await tapMobile(page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true }));
+      await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+      await expectBasket(page, items);
+      await expectNoBasketOverflow(page);
+      // Scroll back from the footer: earlier rows must remain usable too.
+      await expectMobileReachable(page.getByRole('button', {
+        name: `Decrease quantity of ${items[0].name}`, exact: true,
+      }));
+      await expectNoBasketOverflow(page);
+    });
+  });
+}
+
 test('restores items, quantities, line totals and basket total after reload', async ({ page }) => {
   await addProduct(page, headphones.name);
   await addProduct(page, headphones.name);

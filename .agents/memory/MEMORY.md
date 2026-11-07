@@ -1,1 +1,2 @@
 - [Basket undo decisions](basket-undo.md) — merge removed quantities without discarding later edits; dismiss recovery after another tab changes the basket.
+- [Mobile geometry checks](mobile-geometry.md) — multiline inline text needs different hit-testing from buttons.
