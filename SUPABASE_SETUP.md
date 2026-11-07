@@ -1,44 +1,89 @@
-# Supabase authentication setup
+# Supabase account verification
 
-The storefront uses the existing Supabase project URL and **publishable** client
-key in `index.html`. Publishable keys are intended for browser use; never put a
-Supabase secret or service-role key in this file. Profile reads and updates are
-restricted by row-level security to the signed-in customer's own record.
+## Existing schema — do not repeat the migration
 
-## 1. Create the profile table and security policies
+The project owner confirmed the marketplace schema has already been applied:
+`bookings`, `categories`, `order_items`, `orders`, `payment_transactions`,
+`products`, `profiles`, and `seller_profiles`.
 
-In the Supabase Dashboard for this project, open **SQL Editor**, review
-`supabase/migrations/202611070001_customer_profiles.sql`, and run it. The
-migration adds a separate `customer_profiles` table with owner-only access
-and creates profile rows when new users register. It also backfills missing
-profiles for existing Auth users. The existing `profiles` table, its data,
-and its policies are left untouched.
+Read-only API checks confirmed `profiles.id`, `profiles.display_name`,
+`profiles.phone`, and `profiles.created_at`. The app now uses that existing
+table. It does not use `customer_profiles`, `full_name`, or `country` database
+columns. The historical customer_profiles SQL file is superseded; do not run
+it for this project.
 
-Do not grant anonymous users access to customer profiles. Do not add a service
-role key to the web app.
+Registration sends both `display_name` and `full_name` as name metadata so the
+existing database trigger can use either naming convention. The app does not
+insert profile rows from the browser or create a local substitute if the
+backend fails. Successful profile provisioning still needs live verification.
 
-## 2. Configure email/password
+## Check profile security and automatic creation
 
-In **Authentication → URL Configuration**, add the Replit preview origin and
-your eventual published site origin to the allowed redirect URLs. The app
-uses the current origin for confirmation, reset, and OAuth return URLs. In
-**Authentication → Providers → Email**, choose whether new registrations
-require email confirmation and configure a production email sender before
-launch.
+Run `supabase/verify-auth.sql` in the existing project's SQL Editor. It is
+read-only and reads schema/policy/trigger metadata, not customer records.
+Review the results before real customer testing:
 
-## 3. Configure Google sign-in
+- RLS must be enabled on `public.profiles`.
+- Customer read/update policies must restrict access to the current
+  authenticated user, typically `auth.uid() = id`.
+- Customers must not be able to grant themselves seller/admin roles by
+  updating a role column or user-editable metadata.
+- An enabled `auth.users` INSERT trigger should create the corresponding
+  `profiles` row. Its name metadata handling needs checking against the
+  existing schema.
 
-In **Authentication → Providers → Google**, enable Google and add the OAuth
-client ID and secret in Supabase. In Google Cloud Console, register the
-Supabase-provided callback URL as an authorized redirect URI. Add the preview
-and published origins to Supabase's allowed redirect URLs. Keep the Google
-client secret in Supabase, not in this repository.
+These settings cannot be proven using the app's anonymous publishable key.
+Do not modify policies or repeat migrations merely to run these checks.
 
-## 4. Verify before launch
+## Email configuration
 
-Test registration with a real email inbox, email confirmation, sign-in,
-password reset, Google sign-in, profile save and reload, sign-out, and
-authorization boundaries using two separate accounts. Confirm one account
-cannot read or update the other's profile. These external-provider and live
-email flows cannot be fully verified until the project owner completes the
-dashboard setup above.
+Email signup is enabled; public settings report automatic email confirmation
+is disabled (email confirmation is required). Ensure a working email sender
+and confirmation template in Supabase. Production requires a properly
+configured sender and suitable rate limits.
+
+In Authentication → URL Configuration, allow the exact origin where Preview
+is opened, including a port only if the browser's actual address includes it.
+The app uses `window.location.origin` for confirmation, recovery, and OAuth
+returns. Add the published origin before launch; do not overwrite unrelated
+existing redirect URLs or a shared project's Site URL.
+
+## Google callback
+
+Google is enabled. A real OAuth initiation returned HTTP 302 toward Google
+with this callback:
+
+`https://oixruhlxundtgmhzeysj.supabase.co/auth/v1/callback`
+
+That callback must match the Google Cloud OAuth client's authorized redirect
+URI. Ensure its consent screen permits the testing Google account; if the
+Google app is in Testing mode, add authorized test users. Client secrets stay
+in Supabase, never in frontend code.
+
+The live browser check reached Google's OAuth error page with
+`redirect_uri_mismatch`; it did not reach an email-entry form. Before testing:
+open Google Cloud → APIs & Services → Credentials, select the web OAuth client
+whose client ID matches Supabase's Google provider, and add the exact callback
+above under Authorized redirect URIs. Save it. This is not the NexaHub Preview
+URL: Google returns to Supabase, which then returns to NexaHub.
+
+After saving, retest the Google button. Successful Google consent, callback
+exchange, allowed app return URL, and profile creation remain unverified.
+
+## Checks completed
+
+- Both anonymous-account browser tests passed at 402px and 1280px.
+- The real Supabase SDK loaded, sign-in/register controls switched correctly,
+  required fields blocked empty submissions, and password-recovery requests
+  were blocked when no email was entered.
+- No auth POST requests, emails, new users, credentials, or transactions were
+  submitted by those tests.
+- Google was tested separately up to the real provider error described above.
+
+## Real-account test checklist
+
+Use a real inbox and a Google account controlled by the project owner; never
+share passwords or session tokens in chat. Verify signup, email confirmation,
+sign-in, Google consent and return, profile creation/edit/reload, sign-out,
+recovery, and separation between two real accounts. No fake users or
+transactions are required or created by the anonymous UI tests.

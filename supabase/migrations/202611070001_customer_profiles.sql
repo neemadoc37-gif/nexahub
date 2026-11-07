@@ -1,4 +1,6 @@
--- Adds NexaHub customer profiles; does not modify the legacy public.profiles.
+-- SUPERSEDED: the current app uses the owner's existing public.profiles table.
+-- Do not run this optional historical migration for the current marketplace.
+-- No migration should be repeated to verify authentication.
 begin;
 
 create table if not exists public.customer_profiles (

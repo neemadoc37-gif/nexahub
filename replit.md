@@ -28,15 +28,16 @@ Search, category filters, dialogs, and the sample basket are client-side.
 The sample basket persists in this browser and is not a live order.
 
 Customer email/password and Google authentication use the existing Supabase
-project. Apply the SQL migration and provider setup in `SUPABASE_SETUP.md`
-before relying on account profiles or Google sign-in. The browser contains
+project. Follow the verification and provider instructions in
+`SUPABASE_SETUP.md` before relying on account profiles or Google sign-in. The browser contains
 only Supabase's public publishable key; never add a service-role or provider
 secret to frontend code.
 
-The customer account UI uses `customer_profiles`, not the legacy `profiles`
-table. This is intentional: the existing external table has a different
-schema, and its full purpose and policies have not been verified. Do not
-replace or alter it just to match the new account form.
+The owner confirmed their external marketplace migration is applied. The
+customer account UI uses the existing `profiles` table (`id`, `display_name`,
+`phone`). Do not repeat the historical `customer_profiles` migration or
+replace the existing database. Verify existing RLS policies and auth-user
+provisioning triggers with the read-only `supabase/verify-auth.sql` script.
 
 ## Product requirements
 - Preserve the imported NexaHub branding, design, and working features.

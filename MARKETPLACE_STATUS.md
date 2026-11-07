@@ -18,13 +18,14 @@ order, payment, booking, seller, or admin backend in the imported code.
 - Google OAuth initiation using Supabase.
 - Session restoration and sign-out.
 - Email password-recovery request and recovery-password form.
-- Customer profile read/edit UI backed by `customer_profiles`.
-- Owner-only profile migration and new-user provisioning trigger.
+- Customer profile read/edit UI aligned to existing `profiles.display_name`
+  and `profiles.phone`, filtered by the authenticated user's ID.
 - A repaired, tested post-merge setup hook.
 
 These account flows are implemented in code but **not verified end-to-end
-with a real customer inbox or Google account**. Profile storage requires the
-SQL migration in `SUPABASE_SETUP.md` to be applied to the external project.
+with a real customer inbox or Google account**. The owner confirmed the
+marketplace migration is applied; it must not be repeated. Existing profile
+policies and the auth-user provisioning trigger need read-only verification.
 No user accounts or transactions were fabricated for testing.
 
 ## Configuration and checks
@@ -32,15 +33,25 @@ No user accounts or transactions were fabricated for testing.
 Read-only calls confirmed the existing Supabase Auth settings endpoint
 responds, email signup is allowed, and Google is enabled. This does not prove
 OAuth credentials, redirects, email delivery, or signed-in authorization work.
-The legacy `profiles` schema differs from the new form and is left untouched.
+The app is aligned to the existing `profiles` schema without changing the
+database. Google OAuth initiation redirects to Google with the expected
+Supabase callback, but the real browser then receives `redirect_uri_mismatch`.
+The Google Cloud OAuth client's authorized redirect URI must be corrected;
+completed consent/callback remains unverified.
 
 JavaScript syntax, Python compilation, HTML IDs, desktop/mobile storefront
 rendering, and the post-merge hook have been checked. The signed-in profile UI,
-profile migration, and cross-account authorization still need live validation.
+automatic profile creation, and cross-account authorization still need live validation.
+
+The anonymous-account browser tests passed at desktop (1280px) and phone
+(402px) sizes with the real SDK and no mocked sessions or created accounts.
+Real signup, email delivery, and authenticated profile creation/editing have
+not been tested. The read-only `supabase/verify-auth.sql` check is needed to
+inspect existing profile policies and provisioning without rerunning DDL.
 
 ## Remaining build stages before launch
 
-1. **Finish account validation:** apply the migration, allow preview/published
+1. **Finish account validation:** verify existing RLS/provisioning, allow preview/published
    redirects, configure production email delivery, and verify email/Google,
    confirmation, recovery, reload, sign-out, and two-account isolation.
 2. **Sellers and real inventory:** seller applications, verification,

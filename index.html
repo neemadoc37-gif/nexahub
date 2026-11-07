@@ -63,7 +63,55 @@
  </section>
 </main>
 <footer class="footer"><div class="footinner"><div><div class="logo">Nexa<span>Hub</span></div><p>Your World. One Hub.<br>A marketplace for products, digital goods, services and experiences.</p></div><div><h4>Explore</h4><p><a href="#marketplace">Shopping</a><br><a href="#marketplace">Digital products</a><br><a href="#marketplace">Services</a><br><a href="#marketplace">Travel</a></p></div><div><h4>Sell on NexaHub</h4><p><a href="#" onclick="openModal('sellerModal');return false">Become a seller</a><br>Seller support<br>Marketplace guidelines</p></div><div><h4>Help & information</h4><p>Help centre<br>Contact us<br>Privacy policy<br>Terms of service</p></div></div><div class="footbottom">© 2026 NexaHub. All rights reserved. Sample storefront preview — live payments and bookings are not yet connected.</div></footer>
-<div class="modalback" id="accountModal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading"><button class="close" type="button" aria-label="Close account dialog" onclick="closeModal('accountModal')">×</button><h2 id="accountHeading">Welcome to NexaHub</h2><p id="accountIntro">Sign in or create an account to manage your NexaHub profile.</p><div id="authMessage" class="auth-message" role="status" aria-live="polite"></div><div id="authPanel"><form id="authForm" novalidate><label class="form-label" for="authName" id="authNameLabel" hidden>Your name</label><input id="authName" type="text" maxlength="120" autocomplete="name" placeholder="Full name" hidden><label class="form-label" for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="username" maxlength="254" required placeholder="you@example.com"><label class="form-label" for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"><button id="authSubmit" class="primary" type="submit">Sign in</button></form><button id="googleSignIn" class="auth-google" type="button">Continue with Google</button><div class="auth-links"><button id="authModeToggle" class="auth-link" type="button">Create an account</button><button id="resetPassword" class="auth-link" type="button">Forgot password?</button></div></div><div id="recoveryPanel" hidden><form id="recoveryForm"><input id="recoveryEmail" type="email" autocomplete="username" aria-label="Account email" hidden><label class="form-label" for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><label class="form-label" for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Enter the new password again"><button id="updatePassword" class="primary" type="submit">Update password</button></form></div><div id="dashboardPanel" hidden><p>Signed in as <strong id="profileEmail" class="dashboard-email"></strong></p><form id="profileForm"><div class="dashboard-card"><h3>Your customer profile</h3><label class="form-label" for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required><label class="form-label" for="profilePhone">Phone (optional)</label><input id="profilePhone" type="tel" maxlength="32" autocomplete="tel"><label class="form-label" for="profileCountry">Country (optional)</label><input id="profileCountry" type="text" maxlength="80" autocomplete="country-name"></div><button id="saveProfile" class="primary" type="submit">Save profile</button></form><div class="dashboard-card"><h3>Your orders</h3><p>Order history will appear here after marketplace ordering is connected. No orders are being simulated.</p></div><button id="signOut" class="ghost" type="button" style="width:100%">Sign out</button></div></section></div>
+<div class="modalback" id="accountModal">
+ <section class="modal" role="dialog" aria-modal="true" aria-labelledby="accountHeading">
+  <button class="close" type="button" aria-label="Close account dialog" onclick="closeModal('accountModal')">×</button>
+  <h2 id="accountHeading">Welcome to NexaHub</h2>
+  <p id="accountIntro">Sign in or create an account to manage your NexaHub profile.</p>
+  <div id="authMessage" class="auth-message" role="status" aria-live="polite"></div>
+  <div id="authPanel">
+   <form id="authForm" novalidate>
+    <label class="form-label" for="authName" id="authNameLabel" hidden>Your name</label>
+    <input id="authName" type="text" maxlength="120" autocomplete="name" placeholder="Full name" hidden>
+    <label class="form-label" for="authEmail">Email address</label>
+    <input id="authEmail" type="email" autocomplete="username" maxlength="254" required placeholder="you@example.com">
+    <label class="form-label" for="authPassword">Password</label>
+    <input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
+    <button id="authSubmit" class="primary" type="submit">Sign in</button>
+   </form>
+   <button id="googleSignIn" class="auth-google" type="button">Continue with Google</button>
+   <div class="auth-links">
+    <button id="authModeToggle" class="auth-link" type="button">Create an account</button>
+    <button id="resetPassword" class="auth-link" type="button">Forgot password?</button>
+   </div>
+  </div>
+  <div id="recoveryPanel" hidden>
+   <form id="recoveryForm">
+    <input id="recoveryEmail" type="email" autocomplete="username" aria-label="Account email" hidden>
+    <label class="form-label" for="newPassword">New password</label>
+    <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+    <label class="form-label" for="confirmPassword">Confirm new password</label>
+    <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Enter the new password again">
+    <button id="updatePassword" class="primary" type="submit">Update password</button>
+   </form>
+  </div>
+  <div id="dashboardPanel" hidden>
+   <p>Signed in as <strong id="profileEmail" class="dashboard-email"></strong></p>
+   <form id="profileForm">
+    <div class="dashboard-card">
+     <h3>Your customer profile</h3>
+     <label class="form-label" for="profileName">Full name</label>
+     <input id="profileName" type="text" maxlength="120" autocomplete="name" required>
+     <label class="form-label" for="profilePhone">Phone (optional)</label>
+     <input id="profilePhone" type="tel" maxlength="32" autocomplete="tel">
+    </div>
+    <button id="saveProfile" class="primary" type="submit">Save profile</button>
+   </form>
+   <div class="dashboard-card"><h3>Your orders</h3><p>Order history will appear here after marketplace ordering is connected. No orders are being simulated.</p></div>
+   <button id="signOut" class="ghost" type="button" style="width:100%">Sign out</button>
+  </div>
+ </section>
+</div>
 <div class="modalback" id="sellerModal"><div class="modal"><button class="close" onclick="closeModal('sellerModal')">×</button><h2>Grow with NexaHub</h2><p>Seller onboarding will let you create a store, list products and manage orders.</p><input placeholder="Business or store name"><input placeholder="Contact email" type="email"><button class="primary" onclick="toast('Seller registration will be enabled in the full platform.')">Continue</button></div></div>
 <div class="modalback" id="cartModal"><div class="modal"><button class="close" onclick="closeModal('cartModal')">×</button><h2>Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
 <div class="toast" id="toast"></div>
@@ -224,7 +272,7 @@ function clearCart(){
 function showCart(){renderCart();openModal('cartModal')}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
-function showAccount(){clearAuthMessage();openModal('accountModal');if(currentUser)loadCustomerProfile()}
+function showAccount(){clearAuthMessage();openModal('accountModal');if(currentUser&&!isPasswordRecovery)loadCustomerProfile()}
 function setAuthMessage(message,type='info'){
  const box=document.getElementById('authMessage');
  box.textContent=message;
@@ -250,6 +298,7 @@ function setAuthMode(mode){
  clearAuthMessage();
 }
 function renderAuthState(user){
+ if(currentUser?.id!==user?.id)document.getElementById('profileForm').reset();
  currentUser=user||null;
  document.getElementById('accountButton').textContent=currentUser?'My account':'Sign in';
  document.getElementById('recoveryEmail').value=currentUser?.email||'';
@@ -272,23 +321,25 @@ function renderAuthState(user){
 }
 async function loadCustomerProfile(){
  if(!nexahubSupabase||!currentUser)return;
+ const requestedUserId=currentUser.id;
  setAuthMessage('Loading your profile…');
- const {data,error}=await nexahubSupabase.from('customer_profiles')
-  .select('full_name, phone, country')
-  .eq('id',currentUser.id)
-  .maybeSingle();
- if(error){
-  setAuthMessage('Sign-in works, but profile storage is not ready. Apply the database setup in SUPABASE_SETUP.md, then try again.','error');
-  return;
+ try{
+  const {data,error}=await nexahubSupabase.from('profiles')
+   .select('display_name, phone')
+   .eq('id',requestedUserId)
+   .maybeSingle();
+  if(currentUser?.id!==requestedUserId)return;
+  if(error)throw error;
+  if(!data){
+   setAuthMessage('Your account is signed in, but its profile row is missing or inaccessible. The existing auth-user profile trigger and access policies need checking.','error');
+   return;
+  }
+  document.getElementById('profileName').value=data.display_name||currentUser.user_metadata?.display_name||currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||'';
+  document.getElementById('profilePhone').value=data.phone||'';
+  clearAuthMessage();
+ }catch(error){
+  if(currentUser?.id===requestedUserId)setAuthMessage('Your account is signed in, but its profile could not be loaded. Check your connection and the existing profiles access policies. Do not rerun the migration.','error');
  }
- if(!data){
-  setAuthMessage('Your profile is not set up yet. Apply the profile database setup in SUPABASE_SETUP.md.','error');
-  return;
- }
- document.getElementById('profileName').value=data.full_name||currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||'';
- document.getElementById('profilePhone').value=data.phone||'';
- document.getElementById('profileCountry').value=data.country||'';
- clearAuthMessage();
 }
 async function handleAuthSubmit(event){
  event.preventDefault();
@@ -302,7 +353,7 @@ async function handleAuthSubmit(event){
  setAuthBusy(true);
  try{
   if(authMode==='signup'){
-   const {data,error}=await nexahubSupabase.auth.signUp({email,password,options:{data:{full_name:fullName},emailRedirectTo:window.location.origin}});
+   const {data,error}=await nexahubSupabase.auth.signUp({email,password,options:{data:{display_name:fullName,full_name:fullName},emailRedirectTo:window.location.origin}});
    if(error)throw error;
    if(data.session){
     renderAuthState(data.session.user);
@@ -364,13 +415,12 @@ async function saveCustomerProfile(event){
  const fullName=document.getElementById('profileName').value.trim();
  if(!fullName){setAuthMessage('Enter your name before saving.','error');return}
  const profile={
-  full_name:fullName,
-  phone:document.getElementById('profilePhone').value.trim(),
-  country:document.getElementById('profileCountry').value.trim()
+  display_name:fullName,
+  phone:document.getElementById('profilePhone').value.trim()
  };
  setAuthBusy(true);
  try{
-  const {error}=await nexahubSupabase.from('customer_profiles').update(profile).eq('id',currentUser.id).select('id').single();
+  const {error}=await nexahubSupabase.from('profiles').update(profile).eq('id',currentUser.id).select('id').single();
   if(error)throw error;
   setAuthMessage('Your profile was saved.');
  }catch(error){setAuthMessage(error.message||'Could not save your profile. Check the database setup and try again.','error')}
@@ -407,6 +457,12 @@ try{
     openModal('accountModal');
    }
    renderAuthState(session?.user||null);
+   if(event==='SIGNED_IN'&&session?.user&&!isPasswordRecovery){
+    // Defer database calls until the Supabase auth callback has returned.
+    setTimeout(()=>{
+     if(currentUser?.id===session.user.id&&document.getElementById('accountModal').classList.contains('show'))loadCustomerProfile();
+    },0);
+   }
   });
   nexahubSupabase.auth.getSession().then(({data,error})=>{
    if(error)setAuthMessage(error.message||'Unable to check your sign-in session.','error');
