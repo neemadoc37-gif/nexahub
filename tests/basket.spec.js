@@ -40,7 +40,7 @@ async function savedBasket(page) {
   return page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
 }
 
-async function expectBasket(page, items) {
+async function expectBasketContents(page, items) {
   await expect(page.locator('.basket-row')).toHaveCount(items.length);
   await expect(page.locator('#cartCount')).toHaveText(
     String(items.reduce((sum, item) => sum + item.quantity, 0)));
@@ -52,6 +52,10 @@ async function expectBasket(page, items) {
   }
   await expect(page.locator('#cartItems > p')).toHaveText(
     `Total: KSh ${items.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString('en-KE')}`);
+}
+
+async function expectBasket(page, items) {
+  await expectBasketContents(page, items);
   expect(await savedBasket(page)).toEqual(items);
 }
 
@@ -454,6 +458,129 @@ test('cross-tab data is validated and unrelated storage events leave the basket 
   await expect(page.locator('#cartCount')).toHaveText('2');
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 1,700');
   expect(errors).toEqual([]);
+});
+
+async function expectVisitOnlyWarning(page) {
+  const notice = page.locator('#cartNotice');
+  await expect(notice).toBeVisible();
+  await expect(notice).toHaveAttribute('role', 'alert');
+  await expect(notice).toHaveText(
+    'Basket changes are available for this visit, but could not be saved in this browser.');
+}
+
+for (const failure of ['writes fail', 'access unavailable']) {
+  for (const operation of ['add', 'remove', 'clear']) {
+    test(`${operation} remains usable for this visit when storage ${failure}, without promising persistence`, async ({ page }) => {
+      await addProduct(page, headphones.name);
+      await addProduct(page, headphones.name);
+      await addProduct(page, planner.name);
+      await openBasket(page);
+      const original = [headphones, planner];
+      await expectBasket(page, original);
+      await expect(page.locator('#cartNotice')).toBeHidden();
+
+      // Patch only this document, after saving a known basket. Reload removes
+      // the fault, so the actual persisted state can be checked independently.
+      await page.evaluate(({ failure, key }) => {
+        if (failure === 'writes fail') {
+          const setItem = Storage.prototype.setItem;
+          Storage.prototype.setItem = function(storageKey, value) {
+            if (storageKey === key) throw new DOMException('Storage full', 'QuotaExceededError');
+            return setItem.call(this, storageKey, value);
+          };
+        } else {
+          Object.defineProperty(window, 'localStorage', {
+            configurable: true,
+            get() { throw new DOMException('Storage access denied', 'SecurityError'); },
+          });
+        }
+      }, { failure, key: STORAGE_KEY });
+
+      if (operation === 'add') {
+        await page.locator('#cartModal .close').click();
+        await addProduct(page, headphones.name);
+        await openBasket(page);
+        await expectBasketContents(page, [{ ...headphones, quantity: 3 }, planner]);
+      } else if (operation === 'remove') {
+        await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+        await expectBasketContents(page, [planner]);
+        await expect(page.locator('#cartItems')).not.toContainText(headphones.name);
+      } else {
+        await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+        await expectEmpty(page);
+      }
+      await expectVisitOnlyWarning(page);
+
+      // Closing and reopening must neither discard the in-memory edit nor
+      // dismiss its warning. Further shopping must remain possible as well.
+      await page.locator('#cartModal .close').click();
+      await openBasket(page);
+      await expectVisitOnlyWarning(page);
+      if (operation === 'clear') {
+        await expectEmpty(page);
+        await page.locator('#cartModal .close').click();
+        await addProduct(page, planner.name);
+        await openBasket(page);
+        await expectBasketContents(page, [planner]);
+      } else {
+        await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+        await expectBasketContents(page, operation === 'add'
+          ? [{ ...headphones, quantity: 3 }, { ...planner, quantity: 2 }]
+          : [{ ...planner, quantity: 2 }]);
+      }
+      await expectVisitOnlyWarning(page);
+      if (failure === 'writes fail') expect(await savedBasket(page)).toEqual(original);
+
+      // Failed edits really are visit-only: reload restores the old saved
+      // basket, including rows that appeared removed or cleared in this visit.
+      await reloadAndOpen(page);
+      await expectBasket(page, original);
+      await expect(page.locator('#cartNotice')).toBeHidden();
+      await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+      const recovered = [headphones, { ...planner, quantity: 2 }];
+      await expectBasket(page, recovered);
+      await expect(page.locator('#cartNotice')).toBeHidden();
+      await reloadAndOpen(page);
+      await expectBasket(page, recovered);
+    });
+  }
+}
+
+test('storage unavailable at startup still allows visit-only additions, removals and clearing', async ({ page }) => {
+  // Run before storefront scripts, and keep access denied through reloads.
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get() { throw new DOMException('Storage access denied', 'SecurityError'); },
+    });
+  });
+  await reloadAndOpen(page);
+  await expectEmpty(page);
+  await expect(page.locator('#cartNotice')).toBeVisible();
+  await expect(page.locator('#cartNotice')).toContainText('unreadable');
+
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, headphones.name);
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await expectBasketContents(page, [{ ...headphones, quantity: 1 }, planner]);
+  await expectVisitOnlyWarning(page);
+  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await expectBasketContents(page, [planner]);
+  await expectVisitOnlyWarning(page);
+  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await expectEmpty(page);
+  await expectVisitOnlyWarning(page);
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, planner.name);
+  await openBasket(page);
+  await expectBasketContents(page, [planner]);
+  await expectVisitOnlyWarning(page);
+
+  await reloadAndOpen(page);
+  await expectEmpty(page);
+  await expect(page.locator('#cartNotice')).toBeVisible();
+  await expect(page.locator('#cartNotice')).toContainText('unreadable');
 });
 
 test('receiving another tab’s basket does not hide a local save-error notice or write it back', async ({ page, context }) => {
