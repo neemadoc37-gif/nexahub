@@ -246,6 +246,56 @@ test('restores items, quantities, line totals and basket total after reload', as
   await expect(page.locator('#cartNotice')).toBeHidden();
 });
 
+test('startup restores legacy rows as trimmed, merged items through edits and reloads', async ({ page }) => {
+  const legacyRows = [
+    { name: ` \t${headphones.name} `, price: headphones.price },
+    { ...planner, name: ` ${planner.name}\n`, quantity: 2 },
+    headphones,
+    { name: planner.name, price: planner.price },
+    { ...headphones, name: ` ${headphones.name}\n`, quantity: 3 },
+  ];
+  // Seed only once in this page: same-tab writes do not fire storage events.
+  // Reload must load these rows before any customer interaction, and later
+  // reloads must read actual saved edits rather than re-seeding the fixture.
+  await page.evaluate(({ key, rows }) => localStorage.setItem(key, JSON.stringify(rows)),
+    { key: STORAGE_KEY, rows: legacyRows });
+  const restored = [{ ...headphones, quantity: 6 }, { ...planner, quantity: 3 }];
+  await reloadAndOpen(page);
+  await expectBasketContents(page, restored);
+  await expect(page.locator('.basket-name')).toHaveText([headphones.name, planner.name]);
+  await expect(page.locator('#cartCount')).toHaveText('9');
+  await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 23,544');
+  await expect(page.locator('#cartNotice')).toBeHidden();
+
+  // Loading normalizes in memory without rewriting valid legacy storage.
+  expect(await savedBasket(page)).toEqual(legacyRows);
+  await reloadAndOpen(page);
+  await expectBasketContents(page, restored);
+
+  await page.getByRole('button', { name: `Decrease quantity of ${headphones.name}`, exact: true }).click();
+  await expectBasket(page, [{ ...headphones, quantity: 5 }, restored[1]]);
+  await page.getByRole('button', { name: `Increase quantity of ${planner.name}`, exact: true }).click();
+  const edited = [{ ...headphones, quantity: 5 }, { ...planner, quantity: 4 }];
+  await expectBasket(page, edited);
+  await reloadAndOpen(page);
+  await expectBasket(page, edited);
+
+  // Adding the catalog product must update its normalized row, not duplicate it.
+  await page.locator('#cartModal .close').click();
+  await addProduct(page, headphones.name);
+  await openBasket(page);
+  const added = [{ ...headphones, quantity: 6 }, edited[1]];
+  await expectBasket(page, added);
+  await reloadAndOpen(page);
+  await expectBasket(page, added);
+
+  await page.getByRole('button', { name: `Remove ${planner.name} from basket`, exact: true }).click();
+  await expectBasket(page, [added[0]]);
+  await reloadAndOpen(page);
+  await expectBasket(page, [added[0]]);
+  await expect(page.locator('#cartNotice')).toBeHidden();
+});
+
 test('quantity increases and decreases update both rows and persist totals after reload', async ({ page }) => {
   await addProduct(page, headphones.name);
   await addProduct(page, planner.name);
