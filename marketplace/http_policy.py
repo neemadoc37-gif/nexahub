@@ -30,14 +30,14 @@ def validate_write_origin(origin, host):
     try:
         parsed = urlsplit(origin)
     except ValueError:
-        raise ApiError(403, "cross_origin_request", "This action must be submitted from the NexaHub website.") from None
+        raise ApiError(403, "cross_origin_request", "This action must be submitted from the Spinix One website.") from None
     allowed = {host.lower()}
     preview = os.environ.get("REPLIT_DEV_DOMAIN", "").lower()
     if preview:
         allowed.update({preview, preview + ":5000"})
     if (parsed.scheme not in ("https", "http") or parsed.netloc.lower() not in allowed
             or parsed.path not in ("", "/") or parsed.query or parsed.fragment):
-        raise ApiError(403, "cross_origin_request", "This action must be submitted from the NexaHub website.")
+        raise ApiError(403, "cross_origin_request", "This action must be submitted from the Spinix One website.")
 
 
 def parse_json_body(content_type, content_length, transfer_encoding, read):

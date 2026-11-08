@@ -1,5 +1,5 @@
 ---
-name: NexaHub payment provider and approval boundaries
+name: Spinix One payment provider and approval boundaries
 description: Owner-selected Kenyan Paybill/Daraja approach and explicit restrictions on live money and other commerce providers.
 ---
 

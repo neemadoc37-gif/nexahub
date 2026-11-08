@@ -7,7 +7,7 @@ for (const width of [320, 402, 1280]) {
     const logos = page.locator('.logo img');
     await expect(logos).toHaveCount(2);
     for (const logo of await logos.all()) {
-      await expect(logo).toHaveAttribute('alt', /NexaHub/i);
+      await expect(logo).toHaveAttribute('alt', /Spinix One/i);
       await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
       const bounds = await logo.boundingBox();
       expect(bounds.width).toBeGreaterThan(100);
@@ -15,8 +15,8 @@ for (const width of [320, 402, 1280]) {
       expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/assets/brand/favicon.png');
-    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/assets/brand/apple-touch-icon.png');
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/assets/brand/spinix-one-icon.svg');
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/assets/brand/spinix-one-icon.svg');
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();
@@ -30,10 +30,9 @@ for (const width of [320, 402, 1280]) {
 
 test('brand assets support GET/HEAD without exposing workspace files', async ({ request }) => {
   for (const [path, type] of [
-    ['/assets/brand/nexahub-logo.webp', 'image/webp'],
-    ['/assets/brand/favicon.png', 'image/png'],
-    ['/assets/brand/apple-touch-icon.png', 'image/png'],
-    ['/favicon.ico', 'image/png'],
+    ['/assets/brand/spinix-one-logo.svg', 'image/svg+xml'],
+    ['/assets/brand/spinix-one-icon.svg', 'image/svg+xml'],
+    ['/favicon.ico', 'image/svg+xml'],
   ]) {
     const response = await request.get(path);
     expect(response.status()).toBe(200);
@@ -56,7 +55,7 @@ for (const width of [320, 402, 1280]) {
     page.on('request', request => {
       if (request.method() === 'POST') writes.push(new URL(request.url()).pathname);
     });
-    const approved = '/assets/brand/nexahub-logo.webp';
+    const approved = '/assets/brand/spinix-one-logo.svg';
     for (const route of ['/sign-in', '/customer', '/seller', '/rider', '/admin']) {
       await page.goto(route);
       const headerLogo = page.locator(`.header img[src="${approved}"]`);
@@ -65,7 +64,7 @@ for (const width of [320, 402, 1280]) {
         : page.locator(`#platformMount .platform-hero img[src="${approved}"]`);
       for (const logo of [headerLogo, pageLogo]) {
         if (route !== '/sign-in' || logo === pageLogo) await expect(logo).toBeVisible();
-        await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth)).toBe(1020);
+        await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth)).toBe(420);
         const geometry = await logo.evaluate(img => {
           const rect = img.getBoundingClientRect();
           return { ratio: rect.width / rect.height, expectedRatio: img.naturalWidth / img.naturalHeight,

@@ -127,10 +127,10 @@
     copy.append(el("div", "platform-kicker", kicker), el("h1", "", title), el("p", "", description));
     const brandPlate = el("div", "platform-hero-brandplate");
     const brand = el("img", "platform-hero-brand");
-    brand.src = "/assets/brand/nexahub-logo.webp";
-    brand.alt = "NexaHub — Your World. One Hub.";
-    brand.width = 1020;
-    brand.height = 240;
+    brand.src = "/assets/brand/spinix-one-logo.svg";
+    brand.alt = "Spinix One — Everything You Need. All in One Place.";
+    brand.width = 420;
+    brand.height = 96;
     brandPlate.appendChild(brand);
     hero.append(copy, brandPlate);
     mount.appendChild(hero);
@@ -274,7 +274,7 @@
     }
   }
   async function loadCustomer(id) {
-    addHero("CUSTOMER ACCOUNT", "Your NexaHub", "Orders, bookings and payments associated with your signed-in account.");
+    addHero("CUSTOMER ACCOUNT", "Your Spinix One", "Orders, bookings and payments associated with your signed-in account.");
     if (!requireSignIn()) return;
     const ticket = ++epoch;
     const uid = currentUser?.id;
@@ -745,7 +745,7 @@
   async function loadCatalog() {
     const params = new URLSearchParams(location.search);
     const productId = params.get("product");
-    addHero("LIVE MARKETPLACE", productId ? "Product details" : "Published catalog", "Only products published through NexaHub’s live catalog endpoint appear here.");
+    addHero("LIVE MARKETPLACE", productId ? "Product details" : "Published catalog", "Only products published through Spinix One’s live catalog endpoint appear here.");
     let form = null, categorySelect = null, listingSelect = null, searchPanel = null;
     if (!productId) {
       const urlCategory = params.get("category") || "";

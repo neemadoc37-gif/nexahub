@@ -18,7 +18,7 @@ const addBasketFixture = page => page.evaluate(() => window.addCart('Keyboard te
 for (const kind of ['basket', 'account']) {
   test(`${kind} traps both Tab directions and restores focus on every close`, async ({ page }) => {
     const trigger = kind === 'basket' ? basketTrigger(page) : page.locator('#accountButton');
-    const dialog = page.getByRole('dialog', { name: kind === 'basket' ? 'Your selections' : 'Welcome to NexaHub' });
+    const dialog = page.getByRole('dialog', { name: kind === 'basket' ? 'Your selections' : 'Welcome to Spinix One' });
     const close = page.getByRole('button', { name: kind === 'basket' ? 'Close selections dialog' : 'Close account dialog' });
     const last = kind === 'basket' ? close : page.locator('#resetPassword');
 
@@ -51,7 +51,7 @@ for (const kind of ['basket', 'account']) {
 test('account navigation includes newly shown signup fields and skips busy buttons', async ({ page }) => {
   await page.locator('#accountButton').click();
   await page.locator('#authModeToggle').click();
-  await expect(page.getByRole('dialog', { name: 'Create your NexaHub account' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Create your Spinix One account' })).toBeVisible();
   const close = page.getByRole('button', { name: 'Close account dialog' });
   await close.focus();
   await page.keyboard.press('Tab');

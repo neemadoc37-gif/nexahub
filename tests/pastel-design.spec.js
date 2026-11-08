@@ -35,8 +35,8 @@ for (const width of [320, 402, 1280]) {
     expect(new Set(theme.categoryCards)).toEqual(new Set(['rgb(255, 253, 248)']));
     expect(theme.fits).toBe(true);
 
-    await expect(page.locator('.hero h1')).toContainText('Your World.');
-    await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/nexahub-logo.webp');
+    await expect(page.locator('.hero h1')).toContainText('Spinix One');
+    await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/spinix-one-logo.svg');
     await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
     await expect(page.locator('#nearbyHeading')).toContainText('around the corner');
     await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Location-based discovery is not connected yet');

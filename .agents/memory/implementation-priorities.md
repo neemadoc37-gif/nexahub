@@ -1,9 +1,9 @@
 ---
-name: NexaHub visible implementation priorities
+name: Spinix One visible implementation priorities
 description: User direction on visible implementation versus planning documents and completion claims.
 ---
 
-For NexaHub, stop creating more planning documents. Compare approved features
+For Spinix One, stop creating more planning documents. Compare requested features
 with actual code and prioritize accessible navigation, buttons, dashboards and
 working routes in the existing website.
 
@@ -15,14 +15,14 @@ in code, and what is missing, then implement missing visible connections.
 Show the actual pages in Preview. Do not claim a feature is complete because a
 page or design document exists, and preserve existing work and configurations.
 
-Use the approved professional NexaHub logo throughout the actual website; do
-not substitute a different logo.
+Use the Spinix One logo and tagline consistently throughout the actual website.
 
-**Why:** The user explicitly required the approved logo, not a replacement.
+**Why:** The user changed the marketplace name to Spinix One and supplied a
+navy-and-gold visual reference.
 
-**How to apply:** Reuse the approved artwork for the shared header, homepage,
-authentication screens, role dashboards and browser icon. Preserve its
-proportions and verify desktop and mobile rendering.
+**How to apply:** Use the shared Spinix One wordmark and icon for the header,
+homepage, authentication screens, role dashboards and browser icon. Preserve
+their proportions and verify desktop and mobile rendering.
 
 Do not request repeated screenshots or schema exports. Use the information
 already provided and continue implementing the approved design directly on the
@@ -37,17 +37,17 @@ security and relationship details as blockers, and seek approval before any
 further database inspection or changes.
 
 The current customer-facing direction is a premium international marketplace:
-white and warm ivory with deep navy, subtle champagne gold and muted green.
-Keep the approved NexaHub logo, name and “Your World. One Hub.” tagline. Use
-one consistent theme across shopping, account, seller and rider surfaces.
+white and warm ivory with deep navy and champagne gold. Keep the Spinix One name
+and “Everything You Need. All in One Place.” tagline. Use one consistent theme
+across shopping, account, seller and rider surfaces.
 Admin must remain private and role-protected; customers must not see internal
 dashboards.
 
-**Why:** The user replaced the earlier colorful direction with a refined,
-restrained palette in the latest storefront brief.
+**Why:** The user supplied a new Spinix One marketplace reference and requested
+its palette and design for the existing website.
 
 **How to apply:** Preserve data, authentication and working behavior while
-improving the real pages. Keep privileged navigation out of public surfaces;
+updating the existing pages. Keep privileged navigation out of public surfaces;
 never trust editable profile metadata for admin access.
 
 Preview checks must use the exact public address shown to the user, including
@@ -64,7 +64,7 @@ Recheck port mappings after workflow or publishing configuration changes.
 These operations have restored a stale default-port mapping and an unused
 additional port despite an earlier explicit-port Preview correction.
 
-**Why:** NexaHub's explicit `:5000` Preview needs external port 5000, whereas
+**Why:** Spinix One's explicit `:5000` Preview needs external port 5000, whereas
 Autoscale publication requires the single app port forwarded to external 80.
 Treating these as interchangeable caused a healthy server to appear unavailable.
 
@@ -72,12 +72,12 @@ Treating these as interchangeable caused a healthy server to appear unavailable.
 Preview address. Preserve that address during development; switch to the required
 single external-80 mapping deliberately when preparing the actual publication.
 
-NexaHub businesses can offer services as well as products. Customer-facing and
+Spinix One businesses can offer services as well as products. Customer-facing and
 seller-facing language should include service providers and avoid implying that
 the marketplace handles goods only. Do not present service booking as operational
 until it is actually connected and tested.
 
-**Why:** The user clarified that NexaHub includes service businesses and asked
+**Why:** The user clarified that Spinix One includes service businesses and asked
 for inclusive wording such as selections instead of a goods-only basket.
 
 **How to apply:** Use inclusive terms in navigation, seller onboarding, selection

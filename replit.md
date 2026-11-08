@@ -1,4 +1,4 @@
-# NexaHub
+# Spinix One
 
 ## Run on Replit
 - Click Run to start the `Start application` workflow.
@@ -40,11 +40,11 @@ replace the existing database. Verify existing RLS policies and auth-user
 provisioning triggers with the read-only `supabase/verify-auth.sql` script.
 
 ## Product requirements
-- Preserve the imported NexaHub branding, design, and working features.
-- Keep the tagline: "Your World. One Hub."
+- Preserve the Spinix One branding, design, and working features.
+- Keep the tagline: "Everything You Need. All in One Place."
 - Approved direction: premium deep navy, muted champagne gold and ivory;
   avoid bright/flashy colours, purple and pink. Preserve existing structure.
-- The user supplied the approved NexaHub navy/gold bag-and-globe artwork.
+- The user supplied the Spinix One navy/gold marketplace design reference.
   Use that branding, not an invented replacement. Prioritize secure working
   flows over cosmetics.
 - Develop the global multi-vendor marketplace in stages.

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="96" viewBox="0 0 420 96" role="img" aria-labelledby="title">
+  <title id="title">Spinix One</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M80 17C66 5 40 5 25 17 8 30 15 43 37 47l23 4c22 4 23 18 7 30-14 10-37 11-55 1" stroke="#0B2B5B" stroke-width="12"/>
+    <path d="M12 83c15 8 35 9 52 3" stroke="#B88A24" stroke-width="7"/>
+    <path d="M19 14c-5 6-8 13-8 20" stroke="#B88A24" stroke-width="4"/>
+  </g>
+  <text x="112" y="45" fill="#0B2B5B" font-family="Arial, Helvetica, sans-serif" font-size="39" font-style="italic" font-weight="900" letter-spacing="-1.5">SPINIX</text>
+  <text x="115" y="82" fill="#B88A24" font-family="Arial, Helvetica, sans-serif" font-size="30" font-style="italic" font-weight="800" letter-spacing="5">ONE</text>
+</svg>

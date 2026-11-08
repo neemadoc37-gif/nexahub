@@ -6,7 +6,7 @@ for (const width of [320, 402, 1280]) {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/');
-    await expect(page.locator('.hero h1')).toContainText('Your World.');
+    await expect(page.locator('.hero h1')).toContainText('Spinix One');
     await expect(page.locator('#liveProducts')).toHaveAttribute('aria-busy', 'false');
     await expect(page.locator('#liveBusinesses')).toHaveAttribute('aria-busy', 'false');
     await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
@@ -23,7 +23,7 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/nexahub-logo.webp', '/assets/marketplace/marketplace-hero.jpg']) {
+    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.svg', '/assets/marketplace/marketplace-hero.jpg']) {
       expect((await request.get(path)).status()).toBe(200);
     }
     expect((await request.get('/assets/marketplace/nexahub-editorial-stilllife.jpg')).status()).toBe(404);
@@ -50,7 +50,7 @@ test('FIXTURE: homepage uses only published listings and their genuine media', a
   await page.route('**/api/catalog**', route => route.fulfill({
     contentType: 'application/json', body: JSON.stringify({
       products: [
-        { id: product, seller_id: seller, title: 'Isolated published listing', status: 'published', price: 50, currency: 'KES', listing_type: 'service', description: '<b>Literal fixture text</b>', image_url: '/assets/brand/favicon.png' },
+        { id: product, seller_id: seller, title: 'Isolated published listing', status: 'published', price: 50, currency: 'KES', listing_type: 'service', description: '<b>Literal fixture text</b>', image_url: '/assets/brand/spinix-one-icon.svg' },
         { id: textOnlyProduct, seller_id: seller, title: 'Listing without a photo', status: 'published', price: 19.99, currency: 'USD', listing_type: 'digital', image_url: '' },
       ],
       categories: [], limit: 50,
@@ -67,7 +67,7 @@ test('FIXTURE: homepage uses only published listings and their genuine media', a
   await expect(page.locator('#liveProducts')).toContainText('<b>Literal fixture text</b>');
   await expect(page.locator('#liveProducts b')).toHaveCount(0);
   const imageCard = page.locator(`#liveProducts a[href="/catalog?product=${product}"]`);
-  await expect(imageCard.locator('.market-card-art img')).toHaveAttribute('src', /favicon\.png$/);
+  await expect(imageCard.locator('.market-card-art img')).toHaveAttribute('src', /spinix-one-icon\.svg$/);
   await expect(imageCard).toContainText('Ksh');
   const noImageCard = page.locator(`#liveProducts a[href="/catalog?product=${textOnlyProduct}"]`);
   await expect(noImageCard).toContainText('19.99');

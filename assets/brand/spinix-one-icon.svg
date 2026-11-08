@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Spinix One</title>
+  <rect width="64" height="64" rx="15" fill="#0B2B5B"/>
+  <path d="M47 18c-7-6-21-7-29-1-9 7-5 15 7 17l11 2c12 2 12 10 4 16-7 5-18 5-26 0" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 52c8 5 18 6 26 3" fill="none" stroke="#D9AE4F" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -7,7 +7,7 @@ test('direct workspace routes reload and serve the current source build', async 
   page.on('pageerror', error => errors.push(error.message));
   for (const [path, heading] of [
     ['/workspaces', 'Choose your workspace'],
-    ['/customer', 'Your NexaHub'],
+    ['/customer', 'Your Spinix One'],
     ['/seller', 'Sell products or offer services'],
     ['/rider', 'Independent work, responsibly'],
     ['/delivery', 'Track an order'],
@@ -77,10 +77,10 @@ test('direct auth routes open real account controls without submitting anything'
 
 test('old workspace links stay usable and switching routes clears old record filters', async ({ page }) => {
   await page.goto('/?workspace=customer&order=11111111-1111-4111-8111-111111111111&q=old');
-  await expect(page.locator('#platformMount h1')).toHaveText('Your NexaHub');
+  await expect(page.locator('#platformMount h1')).toHaveText('Your Spinix One');
   await page.locator('.footer a[href="/seller"]').click();
   await expect(page).toHaveURL(/\/seller$/);
-  await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
+  await page.getByRole('link', { name: 'Spinix One home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
   await expect(page.locator('#liveProducts')).toBeVisible();
 });

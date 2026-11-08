@@ -400,3 +400,81 @@ body{background:var(--ivory);color:#283548}
  .platform-products{grid-template-columns:1fr}
  .platform-product-image{height:190px}
 }
+
+/* Spinix One identity, applied consistently to the storefront and workspaces. */
+:root{
+ --navy:#0b2b5b;
+ --teal:#b88a24;
+ --teal-dark:#9a6f18;
+ --champagne:#bd8f2c;
+ --champagne-soft:#ead8aa;
+ --ivory:#fff8ed;
+ --paper:#fff;
+ --ink:#192d4a;
+ --muted:#687588;
+ --line:#eadfcf;
+ --green:#58776c;
+ --green-dark:#3e6559;
+ --brand-navy:#0b2b5b;
+ --brand-gold:#b88a24;
+ --brand-gold-soft:#e7d3a2;
+ --brand-ivory:#fff8ed;
+}
+body{background:#fffaf2;color:var(--ink)}
+.topbar{background:var(--navy);color:#fff;font-size:10px;letter-spacing:.12em}
+.topbar b{color:#e7c36f}
+.header{background:#fff;border-bottom-color:#e8dece}
+.headinner .logo img{width:190px}
+.live-search{border-radius:999px;background:#fff;border-color:#d9d4ca}
+.live-search button{background:var(--champagne);color:var(--navy)}
+.live-search button:hover{background:#a87818;color:#fff}
+.ghost{border-radius:999px}
+.primary,.platform-btn{background:var(--champagne);color:var(--navy)}
+.primary:hover,.platform-btn:hover{background:#a87818;color:#fff}
+.nav{max-width:none;width:100%;margin:0;padding:9px 34px;background:var(--navy);gap:8px}
+.nav a{padding:8px 11px;color:#fff;font-size:10px}
+.nav a:after{display:none}
+.nav a:hover,.nav a.active{background:var(--champagne);color:var(--navy);border-radius:999px}
+.hero{border:1px solid #eee1cc;border-radius:18px;background:linear-gradient(112deg,#fffdf9 0%,#fff7eb 58%,#f5eee2 100%);box-shadow:0 16px 42px rgba(11,43,91,.08)}
+.eyebrow{border-color:#e2d3b4;background:#fff;color:var(--teal-dark)}
+.hero h1 em{color:var(--champagne);font-family:var(--font-display);font-style:normal;font-weight:800}
+.hero p{color:#56657a}
+.hero .primary{background:var(--champagne);color:var(--navy)}
+.hero .ghost{border-color:#c7cdd6;background:#fff;color:var(--navy)}
+.hero-note .note-rule{background:var(--champagne)}
+.section-kicker{color:var(--teal-dark)}
+.textlink,.nearby-link,.payment-link{color:var(--teal-dark)}
+.cat{border-radius:12px;background:#fff;box-shadow:0 5px 16px rgba(11,43,91,.045)}
+.cat:hover,.cat:focus-visible{border-color:var(--champagne);box-shadow:0 12px 25px rgba(11,43,91,.1)}
+.cat-index svg{stroke:var(--navy)}
+.trust-strip{background:#fff;border-color:#e8dece}
+.trust-mark{border-color:#e0c887;background:#fff8e7;color:#8b681f}
+.trust-item strong{color:var(--navy)}
+.nearby-section{background:var(--navy)}
+.nearby-art{background:radial-gradient(ellipse at 52% 42%,rgba(184,138,36,.28),transparent 58%),linear-gradient(135deg,#173a70,#0b2b5b)}
+.nearby-pin{background:var(--champagne);color:var(--navy)}
+.live-empty,.live-error{background:#fff;border-left-color:var(--champagne)}
+.market-card,.business-card,.why-grid article,.platform-panel,.platform-product{border-radius:12px;background:#fff}
+.market-card-link,.market-card-type,.business-card span:last-child{color:var(--teal-dark)}
+.seller-section{background:#f7f1e5;border-color:#e8dcc4;border-radius:14px}
+.seller-steps strong{color:var(--navy)}
+.payment-note{background:#fff8e9;border-color:#e5d3ac;border-radius:12px}
+.payment-seal{border-color:var(--champagne);color:var(--teal-dark)}
+.footer{background:var(--navy)}
+.footer .logo{background:#fff;border-radius:9px}
+.footer h4{color:#e7c36f}
+.auth-branding{background:#fff7e8;border-color:#eadfcf}
+.auth-branding p{color:var(--teal-dark)}
+.platform-nav a[aria-current="page"],.platform-nav a:hover{background:#fff2d7;border-color:#e2c77f;color:#795711}
+.platform-hero{background:linear-gradient(112deg,#0b2b5b,#153b73 72%,#295077);border-color:#254774}
+.platform-hero:after{border-color:rgba(231,195,111,.34)}
+.platform-kicker{color:#e7c36f}
+.platform-btn{border-color:rgba(11,43,91,.12)}
+.platform-btn.secondary{background:#fff2d7;color:#31415a;border-color:#e5d5b6}
+.platform-status{background:#fff2d7;color:#795711}
+.platform-authbar{background:#fff2d7;border-color:#e5d5b6}
+.platform-form input:focus,.platform-form select:focus,.platform-form textarea:focus{border-color:var(--champagne)}
+:focus-visible{outline-color:var(--champagne)!important}
+@media(max-width:1000px){.nav{padding-inline:22px}}
+@media(max-width:600px){.nav{padding:8px 15px;gap:6px}.nav a{padding:7px 9px}.headinner .logo img{width:132px}}
+@media(max-width:360px){.headinner .logo img{width:112px}}

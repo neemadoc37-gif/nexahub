@@ -29,7 +29,7 @@ for (const width of [402, 1280]) {
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.keyboard.press('Escape');
     expect(mutations).toEqual([]);
-    await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
+    await page.getByRole('link', { name: 'Spinix One home', exact: true }).click();
     await expect(page.locator('#platformMount')).toBeHidden();
     await expect(page.locator('.categories .cat')).toHaveCount(9);
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
@@ -43,7 +43,7 @@ for (const width of [402, 1280]) {
 }
 
 for (const [route, heading] of [
-  ['customer', 'Your NexaHub'],
+  ['customer', 'Your Spinix One'],
   ['seller', 'Sell products or offer services'],
   ['delivery', 'Track an order'],
   ['payments', 'M-PESA, not a mock checkout'],
@@ -77,7 +77,7 @@ test('public catalog is real published inventory or an explicit service error, n
     expect(body.error.message).toBeTruthy();
     await expect(page.locator('#platformMount')).toContainText(body.error.message);
   }
-  await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
+  await page.getByRole('link', { name: 'Spinix One home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
   await expect(page.locator('#liveProducts')).toBeVisible();
 });
