@@ -15,7 +15,7 @@
   let lastAuthUserId = currentUser?.id || null;
   let fieldSequence = 0;
   const routePaths = {
-    workspaces: "/workspaces", customer: "/customer", seller: "/seller",
+    workspaces: "/workspaces", about: "/about", customer: "/customer", seller: "/seller",
     rider: "/rider", delivery: "/delivery", payments: "/payments",
     admin: "/admin", catalog: "/catalog"
   };
@@ -128,12 +128,17 @@
     const brandPlate = el("div", "platform-hero-brandplate");
     const brand = el("img", "platform-hero-brand");
     brand.src = "/assets/brand/spinix-one-logo.svg";
-    brand.alt = "Spinix One — Everything You Need. All in One Place.";
+    brand.alt = "Spinix One — Connecting Businesses. Empowering People.";
     brand.width = 420;
     brand.height = 96;
     brandPlate.appendChild(brand);
     hero.append(copy, brandPlate);
     mount.appendChild(hero);
+  }
+  function loadAbout() {
+    const template = document.getElementById("aboutPageTemplate");
+    if (!template) throw new Error("The SPINIX ONE brand information could not be loaded.");
+    mount.appendChild(template.content.cloneNode(true));
   }
   function stateBox(text, type = "") {
     mount.appendChild(notice(text, type));
@@ -456,7 +461,7 @@
     return box;
   }
   async function loadSeller() {
-    addHero("SELLER DESK", "Sell products or offer services", "Your shop profile and sales-related records are loaded only from your account-scoped workspace. Seller applications and listing changes are not saved in this Preview.");
+    addHero("SELLER DESK", "Sell products or offer services", "Connecting Businesses. Empowering People. Your shop profile and sales-related records are loaded only from your account-scoped workspace. Seller applications and listing changes are not saved in this Preview.");
     if (!requireSignIn()) {
       mount.appendChild(formPanel("Apply as a seller or service provider", "This form does not submit an application yet. Sign-in and approved server-side storage must be configured first.", [
         ["Store name", "store_name", "text", true, { maxLength: 120 }]
@@ -872,6 +877,7 @@
     mount.replaceChildren();
     try {
       if (route === "workspaces") await loadWorkspaces();
+      else if (route === "about") loadAbout();
       else if (route === "catalog") await loadCatalog();
       else if (route === "customer") await loadCustomer(new URLSearchParams(location.search).get("order"));
       else if (route === "seller") await loadSeller();

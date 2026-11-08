@@ -56,12 +56,32 @@ test('homepage displays the About Spinix One story and tagline', async ({ page }
   await page.goto('/#about');
   const section = page.locator('#about');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText('Welcome to SPINIX ONE');
-  await expect(section).toContainText('Your World. One Hub.');
+  await expect(section).toContainText('Connecting Businesses. Empowering People.');
   await expect(section).toContainText('SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.');
   await expect(section).toContainText('We connect customers with businesses, independent sellers and digital creators');
   await expect(section).toContainText('Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products');
   await expect(section).toContainText('For sellers, we provide an opportunity to showcase products, build an online presence and connect with potential customers.');
   await expect(section).toContainText('For customers, we aim to create a convenient, reliable and enjoyable marketplace experience.');
+  await expect(page.locator('.hero-note')).toContainText('Connecting Businesses. Empowering People.');
+  await expect(page.locator('.seller-section')).toContainText(/Connecting Businesses\. Empowering People\./i);
+  await expect(page.locator('.footer')).toContainText('Connecting Businesses. Empowering People.');
+});
+
+test('dedicated About page presents brand principles and seller invitation', async ({ page }) => {
+  await page.goto('/about');
+  const about = page.locator('#platformMount .about-page');
+  await expect(about.getByRole('heading', { level: 1, name: 'Welcome to SPINIX ONE' })).toBeVisible();
+  await expect(about).toContainText(/Connecting Businesses\. ?Empowering People\./);
+  await expect(about.locator('.about-vision')).toContainText('OUR VISION');
+  await expect(about.locator('.about-mission')).toContainText('OUR MISSION');
+  await expect(about.locator('.about-goals li')).toHaveCount(7);
+  await expect(about.locator('.about-value')).toHaveCount(6);
+  await expect(about.locator('.about-seller-invitation')).toContainText(/empower/i);
+  await expect(page.locator('.platform-nav a[data-workspace="about"]')).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.footer')).toContainText('SPINIX ONE connects customers with businesses');
+
+  await page.goto('/seller');
+  await expect(page.locator('.platform-hero')).toContainText('Connecting Businesses. Empowering People.');
 });
 
 test('Mystery Box remains a locked concept until rewards and approvals are ready', async ({ page, request }) => {

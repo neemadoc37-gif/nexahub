@@ -38,7 +38,7 @@ BRAND_ASSETS = {
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {
-    "/", "/index.html", "/workspaces", "/catalog", "/customer", "/seller",
+    "/", "/index.html", "/workspaces", "/catalog", "/about", "/customer", "/seller",
     "/rider", "/delivery", "/payments", "/admin", "/sign-in", "/register",
     "/forgot-password",
 }

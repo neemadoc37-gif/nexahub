@@ -492,8 +492,46 @@ body{background:#fffaf2;color:var(--ink)}
 .about-audience article p{margin:6px 0 0;color:#4f5e70;font-size:12px;line-height:1.65}
 .about-signoff{margin:21px 0 0;padding-top:15px;border-top:1px solid #e6dac3;color:var(--navy);font-size:12px;font-weight:800;letter-spacing:.025em}
 .about-signoff span{color:#806222}
+.about-more-link{display:inline-flex;align-items:center;gap:8px;margin-top:10px;color:#765719;font-size:11px;font-weight:800;text-decoration:none}
+.about-more-link:hover{text-decoration:underline;text-underline-offset:4px}
+.footer-slogan{color:#e7c36f}
+.about-page{max-width:1200px;margin:0 auto;padding:6px 0 44px}
+.about-page-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);align-items:center;gap:32px;padding:clamp(26px,4vw,48px);border:1px solid #233e62;border-radius:17px;background:linear-gradient(118deg,#0b2b5b,#153962 75%,#1d3a57);color:#fffaf0;overflow:hidden}
+.about-page-kicker,.about-page-section-heading>span,.about-seller-invitation>span{color:#e7c36f;font-size:9px;font-weight:800;letter-spacing:.16em}
+.about-page-hero h1{margin:10px 0;color:#fffaf0;font-size:clamp(30px,4.3vw,48px);line-height:1.08;letter-spacing:-.04em}
+.about-page-slogan{margin:0 0 13px;color:#e7c36f;font-size:clamp(16px,2.1vw,22px);font-weight:750;line-height:1.35}
+.about-page-hero-copy>p:last-child{max-width:670px;margin:0;color:#e7ebf0;font-size:13px;line-height:1.75}
+.about-page-brand-art{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;min-height:150px;padding:25px;border:1px solid #e0d2ad;border-radius:13px;background:linear-gradient(145deg,#fffdf8,#f4ead5)}
+.about-page-brand-art img{display:block;width:min(100%,270px);height:auto}
+.about-page-brand-art span{color:#785c26;font-size:8px;font-weight:800;letter-spacing:.19em}
+.about-page-section{margin-top:17px;padding:25px 28px;border:1px solid #e9dfce;border-radius:13px;background:linear-gradient(135deg,#fffdf8,#faf6ed)}
+.about-page-section-heading{margin-bottom:13px}
+.about-page-section-heading>span{color:#8a681f}
+.about-page-section-heading h2{margin:7px 0 0;color:var(--navy);font-size:clamp(19px,2.5vw,27px);line-height:1.2;letter-spacing:-.025em}
+.about-page-section>p,.about-mission>div>p{max-width:950px;margin:0 0 10px;color:#536174;font-size:13px;line-height:1.75}
+.about-page-section>p:last-child,.about-mission>div>p:last-child{margin-bottom:0}
+.about-mission{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:25px;align-items:start}
+.about-mission .about-page-section-heading{margin-bottom:0}
+.about-goals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0;padding:0;list-style:none}
+.about-goals li{display:flex;align-items:flex-start;gap:12px;min-width:0;padding:13px;border:1px solid #ece2d0;border-radius:10px;background:#fff}
+.about-goals li>span{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border:1px solid #ddc892;border-radius:50%;color:#795c25;font-size:9px;font-weight:800}
+.about-goals li p{margin:2px 0 0;color:#536174;font-size:11px;line-height:1.55}
+.about-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.about-value{padding:16px;border:1px solid #ece2d0;border-radius:11px;background:#fff;transition:transform .18s ease,box-shadow .18s ease}
+.about-value:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(11,43,91,.08)}
+.about-value svg{display:block;width:36px;height:36px;margin-bottom:11px;fill:none;stroke:#9a772d;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.about-value h3{margin:0 0 6px;color:var(--navy);font-size:14px}
+.about-value p{margin:0;color:#5a6675;font-size:11px;line-height:1.6}
+.about-seller-invitation{margin-top:17px;padding:28px;border:1px solid #213c5c;border-radius:13px;background:linear-gradient(118deg,#0b2b5b,#163a61);color:#fffaf0}
+.about-seller-invitation h2{margin:8px 0;color:#fffaf0;font-size:clamp(21px,2.8vw,30px);line-height:1.18}
+.about-seller-invitation p{max-width:850px;margin:0 0 15px;color:#e6ebf0;font-size:12px;line-height:1.7}
+.about-seller-invitation a{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid #d8bc79;border-radius:999px;background:#f1e3bf;color:#142d4b;font-size:11px;font-weight:800;text-decoration:none}
+.about-seller-invitation a:hover{background:#fff1cc}
+@media(prefers-reduced-motion:reduce){.about-value{transition:none}.about-value:hover{transform:none}}
 @media(max-width:760px){.about-content{grid-template-columns:1fr;gap:16px}}
+@media(max-width:760px){.about-page-hero{grid-template-columns:1fr}.about-page-brand-art{min-height:120px}.about-mission{grid-template-columns:1fr;gap:12px}.about-values{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.about-section{scroll-margin-top:210px;margin:40px 0 42px;padding:22px 17px;border-radius:14px}.about-heading{align-items:flex-start;flex-direction:column;gap:12px}.about-heading h2{font-size:29px}.about-tagline{padding:9px 13px;font-size:11px}.about-content{margin-top:18px}.about-story p{font-size:12px;line-height:1.7}.about-audience article{padding:13px 14px}.about-audience article p{font-size:11px}}
+@media(max-width:600px){.about-page{padding-top:0}.about-page-hero{gap:20px;padding:24px 19px;border-radius:14px}.about-page-hero h1{font-size:31px}.about-page-brand-art{padding:18px}.about-page-section{margin-top:12px;padding:19px 17px}.about-page-section-heading h2{font-size:21px}.about-page-section>p,.about-mission>div>p{font-size:12px}.about-goals{grid-template-columns:1fr;gap:7px}.about-values{grid-template-columns:1fr}.about-value{display:grid;grid-template-columns:40px 1fr;column-gap:10px;align-items:start;padding:13px}.about-value svg{grid-row:span 2;width:32px;height:32px;margin:1px 0 0}.about-value h3{margin:0 0 4px}.about-value p{grid-column:2}.about-seller-invitation{margin-top:12px;padding:22px 18px}.about-seller-invitation a{max-width:100%}}
 .mystery-section{scroll-margin-top:170px;margin:54px 0 16px;padding:clamp(22px,4vw,48px);border:1px solid #e6d8b7;border-radius:18px;background:radial-gradient(circle at 84% 17%,rgba(214,182,109,.17),transparent 32%),linear-gradient(132deg,#fffdf8,#f5eedf);box-shadow:0 20px 48px rgba(11,43,91,.07)}
 .mystery-heading{max-width:800px;margin:0 auto 30px;text-align:center}
 .mystery-kicker{display:inline-block;color:#8a681f;font-size:9px;font-weight:800;letter-spacing:.17em}
