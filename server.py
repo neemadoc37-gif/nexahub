@@ -26,6 +26,7 @@ BRAND_ASSETS = {
     "/assets/marketplace.css": (INDEX.parent / "assets" / "marketplace.css", "text/css; charset=utf-8"),
     "/assets/storefront.js": (INDEX.parent / "assets" / "storefront.js", "text/javascript; charset=utf-8"),
     "/assets/marketplace/marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "marketplace-hero.jpg", "image/jpeg"),
+    "/assets/marketplace/spinix-one-marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "spinix-one-marketplace-hero.jpg", "image/jpeg"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {

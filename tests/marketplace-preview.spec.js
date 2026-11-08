@@ -19,17 +19,27 @@ for (const width of [320, 402, 1280]) {
       'Digital products', 'Travel & experiences',
     ]);
     await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
-    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Location-based discovery is not connected yet');
+    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Browse published listings across the marketplace');
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.svg', '/assets/marketplace/marketplace-hero.jpg']) {
+    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.svg', '/assets/marketplace/marketplace-hero.jpg', '/assets/marketplace/spinix-one-marketplace-hero.jpg']) {
       expect((await request.get(path)).status()).toBe(200);
     }
     expect((await request.get('/assets/marketplace/nexahub-editorial-stilllife.jpg')).status()).toBe(404);
     expect(errors).toEqual([]);
   });
 }
+
+test('homepage shows marketplace photography without the old Discover closer badge', async ({ page, request }) => {
+  await page.goto('/');
+  await expect(page.locator('.heroart')).toHaveAttribute('aria-label', /fresh groceries.*electronics/i);
+  await expect(page.locator('.hero-stamp, .hero-caption')).toHaveCount(0);
+  await expect(page.locator('.hero-image')).toHaveCSS('background-image', /spinix-one-marketplace-hero\.jpg/);
+  await expect(page.getByText('A MARKETPLACE FOR EVERY DAY')).toBeVisible();
+  await expect(page.locator('.marketplace-scene')).toBeVisible();
+  expect((await request.get('/assets/marketplace/spinix-one-marketplace-hero.jpg')).status()).toBe(200);
+});
 
 test('anonymous direct admin visits reveal no dashboard or private controls', async ({ page, request }) => {
   await page.goto('/admin');

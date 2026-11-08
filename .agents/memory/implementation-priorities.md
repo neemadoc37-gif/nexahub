@@ -50,6 +50,16 @@ its palette and design for the existing website.
 updating the existing pages. Keep privileged navigation out of public surfaces;
 never trust editable profile metadata for admin access.
 
+Use relevant marketplace photography rather than the “Discover closer” badge
+and abstract map artwork that appeared on the homepage.
+
+**Why:** The user said the old treatment did not fit the marketplace and asked
+for more appealing pictures.
+
+**How to apply:** Prefer authentic shopping, storefront, service and travel
+imagery. Keep product cards tied to published listings; do not invent catalog
+items to make the homepage look populated.
+
 Preview checks must use the exact public address shown to the user, including
 its explicit port, rather than only localhost or the default development domain.
 
