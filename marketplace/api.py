@@ -76,9 +76,12 @@ class MarketplaceAPI:
         return [{key: row.get(key) for key in selected} for row in rows]
 
     def order(self, order_id, user_id, token):
-        rows = self.owned("orders", ORDER_FIELDS, "customer_id", user_id, token, id="eq." + identifier(order_id))
+        requested_id = identifier(order_id)
+        rows = self.owned("orders", ORDER_FIELDS, "customer_id", user_id, token, id="eq." + requested_id)
         if not rows:
             raise ApiError(404, "order_not_found", "This order is unavailable or does not belong to your account.")
+        if len(rows) != 1 or str(rows[0].get("id")) != requested_id:
+            raise ApiError(502, "order_identity_check_failed", "The requested order could not be matched safely. No order was returned.")
         return rows[0]
 
     def seller(self, user_id, token):
@@ -131,6 +134,8 @@ class MarketplaceAPI:
             if path != "/api/catalog":
                 if not products:
                     raise ApiError(404, "product_not_found", "This published product is unavailable.")
+                if len(products) != 1 or str(products[0].get("id")) != filters["id"][3:]:
+                    raise ApiError(502, "product_identity_check_failed", "The requested product could not be matched safely.")
                 return {"product": products[0]}
             q = query.get("q", [""])[0].strip()
             if len(q) > 120:

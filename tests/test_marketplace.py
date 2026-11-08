@@ -131,6 +131,26 @@ class APITests(unittest.TestCase):
         self.api_error(MarketplaceAPI(FixtureClient()), "GET", "/api/customer/orders/not-a-uuid", 400, "invalid_identifier")
 
 
+class ObjectIdentityTests(unittest.TestCase):
+    def test_owned_but_wrong_order_is_not_used_for_payment_or_tracking(self):
+        client = FixtureClient({"/rest/v1/orders": [{"id": OTHER, "customer_id": USER}]})
+        api = MarketplaceAPI(client)
+        for method, route, body in [
+            ("GET", "/api/customer/orders/" + ORDER, None),
+            ("GET", "/api/deliveries/track?order_id=" + ORDER, None),
+            ("POST", "/api/payments/mpesa/stk", {"order_id": ORDER, "phone": "0712345678"}),
+        ]:
+            with self.assertRaises(ApiError) as raised:
+                api.dispatch(method, route, AUTH, body)
+            self.assertEqual(raised.exception.code, "order_identity_check_failed")
+
+    def test_published_but_wrong_product_is_not_returned_as_requested_product(self):
+        client = FixtureClient({"/rest/v1/products": [{"id": OTHER, "status": "published"}]})
+        with self.assertRaises(ApiError) as raised:
+            MarketplaceAPI(client).dispatch("GET", "/api/catalog/" + ORDER)
+        self.assertEqual(raised.exception.code, "product_identity_check_failed")
+
+
 class RuleTests(unittest.TestCase):
     def test_commission_conservation_and_explicit_rounding(self):
         self.assertEqual(allocate_commission(10001, 1000), {"gross_minor": 10001, "commission_minor": 1000, "earnings_minor": 9001})

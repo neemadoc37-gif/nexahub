@@ -3,6 +3,7 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import hashlib
+import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -42,6 +43,44 @@ def build_info():
 
 
 class StorefrontHandler(BaseHTTPRequestHandler):
+    server_version = "NexaHub"
+    sys_version = ""
+
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(15)
+
+    def end_headers(self):
+        # Keep the existing inline handlers working while limiting script and
+        # data destinations. This is a baseline CSP, not a strict nonce CSP.
+        supabase_origin = API.client.url
+        self.send_header("Content-Security-Policy", (
+            "default-src 'self'; base-uri 'self'; object-src 'none'; "
+            "frame-ancestors 'self' https://replit.com https://*.replit.com; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; "
+            f"connect-src 'self' {supabase_origin} {supabase_origin.replace('https://', 'wss://')}; "
+            "form-action 'self'"
+        ))
+        self.send_header("Permissions-Policy", "camera=(), microphone=()")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        super().end_headers()
+
+    def check_write_origin(self):
+        origin = self.headers.get("Origin")
+        if origin is None:
+            return  # Non-browser API callers still require a verified bearer.
+        parsed = urlsplit(origin)
+        allowed_hosts = {self.headers.get("Host", "").lower()}
+        preview_host = os.environ.get("REPLIT_DEV_DOMAIN", "").lower()
+        if preview_host:
+            allowed_hosts.update({preview_host, preview_host + ":5000"})
+        if (parsed.scheme not in ("https", "http") or parsed.netloc.lower() not in allowed_hosts
+                or parsed.path not in ("", "/") or parsed.query or parsed.fragment):
+            raise ApiError(403, "cross_origin_request", "This action must be submitted from the NexaHub website.")
+
     def do_GET(self):
         if urlsplit(self.path).path == "/api/build":
             self.send_json(200, build_info())
@@ -71,6 +110,10 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         try:
             body = None
             if method == "POST":
+                if urlsplit(self.path).path != "/api/payments/mpesa/callback":
+                    self.check_write_origin()
+                if self.headers.get("Transfer-Encoding"):
+                    raise ApiError(400, "unsupported_transfer_encoding", "Send a bounded JSON request with Content-Length.")
                 if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
                     raise ApiError(415, "json_required", "Send a JSON request body.")
                 try:
@@ -89,6 +132,10 @@ class StorefrontHandler(BaseHTTPRequestHandler):
             self.send_json(200, result)
         except ApiError as error:
             self.send_json(error.status, {"error": {"code": error.code, "message": error.message}})
+        except (BrokenPipeError, ConnectionResetError):
+            # Navigation can disconnect a reader. Never turn an abandoned
+            # successful response into a second, misleading 500 response.
+            return
         except Exception:
             # Never return exception details or provider payloads containing PII.
             self.send_json(500, {"error": {"code": "internal_error", "message": "The request could not be completed safely. No success is claimed."}})
@@ -100,8 +147,6 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-NexaHub-Build", build_info()["build_id"])
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
         self.wfile.write(content)
 
@@ -119,11 +164,9 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         content = file_path.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", content_type)
-        self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-NexaHub-Build", build_info()["build_id"])
-        self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
         if not head_only:
             self.wfile.write(content)

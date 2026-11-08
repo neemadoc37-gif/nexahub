@@ -108,6 +108,7 @@
    <button id="googleSignIn" class="auth-google" type="button">Continue with Google</button>
    <div class="auth-links">
     <button id="authModeToggle" class="auth-link" type="button">Create an account</button>
+    <button id="resendConfirmation" class="auth-link" type="button">Resend confirmation email</button>
     <button id="resetPassword" class="auth-link" type="button">Forgot password?</button>
    </div>
   </div>
@@ -142,7 +143,7 @@
  <div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">Grow with NexaHub</h2><p>Visit the seller desk to check the server’s application readiness and view your account-scoped store information.</p><button class="primary" onclick="closeModal('sellerModal');window.Platform&&Platform.go('seller')">Open seller desk</button></div></div>
 <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close basket dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><button class="primary" onclick="toast('Checkout is a preview only. No payment will be collected.')">Continue to checkout (preview)</button><p>Sample basket only. Checkout is a preview; no payment will be collected.</p></div></div>
  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
 <script>
 const NEXAHUB_SUPABASE_URL = "https://oixruhlxundtgmhzeysj.supabase.co";
 const NEXAHUB_SUPABASE_KEY = "sb_publishable_XT5ebDMTT2w8ncVCX--zAA_LbXb5twB";
@@ -398,7 +399,7 @@ function setAuthMessage(message,type='info'){
 }
 function clearAuthMessage(){setAuthMessage('')}
 function setAuthBusy(busy){
- document.querySelectorAll('#authForm button,#googleSignIn,#authModeToggle,#resetPassword,#recoveryForm button,#profileForm button,#signOut').forEach(button=>button.disabled=busy);
+ document.querySelectorAll('#authForm button,#googleSignIn,#authModeToggle,#resendConfirmation,#resetPassword,#recoveryForm button,#profileForm button,#signOut').forEach(button=>button.disabled=busy);
  document.getElementById('authSubmit').textContent=busy?'Please wait…':authMode==='signup'?'Create account':'Sign in';
 }
 function setAuthMode(mode){
@@ -527,6 +528,19 @@ async function sendPasswordReset(){
  }catch(error){setAuthMessage(error.message||'Could not send the password-reset email.','error')}
  finally{setAuthBusy(false)}
 }
+async function resendConfirmationEmail(){
+ if(!nexahubSupabase){setAuthMessage('The Supabase client did not load. Check the connection and refresh this page.','error');return}
+ const input=document.getElementById('authEmail');
+ if(!input.value.trim()){setAuthMessage('Enter your email address before requesting a fresh confirmation link.','error');input.focus();return}
+ if(!input.reportValidity())return;
+ setAuthBusy(true);
+ try{
+  const {error}=await nexahubSupabase.auth.resend({type:'signup',email:input.value.trim(),options:{emailRedirectTo:window.location.origin}});
+  if(error)throw error;
+  setAuthMessage('If an unconfirmed account exists for that address, Supabase will send a new confirmation link. Only the newest valid link should be used.');
+ }catch(error){setAuthMessage(error.message||'Could not request a confirmation email. Please try again later.','error')}
+ finally{setAuthBusy(false)}
+}
 async function updateRecoveredPassword(event){
  event.preventDefault();
  if(!nexahubSupabase||!isPasswordRecovery)return;
@@ -583,6 +597,7 @@ document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==
 document.getElementById('authForm').addEventListener('submit',handleAuthSubmit);
 document.getElementById('googleSignIn').addEventListener('click',signInWithGoogle);
 document.getElementById('resetPassword').addEventListener('click',sendPasswordReset);
+document.getElementById('resendConfirmation').addEventListener('click',resendConfirmationEmail);
 document.getElementById('authModeToggle').addEventListener('click',()=>setAuthMode(authMode==='signin'?'signup':'signin'));
 document.getElementById('profileForm').addEventListener('submit',saveCustomerProfile);
 document.getElementById('recoveryForm').addEventListener('submit',updateRecoveredPassword);
