@@ -52,6 +52,18 @@ test('each marketplace category has a matching photo that loads', async ({ page 
   ).toBe(9);
 });
 
+test('homepage displays the About Spinix One story and tagline', async ({ page }) => {
+  await page.goto('/#about');
+  const section = page.locator('#about');
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText('Welcome to SPINIX ONE');
+  await expect(section).toContainText('Your World. One Hub.');
+  await expect(section).toContainText('SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.');
+  await expect(section).toContainText('We connect customers with businesses, independent sellers and digital creators');
+  await expect(section).toContainText('Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products');
+  await expect(section).toContainText('For sellers, we provide an opportunity to showcase products, build an online presence and connect with potential customers.');
+  await expect(section).toContainText('For customers, we aim to create a convenient, reliable and enjoyable marketplace experience.');
+});
+
 test('Mystery Box remains a locked concept until rewards and approvals are ready', async ({ page, request }) => {
   await page.goto('/');
   const section = page.locator('#mystery-box');
