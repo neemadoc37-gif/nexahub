@@ -12,9 +12,9 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
     await expect(page.locator('.header')).not.toContainText('dashboard');
     await expect(page.locator('.header')).not.toContainText('Workspaces');
-    await expect(page.locator('.categories .cat')).toHaveCount(6);
+    await expect(page.locator('.categories .cat')).toHaveCount(7);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/marketplace/marketplace-hero.jpg']) {
+    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/marketplace/marketplace-hero.jpg', '/assets/marketplace/nexahub-editorial-stilllife.jpg']) {
       expect((await request.get(path)).status()).toBe(200);
     }
     expect(errors).toEqual([]);

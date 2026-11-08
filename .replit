@@ -26,13 +26,13 @@ args = "basket"
 name = "Start application"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 server.py"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "uv run --frozen --no-sync gunicorn --config gunicorn.conf.py production:application"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "basket"
@@ -47,10 +47,15 @@ isValidation = true
 
 
 
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 30000
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
 
-[postMerge]
-path = "scripts/post-merge.sh"
-timeoutMs = 30000
+[deployment]
+deploymentTarget = "autoscale"
+run = ["uv", "run", "--frozen", "--no-sync", "gunicorn", "--config", "gunicorn.conf.py", "production:application"]
+build = ["uv", "sync", "--frozen", "--no-dev"]

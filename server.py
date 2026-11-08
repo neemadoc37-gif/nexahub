@@ -3,12 +3,12 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import hashlib
-import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from marketplace.api import MarketplaceAPI
 from marketplace.supabase_client import ApiError
+from marketplace.http_policy import parse_json_body, security_headers, validate_write_origin
 
 
 INDEX = Path(__file__).with_name("index.html")
@@ -24,6 +24,7 @@ BRAND_ASSETS = {
     "/assets/marketplace.css": (INDEX.parent / "assets" / "marketplace.css", "text/css; charset=utf-8"),
     "/assets/storefront.js": (INDEX.parent / "assets" / "storefront.js", "text/javascript; charset=utf-8"),
     "/assets/marketplace/marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "marketplace-hero.jpg", "image/jpeg"),
+    "/assets/marketplace/nexahub-editorial-stilllife.jpg": (INDEX.parent / "assets" / "marketplace" / "nexahub-editorial-stilllife.jpg", "image/jpeg"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {
@@ -32,6 +33,12 @@ PAGE_ROUTES = {
     "/forgot-password",
 }
 
+# Only fixed, explicitly public files are read, before requests are accepted.
+# Request paths select bytes, never filesystem paths.
+_index_bytes = INDEX.read_bytes()
+PUBLIC_FILES = {route: (_index_bytes, "text/html; charset=utf-8") for route in PAGE_ROUTES}
+PUBLIC_FILES.update({route: (asset.read_bytes(), mime) for route, (asset, mime) in BRAND_ASSETS.items()})
+
 
 def build_info():
     """Fingerprint public and server source, without exposing paths or secrets."""
@@ -39,6 +46,7 @@ def build_info():
     sources = [INDEX, Path(__file__), *BRAND_ASSETS.values()]
     paths = [item[0] if isinstance(item, tuple) else item for item in sources]
     paths.extend(sorted((INDEX.parent / "marketplace").glob("*.py")))
+    paths.extend([INDEX.parent / "production.py", INDEX.parent / "gunicorn.conf.py"])
     for path in paths:
         digest.update(path.name.encode())
         digest.update(path.read_bytes())
@@ -54,35 +62,12 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         self.connection.settimeout(15)
 
     def end_headers(self):
-        # Keep the existing inline handlers working while limiting script and
-        # data destinations. This is a baseline CSP, not a strict nonce CSP.
-        supabase_origin = API.client.url
-        self.send_header("Content-Security-Policy", (
-            "default-src 'self'; base-uri 'self'; object-src 'none'; "
-            "frame-ancestors 'self' https://replit.com https://*.replit.com; "
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; "
-            f"connect-src 'self' {supabase_origin} {supabase_origin.replace('https://', 'wss://')}; "
-            "form-action 'self'"
-        ))
-        self.send_header("Permissions-Policy", "camera=(), microphone=()")
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "no-referrer")
+        for name, value in security_headers(API.client.url):
+            self.send_header(name, value)
         super().end_headers()
 
     def check_write_origin(self):
-        origin = self.headers.get("Origin")
-        if origin is None:
-            return  # Non-browser API callers still require a verified bearer.
-        parsed = urlsplit(origin)
-        allowed_hosts = {self.headers.get("Host", "").lower()}
-        preview_host = os.environ.get("REPLIT_DEV_DOMAIN", "").lower()
-        if preview_host:
-            allowed_hosts.update({preview_host, preview_host + ":5000"})
-        if (parsed.scheme not in ("https", "http") or parsed.netloc.lower() not in allowed_hosts
-                or parsed.path not in ("", "/") or parsed.query or parsed.fragment):
-            raise ApiError(403, "cross_origin_request", "This action must be submitted from the NexaHub website.")
+        validate_write_origin(self.headers.get("Origin"), self.headers.get("Host", ""))
 
     def do_GET(self):
         if urlsplit(self.path).path == "/api/build":
@@ -115,22 +100,9 @@ class StorefrontHandler(BaseHTTPRequestHandler):
             if method == "POST":
                 if urlsplit(self.path).path != "/api/payments/mpesa/callback":
                     self.check_write_origin()
-                if self.headers.get("Transfer-Encoding"):
-                    raise ApiError(400, "unsupported_transfer_encoding", "Send a bounded JSON request with Content-Length.")
-                if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
-                    raise ApiError(415, "json_required", "Send a JSON request body.")
-                try:
-                    length = int(self.headers.get("Content-Length", "0"))
-                except ValueError:
-                    length = 0
-                if not 0 < length <= 16384:
-                    raise ApiError(413, "invalid_body_size", "The request body must be between 1 and 16384 bytes.")
-                try:
-                    body = json.loads(self.rfile.read(length))
-                except (ValueError, UnicodeDecodeError):
-                    raise ApiError(400, "invalid_json", "The request body is not valid JSON.") from None
-                if not isinstance(body, dict):
-                    raise ApiError(400, "invalid_json_object", "Send a JSON object.")
+                body = parse_json_body(self.headers.get("Content-Type", ""),
+                                       self.headers.get("Content-Length"),
+                                       self.headers.get("Transfer-Encoding"), self.rfile.read)
             result = API.dispatch(method, self.path, self.headers.get("Authorization"), body)
             self.send_json(200, result)
         except ApiError as error:
@@ -157,14 +129,11 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if path != "/":
             path = path.rstrip("/")
-        if path in PAGE_ROUTES:
-            file_path, content_type = INDEX, "text/html; charset=utf-8"
-        elif path in BRAND_ASSETS:
-            file_path, content_type = BRAND_ASSETS[path]
-        else:
+        resource = PUBLIC_FILES.get(path)
+        if resource is None:
             self.send_error(404)
             return
-        content = file_path.read_bytes()
+        content, content_type = resource
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(content)))

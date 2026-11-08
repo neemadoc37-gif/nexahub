@@ -36,12 +36,16 @@ inspection, run migrations or change database permissions without approval.
 security and relationship details as blockers, and seek approval before any
 further database inspection or changes.
 
-The approved customer-facing direction is “Modern International Marketplace”:
-white, warm ivory, deep navy and teal, with subtle champagne-gold accents.
-Keep the approved NexaHub logo. Admin must remain private and role-protected;
-customers must not see internal dashboards.
+The approved customer-facing direction is a colorful international marketplace:
+clean white backgrounds, dark navy or charcoal navigation and text, with soft
+pastel pink, sky blue, lemon yellow, lavender, mint and peach accents. Keep the
+approved NexaHub logo, name and “Your World. One Hub.” tagline. Use a consistent
+visual theme across shopping, digital products, services, travel and seller pages.
+Admin must remain private and role-protected; customers must not see internal
+dashboards.
 
-**Why:** The user explicitly selected this direction for the existing website.
+**Why:** The user requested this pastel redesign directly on the existing
+website, replacing the earlier ivory/teal direction without a separate demo.
 
 **How to apply:** Preserve existing data, authentication and functionality while
 implementing the design in the actual pages. Keep privileged navigation out of
@@ -56,3 +60,15 @@ user's explicit-port Preview returned a proxy 502.
 **How to apply:** Check the page, assets and API through that precise public
 address before declaring Preview fixed. Account for external port mappings,
 not only the server's internal listening port.
+
+Recheck port mappings after workflow or publishing configuration changes.
+These operations have restored a stale default-port mapping and an unused
+additional port despite an earlier explicit-port Preview correction.
+
+**Why:** NexaHub's explicit `:5000` Preview needs external port 5000, whereas
+Autoscale publication requires the single app port forwarded to external 80.
+Treating these as interchangeable caused a healthy server to appear unavailable.
+
+**How to apply:** Finish configuration changes before verifying the user's exact
+Preview address. Preserve that address during development; switch to the required
+single external-80 mapping deliberately when preparing the actual publication.

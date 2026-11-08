@@ -1,2 +1,5 @@
 /node_modules/
 /generated-artifacts/
+.pythonlibs/
+__pycache__/
+*.py[cod]

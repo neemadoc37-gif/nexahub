@@ -103,6 +103,9 @@ class MarketplaceAPI:
         url = urlsplit(target)
         path, query = url.path.rstrip("/"), parse_qs(url.query)
         body = body if isinstance(body, dict) else {}
+        if method == "GET" and path == "/api/health":
+            return {"status": "ok", "scope": "application_process_only",
+                    "checkout_enabled": False, "live_money_enabled": False}
         if method == "GET" and path == "/api/readiness":
             return {
                 "payments": {"enabled": False, "reasons": [

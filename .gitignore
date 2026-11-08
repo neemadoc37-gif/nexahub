@@ -1,4 +1,5 @@
 __pycache__/
+.pythonlibs/
 *.py[cod]
 .venv/
 node_modules/

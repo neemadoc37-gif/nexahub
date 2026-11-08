@@ -34,7 +34,7 @@
    <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost cart-trigger" aria-label="Open sample basket" onclick="showCart()"><span class="bag-mark" aria-hidden="true"></span><span>Basket</span><span id="cartCount" class="cart-count">0</span></button></div>
  </div>
   <nav class="nav" aria-label="Marketplace categories">
-    <a class="active" href="/catalog">Discover</a><a href="/catalog?category=nearby-shopping">Nearby shopping</a><a href="/catalog?category=supermarkets">Supermarkets</a><a href="/catalog?category=restaurants">Restaurants</a><a href="/catalog?category=pharmacies">Pharmacies</a><a href="/catalog?category=services">Services</a><a href="/catalog?category=travel">Travel</a>
+     <a class="active" href="/catalog">Discover</a><a href="/catalog?category=nearby-shopping">Nearby shopping</a><a href="/catalog?category=digital-products">Digital creations</a><a href="/catalog?category=supermarkets">Supermarkets</a><a href="/catalog?category=restaurants">Restaurants</a><a href="/catalog?category=pharmacies">Pharmacies</a><a href="/catalog?category=services">Services</a><a href="/catalog?category=travel">Travel</a>
  </nav>
 </header>
  <nav class="platform-nav" aria-label="Marketplace navigation">
@@ -49,14 +49,21 @@
  </section>
   <section class="category-section" aria-labelledby="categoryHeading">
    <div class="sectionhead"><div><span class="section-kicker">GOOD THINGS, CLOSE BY</span><h2 id="categoryHeading">Find your kind of place.</h2><p>Browse local favorites or follow your curiosity somewhere new.</p></div><a class="textlink" href="/catalog">Explore all categories <span aria-hidden="true">↗</span></a></div>
-   <div class="categories">
-    <a class="cat" href="/catalog?category=nearby-shopping"><span class="cat-index">01</span><strong>Nearby shopping</strong><small>Independent finds</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
-    <a class="cat" href="/catalog?category=supermarkets"><span class="cat-index">02</span><strong>Supermarkets</strong><small>Everyday essentials</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
-    <a class="cat" href="/catalog?category=restaurants"><span class="cat-index">03</span><strong>Restaurants</strong><small>Made for the table</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
-    <a class="cat" href="/catalog?category=pharmacies"><span class="cat-index">04</span><strong>Pharmacies</strong><small>Browse with care</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
-    <a class="cat" href="/catalog?category=services"><span class="cat-index">05</span><strong>Services</strong><small>People who know</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
-    <a class="cat" href="/catalog?category=travel"><span class="cat-index">06</span><strong>Travel</strong><small>Places and escapes</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+    <div class="categories">
+     <a class="cat" href="/catalog?category=nearby-shopping"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 14 16 5l11 9v13H5zM12 27V17h8v10"/></svg></span><strong>Nearby shopping</strong><small>Independent finds</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=digital-products"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="17" rx="2"/><path d="M12 27h8M16 22v5M11 12h10M11 16h7"/></svg></span><strong>Digital creations</strong><small>Ideas to keep</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=supermarkets"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 11h18l-1 16H8L7 11ZM11 11V8a5 5 0 0 1 10 0v3M12 17h8"/></svg></span><strong>Supermarkets</strong><small>Everyday essentials</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=restaurants"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M8 5v10M12 5v10M16 5v10c0 3-2 5-4 5v7M24 5c-4 4-4 10 0 12v10M24 5v22"/></svg></span><strong>Restaurants</strong><small>Made for the table</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=pharmacies"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M13 5h6v8h8v6h-8v8h-6v-8H5v-6h8z"/></svg></span><strong>Pharmacies</strong><small>Browse with care</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=services"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="10" r="5"/><path d="M6 27c1-6 4-9 10-9s9 3 10 9"/></svg></span><strong>Services</strong><small>People who know</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
+     <a class="cat" href="/catalog?category=travel"><span class="cat-index" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m4 17 24-9-9 22-4-10-11-3ZM15 20l7-7"/></svg></span><strong>Travel</strong><small>Places and escapes</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
    </div>
+    <div class="trust-strip" aria-label="Marketplace information">
+     <div class="trust-item"><span class="trust-mark" aria-hidden="true">01</span><span><strong>Independent discovery</strong>Find businesses and makers</span></div>
+     <div class="trust-item"><span class="trust-mark" aria-hidden="true">02</span><span><strong>Published listings</strong>Live catalog, not demos</span></div>
+     <div class="trust-item"><span class="trust-mark" aria-hidden="true">03</span><span><strong>Your account, your records</strong>Private customer workspace</span></div>
+     <div class="trust-item"><span class="trust-mark" aria-hidden="true">04</span><span><strong>Clear about what’s live</strong>Availability shown honestly</span></div>
+    </div>
    <p class="category-note">Pharmacy listings require appropriate verification. No local-distance filtering is currently connected.</p>
  </section>
   <section class="live-section" id="liveMarketplace" aria-labelledby="liveHeading">
