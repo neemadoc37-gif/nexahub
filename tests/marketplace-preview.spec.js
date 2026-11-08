@@ -61,9 +61,10 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   await expect(section.locator('.mystery-box-art')).toHaveCount(1);
   await expect(section.locator('.mystery-reward')).toHaveCount(7);
   await expect(section).toContainText('Small cash rewards (USD)');
-  await expect(section).toContainText('Larger cash prizes (USD)');
+  await expect(section).toContainText('Larger cash prizes (KSh 1,000 note bundles)');
   await expect(section).toContainText('Latest iPhone (illustrative)');
   await expect(section).toContainText('Latest laptop (illustrative)');
+  await expect(section.locator('.mystery-disclaimer')).toContainText('All reward pictures are concept illustrations');
   await expect(section.locator('.mystery-disclaimer')).toContainText('No prize inventory is confirmed or available');
   await expect(section.getByRole('button', { name: 'PAY & OPEN NOW' })).toBeDisabled();
   await expect(section).toContainText('No real-money entries are accepted');
@@ -72,14 +73,15 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
 
   await section.scrollIntoViewIfNeeded();
   const prizePhotos = section.locator('.mystery-reward-photo');
-  await expect(prizePhotos).toHaveCount(3);
+  await expect(prizePhotos).toHaveCount(7);
   await prizePhotos.evaluateAll(images => images.forEach(image => { image.loading = 'eager'; }));
   await expect.poll(
     () => prizePhotos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
     { timeout: 20000 },
-  ).toBe(3);
-  expect((await request.get('/assets/marketplace/spinix-reward-iphone.svg')).status()).toBe(200);
-  expect((await request.get('/assets/marketplace/spinix-reward-laptop.svg')).status()).toBe(200);
+  ).toBe(7);
+  for (const asset of ['voucher', 'usd', 'ksh1000', 'iphone', 'laptop', 'watch', 'gift']) {
+    expect((await request.get(`/assets/marketplace/spinix-reward-${asset}.svg`)).status()).toBe(200);
+  }
 });
 
 test('anonymous direct admin visits reveal no dashboard or private controls', async ({ page, request }) => {

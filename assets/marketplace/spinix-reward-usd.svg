@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="320" viewBox="0 0 560 320" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="38" y1="20" x2="512" y2="302" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8F4E9"/>
+      <stop offset="1" stop-color="#DCE6DC"/>
+    </linearGradient>
+    <linearGradient id="coin" x1="179" y1="81" x2="383" y2="252" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7E7BC"/>
+      <stop offset=".55" stop-color="#C59C48"/>
+      <stop offset="1" stop-color="#96702B"/>
+    </linearGradient>
+    <filter id="shadow" x="90" y="65" width="386" height="242" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect width="560" height="320" rx="24" fill="url(#bg)"/>
+  <circle cx="448" cy="63" r="55" fill="#FFFDF8" fill-opacity=".62"/>
+  <ellipse cx="282" cy="264" rx="174" ry="18" fill="#132E4B" fill-opacity=".18" filter="url(#shadow)"/>
+  <g transform="rotate(-7 230 183)">
+    <ellipse cx="213" cy="226" rx="82" ry="21" fill="#9A7634"/>
+    <path d="M131 204v23c0 12 37 22 82 22s82-10 82-22v-23" fill="#B38B3D"/>
+    <ellipse cx="213" cy="204" rx="82" ry="22" fill="url(#coin)" stroke="#F9EBC6" stroke-width="3"/>
+    <ellipse cx="213" cy="204" rx="61" ry="13" stroke="#94712F" stroke-opacity=".55" stroke-width="2"/>
+    <text x="213" y="210" fill="#72531B" font-family="Georgia,serif" font-size="20" font-weight="700" text-anchor="middle">$</text>
+    <ellipse cx="264" cy="170" rx="82" ry="21" fill="#A78339"/>
+    <path d="M182 148v22c0 12 37 22 82 22s82-10 82-22v-22" fill="#C49A45"/>
+    <ellipse cx="264" cy="148" rx="82" ry="22" fill="url(#coin)" stroke="#FFF1CE" stroke-width="3"/>
+    <ellipse cx="264" cy="148" rx="61" ry="13" stroke="#94712F" stroke-opacity=".55" stroke-width="2"/>
+    <text x="264" y="154" fill="#72531B" font-family="Georgia,serif" font-size="20" font-weight="700" text-anchor="middle">$</text>
+  </g>
+  <rect x="377" y="104" width="115" height="75" rx="12" fill="#122B4C"/>
+  <rect x="385" y="112" width="99" height="59" rx="8" stroke="#D9BD7D" stroke-width="2"/>
+  <text x="434" y="143" fill="#FFFDF8" font-family="Georgia,serif" font-size="24" font-weight="700" text-anchor="middle">US$</text>
+  <text x="434" y="160" fill="#E8D8A9" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="2" text-anchor="middle">USD</text>
+  <text x="28" y="291" fill="#40564A" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1">ILLUSTRATIVE CASH REWARD</text>
+</svg>

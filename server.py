@@ -30,6 +30,11 @@ BRAND_ASSETS = {
     "/assets/marketplace/spinix-mystery-box.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-mystery-box.svg", "image/svg+xml"),
     "/assets/marketplace/spinix-reward-iphone.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-iphone.svg", "image/svg+xml"),
     "/assets/marketplace/spinix-reward-laptop.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-laptop.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-voucher.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-voucher.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-usd.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-usd.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-ksh1000.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-ksh1000.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-watch.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-watch.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-gift.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-gift.svg", "image/svg+xml"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {

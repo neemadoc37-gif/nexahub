@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="320" viewBox="0 0 560 320" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="34" y1="15" x2="525" y2="310" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F5EB"/>
+      <stop offset="1" stop-color="#D6E2D7"/>
+    </linearGradient>
+    <linearGradient id="note" x1="124" y1="90" x2="443" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0F0D9"/>
+      <stop offset=".54" stop-color="#C8D9C3"/>
+      <stop offset="1" stop-color="#A8C1AE"/>
+    </linearGradient>
+    <filter id="shadow" x="55" y="63" width="461" height="250" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect width="560" height="320" rx="24" fill="url(#bg)"/>
+  <circle cx="463" cy="65" r="58" fill="#FFFDF8" fill-opacity=".62"/>
+  <ellipse cx="280" cy="273" rx="188" ry="20" fill="#15334B" fill-opacity=".19" filter="url(#shadow)"/>
+  <g transform="rotate(-5 280 165)">
+    <rect x="102" y="132" width="355" height="115" rx="11" fill="#94AD9D" stroke="#6E8C7E" stroke-width="2"/>
+    <path d="M102 151h355M102 169h355M102 187h355M102 205h355M102 223h355" stroke="#6F8C7D" stroke-opacity=".58" stroke-width="2"/>
+    <rect x="127" y="107" width="355" height="116" rx="11" fill="#BDD0BD" stroke="#789583" stroke-width="2"/>
+    <path d="M127 126h355M127 144h355M127 162h355M127 180h355M127 198h355" stroke="#789583" stroke-opacity=".48" stroke-width="2"/>
+    <rect x="76" y="80" width="379" height="143" rx="13" fill="url(#note)" stroke="#6F8B7D" stroke-width="2"/>
+    <rect x="88" y="92" width="355" height="119" rx="8" stroke="#789583" stroke-width="2"/>
+    <path d="M99 105h72M99 112h52M369 192h61" stroke="#718A7A" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="125" cy="171" r="22" stroke="#739080" stroke-width="3"/>
+    <circle cx="125" cy="171" r="13" stroke="#739080" stroke-width="2"/>
+    <circle cx="403" cy="130" r="22" stroke="#739080" stroke-width="3"/>
+    <circle cx="403" cy="130" r="13" stroke="#739080" stroke-width="2"/>
+    <text x="277" y="151" fill="#173C46" font-family="Arial,sans-serif" font-size="31" font-weight="700" text-anchor="middle">KSh 1,000</text>
+    <text x="277" y="177" fill="#375B54" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="2" text-anchor="middle">ILLUSTRATIVE NOTE</text>
+    <rect x="236" y="194" width="82" height="22" rx="5" fill="#D3B36A"/>
+    <text x="277" y="209" fill="#203B45" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1" text-anchor="middle">BUNDLE BAND</text>
+  </g>
+  <rect x="24" y="23" width="163" height="28" rx="14" fill="#122B4C"/>
+  <text x="105.5" y="42" fill="#F6E8C1" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" text-anchor="middle">KSh 1,000 NOTE BUNDLES</text>
+  <text x="28" y="294" fill="#354F46" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing=".9">CONCEPT ART · NOT LEGAL TENDER</text>
+</svg>

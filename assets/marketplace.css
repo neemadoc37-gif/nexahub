@@ -501,26 +501,7 @@ body{background:#fffaf2;color:var(--ink)}
 .mystery-reward-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
 .mystery-reward{display:flex;flex-direction:column;min-width:0;gap:7px;padding:7px;border:1px solid #e9e0d0;border-radius:10px;background:rgba(255,255,255,.78)}
 .mystery-reward>strong{min-height:25px;color:#34445e;font-size:9px;line-height:1.35}
-.mystery-reward-photo,.reward-art{display:flex;width:100%;height:68px;object-fit:cover;border-radius:6px}
-.mystery-reward-photo{filter:none}
-.reward-art{align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#fffdf8,#f0e7d5);color:#8d6b25}
-.reward-voucher{flex-direction:column;gap:3px;border:1px dashed #bc9b55}
-.reward-voucher span{font-size:6px;font-weight:800;letter-spacing:.14em}
-.reward-voucher strong{font-size:9px;letter-spacing:.08em}
-.reward-coins{gap:0}
-.reward-coins span{display:grid;place-items:center;width:30px;height:30px;margin:0 -3px;border:1px solid #b99549;border-radius:50%;background:#f8f0dc;color:#8d6b25;font-size:16px}
-.reward-coins-large span{width:25px;height:25px;font-size:13px}
-.reward-usd{position:relative;flex-direction:column;gap:0;isolation:isolate;background:linear-gradient(135deg,#f9f4e7,#dce5de)}
-.reward-usd:before,.reward-usd:after{position:absolute;z-index:-1;width:60px;height:34px;border:1px solid #8b9b86;border-radius:5px;background:linear-gradient(135deg,#f5f0dd,#cbd7c4);content:""}
-.reward-usd:before{transform:translate(-6px,2px) rotate(-10deg)}
-.reward-usd:after{transform:translate(6px,-3px) rotate(8deg)}
-.reward-usd>span{display:grid;place-items:center;width:27px;height:27px;border:1px solid #b89448;border-radius:50%;background:#fffaf0;color:#76571b;font-family:Georgia,serif;font-size:18px;font-weight:700}
-.reward-usd>small{margin-top:2px;color:#374b43;font-size:6px;font-weight:800;letter-spacing:.16em}
-.reward-usd-large:before{width:68px;height:39px}
-.reward-usd-large:after{width:64px;height:36px}
-.reward-gift{flex-direction:column;gap:2px}
-.reward-gift span{color:#b08a3d;font-size:19px}
-.reward-gift strong{font-size:7px;letter-spacing:.1em}
+.mystery-reward-photo{display:block;width:100%;height:92px;object-fit:cover;border-radius:6px;background:#f3eddf}
 .mystery-pay{width:100%;margin-top:17px;padding:13px 16px;border:1px solid #cbb477;border-radius:8px;background:#e8dfca;color:#6c5a33;font-size:11px;font-weight:800;letter-spacing:.08em;cursor:not-allowed}
 .mystery-pay:disabled{opacity:1}
 .mystery-availability{margin:8px 0 0;color:#656f7e;font-size:10px;line-height:1.6}
@@ -528,5 +509,5 @@ body{background:#fffaf2;color:var(--ink)}
 .mystery-terms strong{color:#76591d;font-size:10px}
 .mystery-terms p{margin:4px 0 0}
 @media(max-width:850px){.mystery-layout{grid-template-columns:1fr}.mystery-box-stage{width:min(100%,450px)}.mystery-box-panel{min-height:310px}}
-@media(max-width:600px){.mystery-section{scroll-margin-top:240px;margin:42px 0 12px;padding:23px 16px;border-radius:14px}.mystery-heading{margin-bottom:22px}.mystery-heading p{font-size:12px}.mystery-layout{gap:18px}.mystery-box-panel{min-height:unset;padding:27px 12px 16px}.mystery-box-stage{width:min(100%,380px);margin-top:22px}.mystery-box-logo{width:72px}.mystery-price{gap:9px;padding:12px}.mystery-price>span{font-size:7px}.mystery-price>strong{font-size:21px}.mystery-price>small{font-size:8px}.mystery-reward-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mystery-reward-photo,.reward-art{height:82px}.mystery-reward>strong{font-size:10px}}
+@media(max-width:600px){.mystery-section{scroll-margin-top:240px;margin:42px 0 12px;padding:23px 16px;border-radius:14px}.mystery-heading{margin-bottom:22px}.mystery-heading p{font-size:12px}.mystery-layout{gap:18px}.mystery-box-panel{min-height:unset;padding:27px 12px 16px}.mystery-box-stage{width:min(100%,380px);margin-top:22px}.mystery-box-logo{width:72px}.mystery-price{gap:9px;padding:12px}.mystery-price>span{font-size:7px}.mystery-price>strong{font-size:21px}.mystery-price>small{font-size:8px}.mystery-reward-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mystery-reward-photo{height:102px}.mystery-reward>strong{font-size:10px}}
 @media(max-width:360px){.headinner .logo img{width:112px}}

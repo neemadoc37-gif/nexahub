@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="320" viewBox="0 0 560 320" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="30" y1="13" x2="529" y2="310" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFCF6"/>
+      <stop offset="1" stop-color="#E9DFC9"/>
+    </linearGradient>
+    <linearGradient id="box" x1="187" y1="132" x2="372" y2="270" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6E8C1"/>
+      <stop offset=".58" stop-color="#D6B66D"/>
+      <stop offset="1" stop-color="#B38A3D"/>
+    </linearGradient>
+    <filter id="shadow" x="91" y="93" width="378" height="223" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect width="560" height="320" rx="24" fill="url(#bg)"/>
+  <circle cx="452" cy="66" r="61" fill="#FFFDF8" fill-opacity=".58"/>
+  <ellipse cx="280" cy="277" rx="164" ry="19" fill="#142D4A" fill-opacity=".18" filter="url(#shadow)"/>
+  <path d="M174 151h211v110H174z" fill="url(#box)" stroke="#A47C32" stroke-width="2"/>
+  <path d="M174 151h211v27H174z" fill="#EAD69E" stroke="#A47C32" stroke-width="2"/>
+  <path d="M267 151h30v110h-30z" fill="#F9F0D9"/>
+  <path d="M267 151h30v27h-30z" fill="#F8EDCE"/>
+  <path d="M281 153c-36-5-51-28-41-42 9-12 31-1 41 42Z" fill="#C49C4C" stroke="#94702C" stroke-width="2"/>
+  <path d="M283 153c35-7 49-28 38-41-10-11-30 1-38 41Z" fill="#E6D09B" stroke="#94702C" stroke-width="2"/>
+  <circle cx="282" cy="154" r="10" fill="#B58A3D"/>
+  <path d="M281 163v17" stroke="#A27A31" stroke-width="7" stroke-linecap="round"/>
+  <rect x="23" y="24" width="150" height="27" rx="13.5" fill="#122B4C"/>
+  <text x="98" y="42" fill="#F6E8C1" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.1" text-anchor="middle">VERIFIED GIFTS</text>
+  <text x="28" y="291" fill="#40516A" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1">ILLUSTRATIVE REWARD</text>
+</svg>
