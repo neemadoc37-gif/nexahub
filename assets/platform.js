@@ -8,8 +8,16 @@
   let orders = [];
   let catalogCache = [];
   let activeRoute = null;
+  let lastAuthUserId = currentUser?.id || null;
   let fieldSequence = 0;
-  const allowed = new Set(["customer", "seller", "rider", "delivery", "payments", "admin", "catalog"]);
+  const routePaths = {
+    workspaces: "/workspaces", customer: "/customer", seller: "/seller",
+    rider: "/rider", delivery: "/delivery", payments: "/payments",
+    admin: "/admin", catalog: "/catalog"
+  };
+  const allowed = new Set(Object.keys(routePaths));
+  const authPaths = new Set(["/sign-in", "/register", "/forgot-password"]);
+  const normalizedPath = () => location.pathname.replace(/\/$/, "") || "/";
   const el = (tag, cls, text) => {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
@@ -42,12 +50,13 @@
     const parsed = new Date(value);
     return Number.isNaN(parsed.getTime()) ? "Date unavailable" : parsed.toLocaleString();
   };
-  function go(route, productId) {
+  function go(route, productId, context = {}) {
     if (!allowed.has(route)) return;
     const url = new URL(location.href);
-    url.searchParams.set("workspace", route);
+    url.pathname = routePaths[route];
+    ["workspace", "product", "q", "order"].forEach(key => url.searchParams.delete(key));
     if (productId) url.searchParams.set("product", productId);
-    else url.searchParams.delete("product");
+    if (context.order) url.searchParams.set("order", context.order);
     history.pushState({}, "", url.pathname + url.search + url.hash);
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -55,19 +64,30 @@
   function routeFromUrl() {
     const params = new URLSearchParams(location.search);
     const requested = params.get("workspace");
-    return allowed.has(requested) ? requested : null;
+    if (allowed.has(requested)) return requested; // Preserve existing shared links.
+    if (authPaths.has(normalizedPath())) return "customer";
+    return Object.keys(routePaths).find(key => routePaths[key] === normalizedPath()) || null;
   }
   function syncNavigation(route) {
     nav.hidden = false;
     nav.querySelectorAll("a").forEach((link) => {
-      const current = new URL(link.href).searchParams.get("workspace") === route;
+      const current = link.dataset.workspace === (route || "home");
       if (current) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });
   }
   function addHero(kicker, title, description) {
     const hero = el("header", "platform-hero");
-    hero.append(el("div", "platform-kicker", kicker), el("h1", "", title), el("p", "", description));
+    const copy = el("div", "platform-hero-copy");
+    copy.append(el("div", "platform-kicker", kicker), el("h1", "", title), el("p", "", description));
+    const brandPlate = el("div", "platform-hero-brandplate");
+    const brand = el("img", "platform-hero-brand");
+    brand.src = "/assets/brand/nexahub-logo.webp";
+    brand.alt = "NexaHub — Your World. One Hub.";
+    brand.width = 1020;
+    brand.height = 240;
+    brandPlate.appendChild(brand);
+    hero.append(copy, brandPlate);
     mount.appendChild(hero);
   }
   function stateBox(text, type = "") {
@@ -115,6 +135,9 @@
     const box = el("div", "platform-authbar");
     box.append(el("span", "", "This workspace is private. Sign in to load account-owned information."));
     box.appendChild(button("Sign in", () => showAccount()));
+    const register = el("a", "", "Create an account");
+    register.href = "/register";
+    box.appendChild(register);
     mount.appendChild(box);
     return false;
   }
@@ -160,6 +183,51 @@
       wrap.appendChild(list);
     }
     return wrap;
+  }
+  async function loadWorkspaces() {
+    addHero("NEXAHUB WORKSPACES", "Choose your workspace", "Every link opens this application. Availability below distinguishes connected readers from operations that are not yet implemented.");
+    const grid = el("div", "platform-grid workspace-shortcuts");
+    const entries = [
+      ["customer", "Customer dashboard", "Connected readers; sign-in required", "Your profile, orders, bookings and payment records. A confirmed Supabase session is required; successful real login still needs acceptance testing."],
+      ["seller", "Seller dashboard", "Read-only account connection", "View your existing store, products and order items. Applications, listing edits, delivery requests and seller accounting are not operational."],
+      ["rider", "Rider registration and dashboard", "Forms only; storage unavailable", "View registration fields, account, jobs and earnings sections. Registration, verification, acceptance and earnings are not saved."],
+      ["delivery", "Customer delivery tracking", "Entry form only; tracking unavailable", "Enter an order to check ownership. No real delivery milestones, rider location or secure OTP service are connected."],
+      ["catalog", "Live product catalog", "Connected published-product reader", "Search published listings returned by the existing backend. An empty catalog stays empty; example storefront products are not substituted."],
+      ["payments", "M-PESA readiness", "Collections and payouts disabled", "View configuration requirements and account-owned payment records. No live STK Push, settlement or payout is enabled."],
+      ["admin", "Admin dashboard", "Protected entry; management disabled", "Owner access must be provisioned server-side. Approvals, suspension, fees, disputes and payout actions remain unavailable."]
+    ];
+    entries.forEach(([route, title, status, description]) => {
+      const card = panel(title);
+      card.append(el("div", "platform-status workspace-status", status), el("p", "", description));
+      const link = el("a", "platform-btn workspace-directory-link", `Open ${title.toLowerCase()}`);
+      link.href = routePaths[route];
+      link.dataset.workspace = route;
+      card.appendChild(link);
+      grid.appendChild(card);
+    });
+    mount.appendChild(grid);
+    const accounts = panel("Real customer authentication", el("p", "", "These routes use the existing Supabase project. Email confirmation and permitted return URLs are required. Google still requires a successful provider callback test."));
+    const links = el("div", "platform-actions");
+    [["/sign-in", "Sign in"], ["/register", "Create an account"], ["/forgot-password", "Reset password"]].forEach(([path, label]) => {
+      const link = el("a", "platform-btn secondary workspace-directory-link", label); link.href = path; links.appendChild(link);
+    });
+    accounts.appendChild(links);
+    mount.appendChild(accounts);
+    mount.appendChild(panel("Not yet operational", notice("Secure digital downloads, service booking, travel and accommodation reservations, real order creation from the basket, delivery operations, seller/rider accounting and management actions are not implemented end to end. Storefront category examples are not these services.", "warn")));
+    const status = panel("Current server readiness", el("div", "platform-skeleton"));
+    mount.appendChild(status);
+    const ticket = epoch;
+    try {
+      const data = await readinessData();
+      if (ticket !== epoch) return;
+      const content = el("div", "platform-actions");
+      for (const [key, label] of [["seller_writes", "Seller applications"], ["rider_registration", "Rider applications"], ["delivery", "Delivery"], ["payments", "Payments"]]) {
+        content.appendChild(el("span", "platform-status", `${label}: ${data[key]?.enabled === true ? "configured; acceptance tests required" : "disabled"}`));
+      }
+      status.replaceChildren(el("h2", "", "Current server readiness"), content);
+    } catch (error) {
+      if (ticket === epoch) status.replaceChildren(el("h2", "", "Current server readiness"), notice(error.message, "error"));
+    }
   }
   async function loadCustomer(id) {
     addHero("CUSTOMER ACCOUNT", "Your NexaHub", "Orders, bookings and payments associated with your signed-in account.");
@@ -207,6 +275,9 @@
     }
   }
   async function viewOrder(id, expectedTicket = epoch) {
+    const url = new URL(location.href);
+    url.searchParams.set("order", id);
+    history.replaceState({}, "", url.pathname + url.search + url.hash);
     const target = mount.querySelector("#orderDetailPanel");
     if (target) target.remove();
     const pending = panel("Order details", el("div", "platform-skeleton"));
@@ -221,7 +292,7 @@
         `Product ${item.product_id}`, `Quantity ${item.quantity} · ${money(item.unit_price, detail.order?.currency)}`, null
       ), "This order has no returned line items."));
       const actions = el("div", "platform-actions");
-      actions.append(button("Payment readiness", () => go("payments")), button("Track delivery", () => go("delivery"), true));
+      actions.append(button("Payment readiness", () => go("payments", null, { order: id })), button("Track delivery", () => go("delivery", null, { order: id }), true));
       box.appendChild(actions);
       pending.replaceChildren(el("h2", "", "Order details"), box);
     } catch (error) {
@@ -312,7 +383,13 @@
       content.appendChild(el("h3", "", "Products"));
       content.appendChild(listRows(data.products, (product) => recordRow(product.title || `Product ${product.id}`, product.status || "Status unavailable", product.status), "No seller products were returned."));
       content.appendChild(el("h3", "", "Order items"));
-      content.appendChild(listRows(data.items, (item) => recordRow(`Order ${item.order_id}`, `Product ${item.product_id} · Qty ${item.quantity} · ${money(item.unit_price)}`, null), "No seller order items were returned."));
+      content.appendChild(listRows(data.items, (item) => recordRow(`Order ${item.order_id}`, `Product ${item.product_id} · Qty ${item.quantity} · ${money(item.unit_price)}`, null, () => {
+        const requestForm = mount.querySelector('form [name="pickup_address"]')?.form;
+        if (!requestForm) return;
+        requestForm.elements.order_id.value = item.order_id;
+        requestForm.scrollIntoView({ behavior: "smooth", block: "center" });
+        requestForm.elements.pickup_address.focus({ preventScroll: true });
+      }, "Prepare delivery request"), "No seller order items were returned."));
       loading.replaceWith(panel("Seller overview", content));
       const grid = el("div", "platform-grid");
       grid.appendChild(formPanel("Apply to sell", "A validated request reaches a server-side configuration gate. There is no local draft.", [
@@ -377,6 +454,7 @@
     const wrap = panel("Customer tracking", null);
     const form = el("form", "platform-form");
     const orderInput = formField(form, "Order ID", "order_id", "text", true, { maxLength: 80 });
+    orderInput.value = new URLSearchParams(location.search).get("order") || "";
     const track = document.createElement("button"); track.className = "platform-btn"; track.type = "submit"; track.textContent = "Check tracking";
     const output = el("div", "platform-route-message"); output.setAttribute("role", "status"); output.setAttribute("aria-live", "polite");
     form.append(track, output);
@@ -414,6 +492,7 @@
     ], "/api/deliveries/confirm", (formEl) => ({
       order_id: formEl.elements.order_id.value.trim(), otp: formEl.elements.otp.value.trim()
     }), "delivery", "delivery confirmation");
+    otp.querySelector('[name="order_id"]').value = orderInput.value;
     mount.appendChild(otp);
     const guide = panel("Delivery status guide", el("p", "platform-meta", "This is the approved workflow guide, not the status of a real delivery."));
     const steps = el("ol", "platform-workflow");
@@ -445,7 +524,9 @@
         const form = el("form", "platform-form");
         const choices = [["", "Choose an order"]];
         orders.forEach((order) => choices.push([order.id, `${order.id} — ${money(order.total_amount, order.currency)} — ${order.status}`]));
-        formField(form, "Order", "order_id", "select", true, { select: choices });
+        const orderSelect = formField(form, "Order", "order_id", "select", true, { select: choices });
+        const requestedOrder = new URLSearchParams(location.search).get("order");
+        if (orders.some(order => order.id === requestedOrder)) orderSelect.value = requestedOrder;
         formField(form, "M-PESA phone number", "phone", "tel", true, { maxLength: 32, autocomplete: "tel" });
         const message = el("div", "platform-route-message"); message.setAttribute("role", "status"); message.setAttribute("aria-live", "polite");
         const submit = document.createElement("button"); submit.className = "platform-btn"; submit.type = "submit"; submit.textContent = "Check payment readiness";
@@ -606,7 +687,8 @@
     clearAndSetLoading();
     mount.replaceChildren();
     try {
-      if (route === "catalog") await loadCatalog();
+      if (route === "workspaces") await loadWorkspaces();
+      else if (route === "catalog") await loadCatalog();
       else if (route === "customer") await loadCustomer(new URLSearchParams(location.search).get("order"));
       else if (route === "seller") await loadSeller();
       else if (route === "rider") await loadRider();
@@ -616,29 +698,38 @@
     } catch (error) { setError(error.message || "Unable to load this workspace.", () => render()); }
   }
   function authChanged(user) {
-    if (!activeRoute || activeRoute === "catalog") return;
+    const nextUserId = user?.id || null;
+    if (nextUserId === lastAuthUserId) return;
+    lastAuthUserId = nextUserId;
+    if (!activeRoute || activeRoute === "catalog" || activeRoute === "workspaces") return;
     epoch++;
     orders = [];
-    if (!user) {
-      mount.replaceChildren();
-      if (activeRoute) {
-        addHero("SIGNED OUT", "Your private workspace is cleared", "Sign in to request fresh account-owned information. No previous account data remains on screen.");
-        requireSignIn();
-      }
-    } else render();
+    // Rendering clears the previous account's DOM before any async reader runs.
+    // Initial anonymous SDK events must not erase public forms or route titles.
+    render();
   }
   document.addEventListener("click", (event) => {
-    const link = event.target.closest(".platform-nav a");
-    if (!link) return;
+    const categoryLink = event.target.closest('.footer a[href="#marketplace"]');
+    if (categoryLink && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+      event.preventDefault();
+      goHome();
+      filterCategory({ Shopping: "Shopping", "Digital products": "Digital", Services: "Services", Travel: "Travel" }[categoryLink.textContent.trim()] || "All");
+      document.getElementById("marketplace").scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    const link = event.target.closest("a[data-workspace]");
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = new URL(link.href);
     if (target.origin !== location.origin) return;
     event.preventDefault();
-    const workspace = target.searchParams.get("workspace");
-    if (workspace) go(workspace);
+    if (link.closest("#accountModal")) closeModal("accountModal");
+    const workspace = link.dataset.workspace;
+    if (allowed.has(workspace)) go(workspace);
     else goHome();
   });
   function goHome() {
     const url = new URL(location.href);
+    url.pathname = "/";
     ["workspace", "product", "q", "order"].forEach(key => url.searchParams.delete(key));
     history.pushState({}, "", url.pathname + url.search + url.hash);
     render();
@@ -646,7 +737,22 @@
   document.querySelector(".header .nav").addEventListener("click", event => {
     if (activeRoute && event.target.closest("button") && !event.target.closest("button").getAttribute("onclick")?.includes("Platform")) goHome();
   }, true);
-  window.addEventListener("popstate", render);
-  window.Platform = { go, render, authChanged };
+  function openAccountRoute() {
+    if (!authPaths.has(normalizedPath())) return;
+    showAccount();
+    if (!currentUser && !isPasswordRecovery) {
+      setAuthMode(normalizedPath() === "/register" ? "signup" : "signin");
+      if (normalizedPath() === "/forgot-password") setAuthMessage("Enter your account email, then choose “Forgot password?” to request a secure reset link.");
+    }
+  }
+  window.addEventListener("popstate", () => { render(); openAccountRoute(); });
+  window.Platform = { go, home: goHome, render, authChanged };
   render();
+  openAccountRoute();
+  api("/api/build").then(data => {
+    document.getElementById("previewBuild").textContent = `Preview build ${data.build_id} · Existing Supabase authentication · Live payments and payouts disabled`;
+    document.getElementById("previewBuild").dataset.buildId = data.build_id;
+  }).catch(() => {
+    document.getElementById("previewBuild").textContent = "Preview build could not be verified. Reload before testing account features.";
+  });
 })();

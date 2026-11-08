@@ -46,3 +46,46 @@ test('brand assets support GET/HEAD without exposing workspace files', async ({ 
     expect((await request.get(path)).status()).toBe(404);
   }
 });
+
+for (const width of [320, 402, 1280]) {
+  test(`approved branding on sign-in and every role dashboard at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const writes = [];
+    page.on('request', request => {
+      if (request.method() === 'POST') writes.push(new URL(request.url()).pathname);
+    });
+    const approved = '/assets/brand/nexahub-logo.webp';
+    for (const route of ['/sign-in', '/customer', '/seller', '/rider', '/admin']) {
+      await page.goto(route);
+      const headerLogo = page.locator(`.header img[src="${approved}"]`);
+      const pageLogo = route === '/sign-in'
+        ? page.locator(`#accountModal img[src="${approved}"]`)
+        : page.locator(`#platformMount .platform-hero img[src="${approved}"]`);
+      for (const logo of [headerLogo, pageLogo]) {
+        if (route !== '/sign-in' || logo === pageLogo) await expect(logo).toBeVisible();
+        await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth)).toBe(1020);
+        const geometry = await logo.evaluate(img => {
+          const rect = img.getBoundingClientRect();
+          return { ratio: rect.width / rect.height, expectedRatio: img.naturalWidth / img.naturalHeight,
+            width: rect.width, fits: rect.left >= 0 && rect.right <= innerWidth };
+        });
+        expect(Math.abs(geometry.ratio - geometry.expectedRatio)).toBeLessThan(0.03);
+        expect(geometry.width).toBeGreaterThan(100);
+        expect(geometry.fits).toBe(true);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+    expect(writes).toEqual([]);
+  });
+}
+
+test('browser favicon is the approved 64px image on dashboard routes', async ({ page }) => {
+  await page.goto('/admin');
+  const dimensions = await page.evaluate(async () => {
+    const img = new Image();
+    img.src = document.querySelector('link[rel="icon"]').href;
+    await img.decode();
+    return [img.naturalWidth, img.naturalHeight];
+  });
+  expect(dimensions).toEqual([64, 64]);
+});

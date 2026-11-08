@@ -13,7 +13,7 @@ for (const width of [402, 1280]) {
     await page.goto('/');
     await expect(page.locator('.platform-nav')).toBeVisible();
     await page.locator('.platform-nav').getByRole('link', { name: 'Rider desk', exact: true }).click();
-    await expect(page).toHaveURL(/workspace=rider/);
+    await expect(page).toHaveURL(/\/rider$/);
     await expect(page.getByRole('heading', { name: 'Independent work, responsibly' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Rider application', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Available jobs', exact: true })).toBeVisible();

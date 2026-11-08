@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import hashlib
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -21,10 +22,30 @@ BRAND_ASSETS = {
     "/assets/platform.js": (INDEX.parent / "assets" / "platform.js", "text/javascript; charset=utf-8"),
 }
 API = MarketplaceAPI()
+PAGE_ROUTES = {
+    "/", "/index.html", "/workspaces", "/catalog", "/customer", "/seller",
+    "/rider", "/delivery", "/payments", "/admin", "/sign-in", "/register",
+    "/forgot-password",
+}
+
+
+def build_info():
+    """Fingerprint public and server source, without exposing paths or secrets."""
+    digest = hashlib.sha256()
+    sources = [INDEX, Path(__file__), *BRAND_ASSETS.values()]
+    paths = [item[0] if isinstance(item, tuple) else item for item in sources]
+    paths.extend(sorted((INDEX.parent / "marketplace").glob("*.py")))
+    for path in paths:
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return {"build_id": digest.hexdigest()[:12], "auth_provider": "Supabase"}
 
 
 class StorefrontHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if urlsplit(self.path).path == "/api/build":
+            self.send_json(200, build_info())
+            return
         if urlsplit(self.path).path.startswith("/api/"):
             self.serve_api("GET")
             return
@@ -78,6 +99,7 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-NexaHub-Build", build_info()["build_id"])
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
@@ -85,7 +107,9 @@ class StorefrontHandler(BaseHTTPRequestHandler):
 
     def serve_page(self, head_only=False):
         path = urlsplit(self.path).path
-        if path in ("/", "/index.html"):
+        if path != "/":
+            path = path.rstrip("/")
+        if path in PAGE_ROUTES:
             file_path, content_type = INDEX, "text/html; charset=utf-8"
         elif path in BRAND_ASSETS:
             file_path, content_type = BRAND_ASSETS[path]
@@ -98,6 +122,7 @@ class StorefrontHandler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Length", str(len(content)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-NexaHub-Build", build_info()["build_id"])
         self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
         if not head_only:
