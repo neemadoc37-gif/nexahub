@@ -133,19 +133,25 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
 test('Spin & Win preview has exact sector counts and cannot assign a result', async ({ page }) => {
   await page.goto('/');
   const wheel = page.locator('.mystery-wheel-preview');
-  await expect(wheel.getByRole('heading', { name: 'The Spin & Win wheel' })).toBeVisible();
+  const box = page.locator('.mystery-box-panel');
+  await expect(box).toContainText('The wheel is inside the box and appears after verified payment unlocks it');
+  await expect(wheel).toBeAttached();
+  await expect(wheel).toBeHidden();
+  await expect(wheel.locator('#mysteryWheelHeading')).toHaveText('The Spin & Win wheel');
   const segments = wheel.locator('.mystery-wheel-segment');
-  const labels = await segments.evaluateAll(items => items.map(item => item.innerText.replace(/\s+/g, ' ').trim()));
+  const labels = await segments.evaluateAll(items => items.map(item =>
+    item.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(),
+  ));
   expect(labels).toHaveLength(10);
   expect(labels.filter(label => label === 'ONE SPIN')).toHaveLength(1);
   expect(labels.filter(label => label === 'TRY AGAIN 1')).toHaveLength(1);
   expect(labels.filter(label => label === 'TRY AGAIN 2')).toHaveLength(1);
   for (const prize of ['CARREFOUR', 'US$100', 'KSh 100,000', 'iPHONE 16', 'SAMSUNG', 'HP LAPTOP', 'SMART']) {
-    await expect(segments.filter({ hasText: prize }).first()).toBeVisible();
+    await expect(segments.filter({ hasText: prize })).toHaveCount(1);
   }
-  await expect(wheel.locator('.mystery-wheel-pointer')).toBeVisible();
+  await expect(wheel.locator('.mystery-wheel-pointer')).toBeAttached();
   await expect(wheel).toContainText('READY AFTER PAYMENT');
-  await expect(wheel.getByRole('button', { name: 'PAYMENT NOT ENABLED IN PREVIEW' })).toBeDisabled();
+  await expect(wheel.locator('.mystery-wheel-button')).toBeDisabled();
   await expect(wheel).toContainText('Once a verified payment unlocks the box');
   await expect(wheel).toContainText('no payment, congratulations, spin or prize record is created here');
 });
