@@ -94,7 +94,7 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   const section = page.locator('#mystery-box');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText('YOUR NEXT SURPRISE COULD BE AMAZING!');
   await expect(section.locator('.mystery-price')).toContainText('ONE BOX · ONE PRICE');
-  await expect(section.locator('.mystery-price strong')).toHaveText('KSh 300');
+  await expect(section.locator('.mystery-price strong')).toHaveText('KSh 299');
   await expect(section.locator('.mystery-box-art')).toHaveCount(1);
   await expect(section.locator('.mystery-reward')).toHaveCount(7);
   await expect(section).toContainText('Small cash rewards (USD)');
