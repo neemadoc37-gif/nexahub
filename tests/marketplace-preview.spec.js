@@ -104,7 +104,7 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   await expect(section).toContainText('HP Laptop 15 (concept)');
   await expect(section.locator('.mystery-disclaimer')).toContainText('These photos illustrate possible reward types only');
   await expect(section.locator('.mystery-disclaimer')).toContainText('No prize inventory is confirmed or available');
-  await expect(section.getByRole('button', { name: 'PAY & OPEN NOW' })).toBeDisabled();
+  await expect(section.getByRole('button', { name: 'PAY KSh 299 TO UNLOCK THE BOX' })).toBeDisabled();
   await expect(section).toContainText('No real-money entries are accepted');
   await expect(section).toContainText('Admin reward inventory');
   expect((await request.get('/assets/marketplace/spinix-mystery-box.svg')).status()).toBe(200);
@@ -128,6 +128,26 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   ]) {
     expect((await request.get(`/assets/marketplace/rewards/${asset}`)).status()).toBe(200);
   }
+});
+
+test('Spin & Win preview has exact sector counts and cannot assign a result', async ({ page }) => {
+  await page.goto('/');
+  const wheel = page.locator('.mystery-wheel-preview');
+  await expect(wheel.getByRole('heading', { name: 'The Spin & Win wheel' })).toBeVisible();
+  const segments = wheel.locator('.mystery-wheel-segment');
+  const labels = await segments.evaluateAll(items => items.map(item => item.innerText.replace(/\s+/g, ' ').trim()));
+  expect(labels).toHaveLength(10);
+  expect(labels.filter(label => label === 'ONE SPIN')).toHaveLength(1);
+  expect(labels.filter(label => label === 'TRY AGAIN 1')).toHaveLength(1);
+  expect(labels.filter(label => label === 'TRY AGAIN 2')).toHaveLength(1);
+  for (const prize of ['CARREFOUR', 'US$100', 'KSh 100,000', 'iPHONE 16', 'SAMSUNG', 'HP LAPTOP', 'SMART']) {
+    await expect(segments.filter({ hasText: prize }).first()).toBeVisible();
+  }
+  await expect(wheel.locator('.mystery-wheel-pointer')).toBeVisible();
+  await expect(wheel).toContainText('READY AFTER PAYMENT');
+  await expect(wheel.getByRole('button', { name: 'PAYMENT NOT ENABLED IN PREVIEW' })).toBeDisabled();
+  await expect(wheel).toContainText('Once a verified payment unlocks the box');
+  await expect(wheel).toContainText('no payment, congratulations, spin or prize record is created here');
 });
 
 test('anonymous direct admin visits reveal no dashboard or private controls', async ({ page, request }) => {
