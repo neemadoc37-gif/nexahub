@@ -64,7 +64,7 @@
    <a class="about-more-link" href="/about" data-workspace="about">Explore our vision, mission and values <span aria-hidden="true">↗</span></a>
   </section>
    <section class="category-section" aria-labelledby="categoryHeading">
-     <div class="sectionhead"><div><span class="section-kicker">SHOP SPINIX ONE</span><h2 id="categoryHeading">Explore products and services.</h2><p>Browse businesses, products and experiences from around the world.</p></div><a class="textlink" href="/catalog">Shop the full catalog <span aria-hidden="true">↗</span></a></div>
+      <div class="sectionhead"><div><span class="section-kicker">SHOP SPINIX ONE</span><h2 id="categoryHeading">Explore products and services.</h2><p>Explore categories for shopping, services, digital products and travel.</p></div><a class="textlink" href="/catalog">Shop the full catalog <span aria-hidden="true">↗</span></a></div>
     <div class="categories">
       <a class="cat" href="/catalog?category=supermarkets"><img class="cat-photo" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Supermarkets</strong><small>Everyday essentials</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
       <a class="cat" href="/catalog?category=restaurants"><img class="cat-photo" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Restaurants</strong><small>Made for the table</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
@@ -76,27 +76,44 @@
       <a class="cat" href="/catalog?category=digital-products"><img class="cat-photo" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Digital products</strong><small>Ideas to keep</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
       <a class="cat" href="/catalog?category=travel"><img class="cat-photo" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Travel &amp; experiences</strong><small>Places and escapes</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
    </div>
-    <div class="trust-strip" aria-label="Marketplace information">
-     <div class="trust-item"><span class="trust-mark" aria-hidden="true">01</span><span><strong>Independent discovery</strong>Find businesses and makers</span></div>
-     <div class="trust-item"><span class="trust-mark" aria-hidden="true">02</span><span><strong>Published listings</strong>Live catalog, not demos</span></div>
-     <div class="trust-item"><span class="trust-mark" aria-hidden="true">03</span><span><strong>Your account, your records</strong>Private customer workspace</span></div>
-     <div class="trust-item"><span class="trust-mark" aria-hidden="true">04</span><span><strong>Clear about what’s live</strong>Availability shown honestly</span></div>
-    </div>
-    <p class="category-note">Pharmacy listings require appropriate verification. Category links show only live listings configured for Spinix One.</p>
  </section>
-  <section class="live-section" id="liveMarketplace" aria-labelledby="liveHeading">
+  <section class="experience-section" aria-labelledby="experienceHeading">
+   <div class="experience-intro">
+    <span class="section-kicker">SERVICES, BOOKINGS &amp; TRAVEL</span>
+    <h2 id="experienceHeading">Find more than things to buy.</h2>
+    <p>Explore categories for professional services, travel and experiences in one place.</p>
+   </div>
+   <div class="experience-grid">
+    <a class="experience-card" href="/catalog?category=services">
+     <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&amp;fit=crop&amp;w=900&amp;h=520&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="900" height="520">
+     <span class="experience-card-copy"><small>PROFESSIONAL SERVICES</small><strong>Explore service categories</strong><span>Browse expertise for work, home and everyday life <b aria-hidden="true">↗</b></span></span>
+    </a>
+    <a class="experience-card" href="/catalog?category=travel">
+     <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&amp;fit=crop&amp;w=900&amp;h=520&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="900" height="520">
+     <span class="experience-card-copy"><small>TRAVEL &amp; EXPERIENCES</small><strong>Discover travel and stays</strong><span>Browse categories for tours and getaways <b aria-hidden="true">↗</b></span></span>
+    </a>
+   </div>
+  </section>
+   <section class="live-section" id="liveMarketplace" aria-labelledby="liveHeading" hidden>
     <div class="sectionhead"><div><span class="section-kicker">FROM THE LIVE CATALOG</span><h2 id="liveHeading">A good place to start.</h2><p>Real listings currently available on Spinix One. Browse the full catalog for more.</p></div><a class="textlink" href="/catalog">View the catalog <span aria-hidden="true">↗</span></a></div>
-   <div class="live-products" id="liveProducts" aria-live="polite" aria-busy="true"><div class="live-skeleton"></div><div class="live-skeleton"></div><div class="live-skeleton"></div><div class="live-skeleton"></div></div>
+    <div class="live-products" id="liveProducts" aria-live="polite" aria-busy="true"></div>
   </section>
-  <section class="business-section" aria-labelledby="businessHeading">
+   <section class="business-section" id="businessShowcase" aria-labelledby="businessHeading" hidden>
    <div class="sectionhead"><div><span class="section-kicker">MEET THE NEIGHBORS</span><h2 id="businessHeading">Stores with a story.</h2><p>Approved businesses with published listings in the live catalog.</p></div><a class="textlink" href="/catalog">Find more businesses <span aria-hidden="true">↗</span></a></div>
-   <div class="business-grid" id="liveBusinesses" aria-live="polite" aria-busy="true"><div class="business-skeleton"></div><div class="business-skeleton"></div><div class="business-skeleton"></div></div>
+    <div class="business-grid" id="liveBusinesses" aria-live="polite" aria-busy="true"></div>
   </section>
-  <section class="why-section" aria-labelledby="whyHeading"><div class="sectionhead"><div><span class="section-kicker">A MORE THOUGHTFUL MARKETPLACE</span><h2 id="whyHeading">Clarity comes with every discovery.</h2><p>Useful features, presented honestly while Spinix One grows.</p></div></div><div class="why-grid"><article><span>01</span><h3>Published, not pretend</h3><p>Only listings returned as published by the live catalog appear as products.</p></article><article><span>02</span><h3>Your account stays yours</h3><p>Private customer pages require sign-in and request account-scoped records.</p></article><article><span>03</span><h3>Clear about what is live</h3><p>Unavailable inventory, checkout and services are not replaced with demo data.</p></article></div></section>
-    <section class="seller-section" aria-labelledby="sellerHeading"><div class="seller-copy"><span class="section-kicker">SELLER OPPORTUNITIES</span><h2 id="sellerHeading">Put your products, services and experiences in view.</h2><p>SPINIX ONE helps independent sellers, businesses and digital creators showcase their offerings and connect with potential customers. Seller onboarding and listing changes are not yet saved in this Preview.</p><a class="primary" href="/seller" data-workspace="seller">JOIN AS A SELLER <span aria-hidden="true">↗</span></a></div><div class="seller-steps" aria-label="Seller journey"><div><span>01</span><strong>Introduce your shop or service</strong></div><div><span>02</span><strong>Complete verification</strong></div><div><span>03</span><strong>Prepare products or services</strong></div><p>These are planned steps; this page does not submit an application.</p></div></section>
-  <section class="payment-note" id="payment-information" aria-labelledby="paymentHeading"><div class="payment-seal" aria-hidden="true">NH</div><div><span class="section-kicker">PAYMENT STATUS</span><h2 id="paymentHeading">Checkout is not enabled yet.</h2><p>M-PESA and international card payments are not being accepted in this Preview. Payment details and provider approvals must be verified before real checkout is turned on.</p></div><a href="/payments" class="payment-link">View payment readiness <span aria-hidden="true">↗</span></a></section>
- <section class="discovery-note"><span class="discovery-line"></span><p>One marketplace. Many ways to find what feels right.</p><a href="/catalog">Start exploring <span aria-hidden="true">↗</span></a></section>
-  <section class="mystery-section" id="mystery-box" aria-labelledby="mysteryHeading">
+  <section class="seller-section" aria-labelledby="sellerOpportunityHeading">
+   <div class="seller-copy">
+    <span class="section-kicker">SELL ON SPINIX ONE</span>
+    <h2 id="sellerOpportunityHeading">Bring your business to more customers.</h2>
+    <p>Introduce your products, services, digital creations or travel experiences to people exploring SPINIX ONE.</p>
+    <a class="primary" href="/seller" data-workspace="seller">JOIN AS A SELLER <span aria-hidden="true">↗</span></a>
+   </div>
+   <div class="seller-offerings" aria-label="Business categories on SPINIX ONE">
+    <span>Products</span><span>Services</span><span>Digital creations</span><span>Travel &amp; experiences</span>
+   </div>
+  </section>
+   <section class="mystery-section" id="mystery-box" aria-labelledby="mysteryHeading" hidden>
    <div class="mystery-heading">
     <span class="mystery-kicker">SPINIX ONE · CONCEPT PREVIEW</span>
     <h2 id="mysteryHeading">YOUR NEXT SURPRISE COULD BE AMAZING!</h2>
@@ -194,7 +211,7 @@
     <div><div class="logo"><img src="/assets/brand/spinix-one-logo.svg" alt="SPINIX ONE — Connecting Businesses. Empowering People." width="420" height="96"></div><p><strong class="footer-slogan">Connecting Businesses. Empowering People.</strong><br>SPINIX ONE connects customers with businesses, independent sellers and digital creators through a global marketplace for products and services.</p></div>
     <div><h4>Explore</h4><p><a href="/catalog?category=supermarkets">Supermarkets</a><br><a href="/catalog?category=restaurants">Restaurants</a><br><a href="/catalog?category=pharmacies">Pharmacies</a><br><a href="/catalog?category=electronics">Electronics</a><br><a href="/catalog?category=fashion">Fashion</a><br><a href="/catalog?category=home-living">Home &amp; living</a><br><a href="/catalog?category=services">Professional services</a><br><a href="/catalog?category=digital-products">Digital products</a><br><a href="/catalog?category=travel">Travel &amp; experiences</a></p></div>
     <div><h4>Partner with us</h4><p><a href="/seller">Seller information</a><br><a href="/rider">Rider information</a><br><a href="/payments">Payment readiness</a></p></div>
-    <div><h4>Help &amp; information</h4><p><a href="/about" data-workspace="about">About SPINIX ONE</a><br><a href="/customer">Your account</a><br>Support and policy details will be published before public launch.</p></div>
+    <div><h4>Help &amp; information</h4><p><a href="/about" data-workspace="about">About SPINIX ONE</a><br><a href="/customer">Your account</a><br><a href="/payments">Payment information</a></p></div>
    </div>
    <div class="footbottom">© 2026 SPINIX ONE. Connecting Businesses. Empowering People.</div>
   </footer>

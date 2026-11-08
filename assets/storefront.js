@@ -4,6 +4,8 @@
   const productHost = document.getElementById("liveProducts");
   const businessHost = document.getElementById("liveBusinesses");
   if (!productHost || !businessHost) return;
+  const productSection = productHost.closest(".live-section");
+  const businessSection = businessHost.closest(".business-section");
 
   const element = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -38,18 +40,6 @@
     }
   };
 
-  const makeState = (heading, description, retry) => {
-    const state = element("div", retry ? "live-error" : "live-empty");
-    state.append(element("strong", "", heading), element("p", "", description));
-    if (retry) {
-      const button = element("button", "", "Try again");
-      button.type = "button";
-      button.addEventListener("click", retry);
-      state.appendChild(button);
-    }
-    return state;
-  };
-
   const setBusy = (host, busy) => {
     host.setAttribute("aria-busy", busy ? "true" : "false");
   };
@@ -62,12 +52,11 @@
       product && product.id && product.title && product.status === "published"
     );
     if (!published.length) {
-      productHost.replaceChildren(makeState(
-        "The catalog is taking shape.",
-        "There are no live listings to show right now. Browse the full catalog to check again."
-      ));
+      productHost.replaceChildren();
+      if (productSection) productSection.hidden = true;
       return;
     }
+    if (productSection) productSection.hidden = false;
 
     const cards = published.slice(0, 8).map((product) => {
       const card = element("a", "market-card");
@@ -109,12 +98,11 @@
       business && business.id && business.store_name && business.status === "approved"
     );
     if (!approved.length) {
-      businessHost.replaceChildren(makeState(
-        "Your next favorite is still out there.",
-        "No approved businesses with published listings are available to feature yet."
-      ));
+      businessHost.replaceChildren();
+      if (businessSection) businessSection.hidden = true;
       return;
     }
+    if (businessSection) businessSection.hidden = false;
     const cards = approved.slice(0, 6).map((business) => {
       const card = element("a", "business-card");
       const target = new URL("/catalog", window.location.origin);
@@ -144,11 +132,8 @@
       if (!response.ok) throw new Error(`Catalog request failed (${response.status}).`);
       renderProducts(await response.json());
     } catch (_) {
-      productHost.replaceChildren(makeState(
-        "Live listings could not be loaded.",
-        "Check your connection and try again. No substitute listings will be shown.",
-        loadProducts
-      ));
+      productHost.replaceChildren();
+      if (productSection) productSection.hidden = true;
     } finally {
       setBusy(productHost, false);
     }
@@ -165,11 +150,8 @@
       if (!response.ok) throw new Error(`Business request failed (${response.status}).`);
       renderBusinesses(await response.json());
     } catch (_) {
-      businessHost.replaceChildren(makeState(
-        "Business profiles are unavailable just now.",
-        "Please try again in a moment. No sample businesses are substituted.",
-        loadBusinesses
-      ));
+      businessHost.replaceChildren();
+      if (businessSection) businessSection.hidden = true;
     } finally {
       setBusy(businessHost, false);
     }

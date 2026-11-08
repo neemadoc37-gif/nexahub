@@ -601,3 +601,31 @@ body{background:#fffaf2;color:var(--ink)}
 @media(max-width:850px){.mystery-wheel-preview{grid-template-columns:1fr}.mystery-wheel-figure{grid-column:1;grid-row:1}.mystery-wheel-copy{grid-column:1;grid-row:2}.mystery-wheel-locked{grid-column:1;grid-row:3}}
 @media(max-width:600px){.mystery-section{scroll-margin-top:240px;margin:42px 0 12px;padding:23px 16px;border-radius:14px}.mystery-heading{margin-bottom:22px}.mystery-heading p{font-size:12px}.mystery-layout{gap:18px}.mystery-box-panel{min-height:unset;padding:27px 12px 16px}.mystery-box-stage{width:min(100%,380px);margin-top:22px}.mystery-box-logo{width:72px}.mystery-price{gap:9px;padding:12px}.mystery-price>span{font-size:7px}.mystery-price>strong{font-size:21px}.mystery-price>small{font-size:8px}.mystery-reward-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mystery-reward-photo{height:102px}.mystery-reward>strong{font-size:10px}.mystery-wheel-preview{gap:14px;padding:16px}.mystery-wheel-stage{width:min(100%,340px)}.mystery-wheel-segment{width:72px;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter));font-size:7px}.mystery-wheel-hub{width:63px;height:63px}.mystery-wheel-summary{gap:6px}.mystery-wheel-summary li{padding:7px;font-size:8px}.mystery-wheel-summary strong{font-size:13px}}
 @media(max-width:360px){.headinner .logo img{width:112px}}
+
+/* Public-homepage discovery polish: no empty live-data panels or internal status copy. */
+#liveMarketplace[hidden],#businessShowcase[hidden],#mystery-box[hidden]{display:none!important}
+.experience-section{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(0,1.28fr);gap:28px;align-items:center;margin:16px 0 0;padding:22px;border:1px solid #e6dcc7;background:linear-gradient(120deg,#fffdf8,#f1eadc)}
+.experience-intro .section-kicker{color:#8c6b30}
+.experience-intro h2{margin:9px 0 8px;font-size:clamp(22px,2.8vw,31px);line-height:1.13;letter-spacing:-.045em}
+.experience-intro p{max-width:360px;margin:0;color:#65717d;font-size:11px;line-height:1.7}
+.experience-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.experience-card{position:relative;display:block;min-width:0;min-height:190px;overflow:hidden;background:#172d49;color:#fff;text-decoration:none}
+.experience-card:focus-visible{outline:3px solid #b89458;outline-offset:3px}
+.experience-card>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.experience-card:hover>img{transform:scale(1.04)}
+.experience-card:after{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,27,46,.03) 20%,rgba(10,27,46,.8) 100%);content:""}
+.experience-card-copy{position:absolute;right:16px;bottom:15px;left:16px;z-index:1;display:grid;gap:5px}
+.experience-card-copy small{color:#f1d69a;font-size:8px;font-weight:800;letter-spacing:.13em}
+.experience-card-copy strong{font-size:16px;line-height:1.2}
+.experience-card-copy>span{display:flex;justify-content:space-between;gap:8px;color:#fffdf6;font-size:9px;line-height:1.45}
+.experience-card-copy b{color:#f1d69a;font-size:13px}
+.seller-section{background:linear-gradient(120deg,#14253f,#1a344e);border-color:#d3bd8b}
+.seller-copy .section-kicker{color:#e5ce98}
+.seller-copy h2{color:#fffdf8}
+.seller-copy p{color:#d6ddd9}
+.seller-section .primary{background:#d7bd7d;color:#14253f}
+.seller-section .primary:hover{background:#ead9ae}
+.seller-offerings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.seller-offerings span{display:flex;align-items:center;min-height:58px;padding:12px;border:1px solid rgba(231,216,179,.36);background:rgba(255,253,248,.06);color:#fffdf8;font-size:11px;font-weight:650}
+@media(max-width:850px){.experience-section{grid-template-columns:1fr;gap:18px}.experience-intro p{max-width:620px}.seller-section{grid-template-columns:1fr}.seller-offerings{max-width:520px}}
+@media(max-width:600px){.experience-section{margin-top:10px;padding:16px}.experience-grid{grid-template-columns:1fr}.experience-card{min-height:175px}.experience-card-copy{right:13px;bottom:13px;left:13px}.experience-card-copy strong{font-size:15px}.seller-section{gap:18px;margin-top:42px;padding:23px 18px}.seller-offerings span{min-height:52px;padding:10px;font-size:10px}}

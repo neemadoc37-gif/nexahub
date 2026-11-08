@@ -13,12 +13,21 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('.header')).not.toContainText('dashboard');
     await expect(page.locator('.header')).not.toContainText('Workspaces');
     await expect(page.locator('.categories .cat')).toHaveCount(9);
+    await expect(page.locator('#liveMarketplace')).toBeHidden();
+    await expect(page.locator('#businessShowcase')).toBeHidden();
+    await expect(page.locator('.why-section')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/The catalogue is taking shape|Published, not pretend|Your account stays yours|Clear about what is live/i);
+    await expect(page.locator('#mystery-box')).toBeHidden();
+    await expect(page.locator('.experience-card')).toHaveCount(2);
+    await expect(page.locator('.experience-card[href="/catalog?category=services"]')).toContainText('Explore service categories');
+    await expect(page.locator('.experience-card[href="/catalog?category=travel"]')).toContainText('Discover travel and stays');
+    await expect(page.locator('#sellerOpportunityHeading')).toHaveText('Bring your business to more customers.');
     await expect(page.locator('.categories .cat strong')).toHaveText([
       'Supermarkets', 'Restaurants', 'Pharmacies', 'Electronics',
       'Fashion', 'Home & living', 'Professional services',
       'Digital products', 'Travel & experiences',
     ]);
-    await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
+    await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Payment information' })).toBeVisible();
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -55,6 +64,13 @@ test('each marketplace category has a matching photo that loads', async ({ page 
     () => photos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
     { timeout: 20000 },
   ).toBe(9);
+  const experiencePhotos = page.locator('.experience-card > img');
+  await expect(experiencePhotos).toHaveCount(2);
+  await experiencePhotos.evaluateAll(images => images.forEach(image => { image.loading = 'eager'; }));
+  await expect.poll(
+    () => experiencePhotos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
+    { timeout: 20000 },
+  ).toBe(2);
 });
 
 test('homepage presents the About story once after the welcome hero', async ({ page }) => {
@@ -92,7 +108,8 @@ test('dedicated About page presents brand principles and seller invitation', asy
 test('Mystery Box remains a locked concept until rewards and approvals are ready', async ({ page, request }) => {
   await page.goto('/');
   const section = page.locator('#mystery-box');
-  await expect(section.getByRole('heading', { level: 2 })).toHaveText('YOUR NEXT SURPRISE COULD BE AMAZING!');
+  await expect(section).toBeHidden();
+  await expect(section.locator('#mysteryHeading')).toHaveText('YOUR NEXT SURPRISE COULD BE AMAZING!');
   await expect(section.locator('.mystery-price')).toContainText('ONE BOX · ONE PRICE');
   await expect(section.locator('.mystery-price strong')).toHaveText('KSh 299');
   await expect(section.locator('.mystery-box-art')).toHaveCount(1);
@@ -104,11 +121,13 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   await expect(section).toContainText('HP Laptop 15 (concept)');
   await expect(section.locator('.mystery-disclaimer')).toContainText('These photos illustrate possible reward types only');
   await expect(section.locator('.mystery-disclaimer')).toContainText('No prize inventory is confirmed or available');
-  await expect(section.getByRole('button', { name: 'PAY KSh 299 TO UNLOCK THE BOX' })).toBeDisabled();
+  await expect(section.locator('.mystery-pay')).toBeDisabled();
   await expect(section).toContainText('No real-money entries are accepted');
   await expect(section).toContainText('Admin reward inventory');
   expect((await request.get('/assets/marketplace/spinix-mystery-box.svg')).status()).toBe(200);
 
+  // Reveal only in this browser fixture to verify retained concept imagery.
+  await section.evaluate(element => { element.hidden = false; });
   await section.scrollIntoViewIfNeeded();
   const prizePhotos = section.locator('.mystery-reward-photo');
   await expect(prizePhotos).toHaveCount(7);
@@ -158,6 +177,8 @@ test('Spin & Win preview has exact sector counts and cannot assign a result', as
 
 test('opening the wheel reveals the congratulatory animation inside the box', async ({ page }) => {
   await page.goto('/');
+  const mystery = page.locator('#mystery-box');
+  await mystery.evaluate(element => { element.hidden = false; });
   const box = page.locator('.mystery-box-panel');
   const wheel = box.locator('.mystery-wheel-preview');
   const congratulations = box.locator('.mystery-congrats');
@@ -225,7 +246,7 @@ test('FIXTURE: homepage uses only published listings and their genuine media', a
   await expect(page.locator('#platformMount')).toContainText('selected business');
 });
 
-test('FIXTURE: unavailable live inventory is explicit and can be retried without sample substitution', async ({ page }) => {
+test('FIXTURE: empty or unavailable live sections stay out of the homepage', async ({ page }) => {
   let fail = true;
   await page.route('**/api/catalog', route => route.fulfill({
     status: fail ? 503 : 200, contentType: 'application/json',
@@ -235,13 +256,16 @@ test('FIXTURE: unavailable live inventory is explicit and can be retried without
     contentType: 'application/json', body: JSON.stringify({ businesses: [] }),
   }));
   await page.goto('/');
-  await expect(page.locator('#liveProducts')).toContainText('could not be loaded');
+  await expect(page.locator('#liveMarketplace')).toBeHidden();
+  await expect(page.locator('#businessShowcase')).toBeHidden();
+  await expect(page.locator('#liveProducts')).toBeEmpty();
+  await expect(page.locator('body')).not.toContainText(/could not be loaded|No approved businesses|The catalog is taking shape/i);
   await expect(page.locator('#liveProducts .product')).toHaveCount(0);
   await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
   fail = false;
-  await page.locator('#liveProducts').getByRole('button', { name: 'Try again' }).click();
-  await expect(page.locator('#liveProducts')).toContainText('no live listings');
-  await expect(page.locator('#liveBusinesses')).toContainText('No approved businesses');
+  await page.reload();
+  await expect(page.locator('#liveMarketplace')).toBeHidden();
+  await expect(page.locator('#businessShowcase')).toBeHidden();
 });
 
 test('FIXTURE: editable admin metadata cannot reveal an internal dashboard', async ({ page }) => {
