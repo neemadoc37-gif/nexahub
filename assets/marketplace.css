@@ -572,6 +572,31 @@ body{background:#fffaf2;color:var(--ink)}
 .mystery-box-panel .mystery-wheel-locked{grid-column:1;grid-row:auto}
 .mystery-box-panel .mystery-wheel-stage{width:min(100%,340px)}
 .mystery-box-panel .mystery-wheel-caption{margin:8px 0 0;color:#687588;font-size:9px;text-align:center}
+.mystery-congrats{position:absolute;inset:17% 11% 16%;z-index:3;display:grid;place-items:center;overflow:hidden;visibility:hidden;opacity:0;pointer-events:none;isolation:isolate}
+.mystery-congrats-card{position:relative;z-index:1;display:grid;gap:5px;max-width:100%;padding:13px 16px;border:1px solid rgba(208,174,97,.78);border-radius:13px;background:rgba(255,253,248,.94);color:#142d4b;text-align:center;box-shadow:0 8px 28px rgba(20,45,75,.2);backdrop-filter:blur(5px)}
+.mystery-congrats-card strong{font-size:clamp(17px,3vw,25px);line-height:1.05;letter-spacing:-.035em}
+.mystery-congrats-card>span:last-child{color:#59677a;font-size:10px;line-height:1.4}
+.mystery-congrats-kicker{color:#876a2a;font-size:7px;font-weight:850;letter-spacing:.16em}
+.mystery-confetti{position:absolute;top:42%;left:50%;z-index:0;width:8px;height:13px;border-radius:2px;background:#c69b42;opacity:0}
+.mystery-confetti-one{--confetti-x:-115px;--confetti-y:-84px;--confetti-rotate:-48deg}
+.mystery-confetti-two{--confetti-x:118px;--confetti-y:-76px;--confetti-rotate:55deg;background:#173b5d}
+.mystery-confetti-three{--confetti-x:-132px;--confetti-y:46px;--confetti-rotate:38deg;background:#e0c982}
+.mystery-confetti-four{--confetti-x:130px;--confetti-y:48px;--confetti-rotate:-38deg;background:#f5e8c9}
+.mystery-confetti-five{--confetti-x:-69px;--confetti-y:-105px;--confetti-rotate:24deg;background:#244e70}
+.mystery-confetti-six{--confetti-x:76px;--confetti-y:102px;--confetti-rotate:-24deg;background:#b78932}
+.mystery-box-panel.is-unlocked .mystery-lock{display:none}
+.mystery-box-panel.is-unlocked .mystery-congrats{visibility:visible;animation:mystery-congrats-reveal 3.2s ease-out both}
+.mystery-box-panel.is-unlocked .mystery-congrats-card{animation:mystery-card-enter .55s cubic-bezier(.2,.8,.2,1) both}
+.mystery-box-panel.is-unlocked .mystery-confetti{animation:mystery-confetti-burst 1.35s cubic-bezier(.18,.72,.35,1) both}
+.mystery-box-panel.is-unlocked .mystery-confetti-two{animation-delay:.04s}
+.mystery-box-panel.is-unlocked .mystery-confetti-three{animation-delay:.08s}
+.mystery-box-panel.is-unlocked .mystery-confetti-four{animation-delay:.12s}
+.mystery-box-panel.is-unlocked .mystery-confetti-five{animation-delay:.16s}
+.mystery-box-panel.is-unlocked .mystery-confetti-six{animation-delay:.2s}
+@keyframes mystery-congrats-reveal{0%{visibility:visible;opacity:0}12%,70%{opacity:1}100%{visibility:visible;opacity:0}}
+@keyframes mystery-card-enter{0%{transform:translateY(10px) scale(.82)}70%{transform:translateY(-3px) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+@keyframes mystery-confetti-burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--confetti-x)),calc(-50% + var(--confetti-y))) scale(1) rotate(var(--confetti-rotate))}}
+@media(prefers-reduced-motion:reduce){.mystery-box-panel.is-unlocked .mystery-congrats{animation:none;visibility:visible;opacity:1}.mystery-box-panel.is-unlocked .mystery-congrats-card,.mystery-box-panel.is-unlocked .mystery-confetti{animation:none}.mystery-confetti{display:none}}
 @media(max-width:850px){.mystery-layout{grid-template-columns:1fr}.mystery-box-stage{width:min(100%,450px)}.mystery-box-panel{min-height:310px}}
 @media(max-width:850px){.mystery-wheel-preview{grid-template-columns:1fr}.mystery-wheel-figure{grid-column:1;grid-row:1}.mystery-wheel-copy{grid-column:1;grid-row:2}.mystery-wheel-locked{grid-column:1;grid-row:3}}
 @media(max-width:600px){.mystery-section{scroll-margin-top:240px;margin:42px 0 12px;padding:23px 16px;border-radius:14px}.mystery-heading{margin-bottom:22px}.mystery-heading p{font-size:12px}.mystery-layout{gap:18px}.mystery-box-panel{min-height:unset;padding:27px 12px 16px}.mystery-box-stage{width:min(100%,380px);margin-top:22px}.mystery-box-logo{width:72px}.mystery-price{gap:9px;padding:12px}.mystery-price>span{font-size:7px}.mystery-price>strong{font-size:21px}.mystery-price>small{font-size:8px}.mystery-reward-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mystery-reward-photo{height:102px}.mystery-reward>strong{font-size:10px}.mystery-wheel-preview{gap:14px;padding:16px}.mystery-wheel-stage{width:min(100%,340px)}.mystery-wheel-segment{width:72px;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter));font-size:7px}.mystery-wheel-hub{width:63px;height:63px}.mystery-wheel-summary{gap:6px}.mystery-wheel-summary li{padding:7px;font-size:8px}.mystery-wheel-summary strong{font-size:13px}}

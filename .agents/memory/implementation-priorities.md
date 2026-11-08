@@ -102,3 +102,14 @@ for inclusive wording such as selections instead of a goods-only basket.
 **How to apply:** Use inclusive terms in navigation, seller onboarding, selection
 and checkout copy while keeping unsupported booking and payment actions clearly
 disabled.
+
+The immediate launch scope is the public SPINIX ONE marketplace; the separate
+Super Admin portal is deferred. Keep backend permissions suitable for a future
+separate portal without building that interface now.
+
+**Why:** The user explicitly chose to complete the public marketplace first and
+develop the separate Super Admin portal later.
+
+**How to apply:** Prioritize customer, seller, listing, approval, order, booking,
+payment, support and responsive public-site work. Keep privileged authorization
+server-side and separable from the public website routes.

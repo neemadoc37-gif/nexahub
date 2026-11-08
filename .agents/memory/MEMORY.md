@@ -5,3 +5,4 @@
 - [Spinix One Delivery](delivery-scope.md) — independent verified riders, seller requests, order links, tracking/OTP and admin oversight; approval before changes.
 - [Payment boundaries](payment-scope.md) — existing Kenyan Paybill via Daraja; no Stripe/Whop/Shopify yet, verified settlement and explicit approval before live money.
 - [Visible implementation](implementation-priorities.md) — stop producing more planning documents; prioritize accessible website features and honest Preview demonstrations.
+- [Preview static assets](preview-static-assets.md) — restart the app after static edits when the server snapshots files during startup.

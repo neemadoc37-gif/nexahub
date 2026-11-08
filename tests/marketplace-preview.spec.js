@@ -156,6 +156,27 @@ test('Spin & Win preview has exact sector counts and cannot assign a result', as
   await expect(wheel).toContainText('no payment, congratulations, spin or prize record is created here');
 });
 
+test('opening the wheel reveals the congratulatory animation inside the box', async ({ page }) => {
+  await page.goto('/');
+  const box = page.locator('.mystery-box-panel');
+  const wheel = box.locator('.mystery-wheel-preview');
+  const congratulations = box.locator('.mystery-congrats');
+
+  await expect(wheel).toBeHidden();
+  await expect(congratulations).not.toBeVisible();
+
+  // Visual-state fixture only: no payment, unlock API, or prize is created.
+  await wheel.evaluate(element => element.removeAttribute('hidden'));
+  await box.evaluate(element => element.classList.add('is-unlocked'));
+
+  await expect(wheel).toBeVisible();
+  await expect(box.locator('.mystery-lock')).toBeHidden();
+  await expect(congratulations).toBeVisible();
+  await expect(congratulations).toContainText('Congratulations!');
+  await expect(congratulations).toContainText('Your Spin & Win wheel is ready.');
+  await expect(congratulations).toHaveCSS('animation-name', 'mystery-congrats-reveal');
+});
+
 test('anonymous direct admin visits reveal no dashboard or private controls', async ({ page, request }) => {
   await page.goto('/admin');
   await expect(page.locator('#platformMount h1')).toHaveText('This page is unavailable');
