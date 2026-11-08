@@ -695,7 +695,12 @@
     catalogCache = Array.isArray(products) ? products : [];
     const grid = el("div", "platform-products");
     if (!catalogCache.length) {
-      grid.appendChild(empty("No published products are currently available. This catalog is live and does not use the storefront preview cards as fallback inventory."));
+      const state = el("div", "catalog-empty");
+      state.appendChild(empty("No published products are currently available. This catalog is live and does not use the storefront preview cards as fallback inventory."));
+      const sellerLink = el("a", "platform-btn secondary", "Seller information");
+      sellerLink.href = "/seller";
+      state.appendChild(sellerLink);
+      grid.appendChild(state);
       return grid;
     }
     catalogCache.forEach((product) => {
@@ -721,11 +726,27 @@
     });
     return grid;
   }
+  function renderCatalogCategoryRail(categories, selectedCategoryId) {
+    if (!Array.isArray(categories) || categories.length === 0) return null;
+    const rail = el("nav", "catalog-category-rail");
+    rail.setAttribute("aria-label", "Browse live marketplace categories");
+    rail.appendChild(el("h2", "", "Explore categories"));
+    categories.forEach((category) => {
+      if (!category?.id || !category?.name) return;
+      const link = el("a", "catalog-category-link", category.name);
+      const target = new URL("/catalog", location.origin);
+      target.searchParams.set("category", String(category.id));
+      link.href = target.pathname + target.search;
+      if (String(category.id) === String(selectedCategoryId || "")) link.setAttribute("aria-current", "true");
+      rail.appendChild(link);
+    });
+    return rail.childElementCount > 1 ? rail : null;
+  }
   async function loadCatalog() {
     const params = new URLSearchParams(location.search);
     const productId = params.get("product");
     addHero("LIVE MARKETPLACE", productId ? "Product details" : "Published catalog", "Only products published through NexaHub’s live catalog endpoint appear here.");
-    let form = null, categorySelect = null, listingSelect = null;
+    let form = null, categorySelect = null, listingSelect = null, searchPanel = null;
     if (!productId) {
       const urlCategory = params.get("category") || "";
       form = el("form", "platform-form platform-catalog-filters");
@@ -744,7 +765,7 @@
       }, true);
       actions.append(submit, clear);
       form.appendChild(actions);
-      const searchPanel = panel("Find something", form);
+      searchPanel = panel("Find something", form);
       mount.appendChild(searchPanel);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -805,6 +826,8 @@
         const products = Array.isArray(response.products) ? response.products : [];
         const selectedCategoryId = response.selected_category_id || categoryId;
         categoryCache = categories;
+        const categoryRail = renderCatalogCategoryRail(categories, selectedCategoryId);
+        if (categoryRail) mount.insertBefore(categoryRail, searchPanel || result);
         if (categorySelect) {
           categories.forEach(category => {
             const option = el("option", "", category.name || category.slug || "Category");

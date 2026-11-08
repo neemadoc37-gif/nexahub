@@ -12,11 +12,14 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
     await expect(page.locator('.header')).not.toContainText('dashboard');
     await expect(page.locator('.header')).not.toContainText('Workspaces');
-    await expect(page.locator('.categories .cat')).toHaveCount(8);
+    await expect(page.locator('.categories .cat')).toHaveCount(9);
     await expect(page.locator('.categories .cat strong')).toHaveText([
       'Supermarkets', 'Restaurants', 'Pharmacies', 'Electronics',
-      'Fashion', 'Services', 'Digital products', 'Travel',
+      'Fashion', 'Home & living', 'Professional services',
+      'Digital products', 'Travel & experiences',
     ]);
+    await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
+    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Location-based discovery is not connected yet');
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -34,6 +37,7 @@ test('anonymous direct admin visits reveal no dashboard or private controls', as
   await expect(page.locator('#platformMount')).not.toContainText('Owner management');
   await expect(page.locator('#platformMount')).not.toContainText('Restricted action request');
   await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
+  await expect(page.locator('.platform-nav a[href="/admin"]')).toHaveCount(0);
   for (const path of ['/api/admin', '/api/account/access', '/api/customer/profile']) {
     expect((await request.get(path)).status()).toBe(401);
   }

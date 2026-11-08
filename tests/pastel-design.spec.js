@@ -6,13 +6,14 @@ const categories = [
   ['pharmacies', 'Pharmacies'],
   ['electronics', 'Electronics'],
   ['fashion', 'Fashion'],
-  ['services', 'Services'],
+  ['home-living', 'Home & living'],
+  ['services', 'Professional services'],
   ['digital-products', 'Digital products'],
-  ['travel', 'Travel'],
+  ['travel', 'Travel & experiences'],
 ];
 
 for (const width of [320, 402, 1280]) {
-  test(`premium storefront and eight categories fit at ${width}px`, async ({ page }) => {
+  test(`premium storefront and nine categories fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     const theme = await page.evaluate(() => {
@@ -37,6 +38,11 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('.hero h1')).toContainText('Your World.');
     await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/nexahub-logo.webp');
     await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
+    await expect(page.locator('#nearbyHeading')).toContainText('around the corner');
+    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Location-based discovery is not connected yet');
+    await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
+    await expect(page.locator('#payment-information')).toContainText('not being accepted in this Preview');
+    await expect(page.locator('.platform-nav a[href="/admin"]')).toHaveCount(0);
     for (const [slug, label] of categories) {
       await expect(page.locator(`.categories a[href="/catalog?category=${slug}"]`)).toContainText(label);
       await expect(page.locator(`.nav a[href="/catalog?category=${slug}"]`)).toContainText(label);

@@ -36,20 +36,19 @@ inspection, run migrations or change database permissions without approval.
 security and relationship details as blockers, and seek approval before any
 further database inspection or changes.
 
-The approved customer-facing direction is a colorful international marketplace:
-clean white backgrounds, dark navy or charcoal navigation and text, with soft
-pastel pink, sky blue, lemon yellow, lavender, mint and peach accents. Keep the
-approved NexaHub logo, name and “Your World. One Hub.” tagline. Use a consistent
-visual theme across shopping, digital products, services, travel and seller pages.
+The current customer-facing direction is a premium international marketplace:
+white and warm ivory with deep navy, subtle champagne gold and muted green.
+Keep the approved NexaHub logo, name and “Your World. One Hub.” tagline. Use
+one consistent theme across shopping, account, seller and rider surfaces.
 Admin must remain private and role-protected; customers must not see internal
 dashboards.
 
-**Why:** The user requested this pastel redesign directly on the existing
-website, replacing the earlier ivory/teal direction without a separate demo.
+**Why:** The user replaced the earlier colorful direction with a refined,
+restrained palette in the latest storefront brief.
 
-**How to apply:** Preserve existing data, authentication and functionality while
-implementing the design in the actual pages. Keep privileged navigation out of
-public customer surfaces; never trust editable profile metadata for admin access.
+**How to apply:** Preserve data, authentication and working behavior while
+improving the real pages. Keep privileged navigation out of public surfaces;
+never trust editable profile metadata for admin access.
 
 Preview checks must use the exact public address shown to the user, including
 its explicit port, rather than only localhost or the default development domain.

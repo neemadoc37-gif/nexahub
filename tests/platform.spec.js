@@ -31,7 +31,7 @@ for (const width of [402, 1280]) {
     expect(mutations).toEqual([]);
     await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
     await expect(page.locator('#platformMount')).toBeHidden();
-    await expect(page.locator('.categories .cat')).toHaveCount(8);
+    await expect(page.locator('.categories .cat')).toHaveCount(9);
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await page.getByRole('button', { name: 'Open basket' }).click();
     await expect(page.locator('#basketCheckoutNotice')).toBeVisible();
