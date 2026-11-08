@@ -27,6 +27,9 @@ BRAND_ASSETS = {
     "/assets/storefront.js": (INDEX.parent / "assets" / "storefront.js", "text/javascript; charset=utf-8"),
     "/assets/marketplace/marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "marketplace-hero.jpg", "image/jpeg"),
     "/assets/marketplace/spinix-one-marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "spinix-one-marketplace-hero.jpg", "image/jpeg"),
+    "/assets/marketplace/spinix-mystery-box.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-mystery-box.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-iphone.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-iphone.svg", "image/svg+xml"),
+    "/assets/marketplace/spinix-reward-laptop.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-laptop.svg", "image/svg+xml"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {

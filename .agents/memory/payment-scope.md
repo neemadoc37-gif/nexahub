@@ -20,3 +20,14 @@ enable live checkout/payouts without successful testing and explicit approval.
 **How to apply:** Safe visible implementation and sandbox preparation are
 authorized; live money is not. Keep incomplete provider, ledger and persistence
 operations visibly blocked rather than treating credentials alone as completion.
+
+Keep Mystery Box paid entries, reward allocation and opening disabled until
+Kenyan regulatory and payment-provider approvals, verified prize inventory and
+published terms are in place. The every-entry reward model remains a proposal.
+
+**Why:** The owner specified these as launch prerequisites and prohibited real
+money entries before approval.
+
+**How to apply:** A public concept section may show proposed pricing and clearly
+marked illustrative reward types, but must not sell entries, confirm prizes or
+unlock rewards from browser-only state.

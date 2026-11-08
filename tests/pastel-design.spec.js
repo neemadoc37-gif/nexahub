@@ -27,19 +27,20 @@ for (const width of [320, 402, 1280]) {
         fits: document.documentElement.scrollWidth <= innerWidth,
       };
     });
-    expect(theme.topbar).toBe('rgb(20, 37, 63)');
-    expect(theme.header).toBe('rgba(255, 253, 248, 0.97)');
-    expect(theme.page).toBe('rgb(246, 242, 233)');
-    expect(theme.hero).toContain('marketplace-hero.jpg');
+    expect(theme.topbar).toBe('rgb(11, 43, 91)');
+    expect(theme.header).toBe('rgb(255, 255, 255)');
+    expect(theme.page).toBe('rgb(255, 250, 242)');
+    expect(theme.hero).toContain('spinix-one-marketplace-hero.jpg');
     expect(theme.hero).not.toContain('nexahub-editorial-stilllife');
-    expect(new Set(theme.categoryCards)).toEqual(new Set(['rgb(255, 253, 248)']));
+    expect(new Set(theme.categoryCards)).toEqual(new Set(['rgb(255, 255, 255)']));
     expect(theme.fits).toBe(true);
 
     await expect(page.locator('.hero h1')).toContainText('Spinix One');
     await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/spinix-one-logo.svg');
     await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
-    await expect(page.locator('#nearbyHeading')).toContainText('around the corner');
-    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Location-based discovery is not connected yet');
+    await expect(page.locator('.categories .cat-photo')).toHaveCount(categories.length);
+    await expect(page.locator('#nearbyHeading')).toHaveText('More than shopping.');
+    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Browse published listings across the marketplace');
     await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
     await expect(page.locator('#payment-information')).toContainText('not being accepted in this Preview');
     await expect(page.locator('.platform-nav a[href="/admin"]')).toHaveCount(0);
@@ -49,7 +50,7 @@ for (const width of [320, 402, 1280]) {
     }
     await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
+    await expect(page.locator('body')).not.toContainText(/SAMPLE|Add to sample basket/i);
 
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();

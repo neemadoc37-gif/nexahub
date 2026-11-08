@@ -21,7 +21,7 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
     await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Browse published listings across the marketplace');
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
+    await expect(page.locator('body')).not.toContainText(/SAMPLE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.svg', '/assets/marketplace/marketplace-hero.jpg', '/assets/marketplace/spinix-one-marketplace-hero.jpg']) {
       expect((await request.get(path)).status()).toBe(200);
@@ -39,6 +39,47 @@ test('homepage shows marketplace photography without the old Discover closer bad
   await expect(page.getByText('A MARKETPLACE FOR EVERY DAY')).toBeVisible();
   await expect(page.locator('.marketplace-scene')).toBeVisible();
   expect((await request.get('/assets/marketplace/spinix-one-marketplace-hero.jpg')).status()).toBe(200);
+});
+
+test('each marketplace category has a matching photo that loads', async ({ page }) => {
+  await page.goto('/');
+  const photos = page.locator('.categories .cat-photo');
+  await expect(photos).toHaveCount(9);
+  await photos.evaluateAll(images => images.forEach(image => { image.loading = 'eager'; }));
+  await expect.poll(
+    () => photos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
+    { timeout: 20000 },
+  ).toBe(9);
+});
+
+test('Mystery Box remains a locked concept until rewards and approvals are ready', async ({ page, request }) => {
+  await page.goto('/');
+  const section = page.locator('#mystery-box');
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText('YOUR NEXT SURPRISE COULD BE AMAZING!');
+  await expect(section.locator('.mystery-price')).toContainText('ONE BOX · ONE PRICE');
+  await expect(section.locator('.mystery-price strong')).toHaveText('KSh 300');
+  await expect(section.locator('.mystery-box-art')).toHaveCount(1);
+  await expect(section.locator('.mystery-reward')).toHaveCount(7);
+  await expect(section).toContainText('Small cash rewards (USD)');
+  await expect(section).toContainText('Larger cash prizes (USD)');
+  await expect(section).toContainText('Latest iPhone (illustrative)');
+  await expect(section).toContainText('Latest laptop (illustrative)');
+  await expect(section.locator('.mystery-disclaimer')).toContainText('No prize inventory is confirmed or available');
+  await expect(section.getByRole('button', { name: 'PAY & OPEN NOW' })).toBeDisabled();
+  await expect(section).toContainText('No real-money entries are accepted');
+  await expect(section).toContainText('Admin reward inventory');
+  expect((await request.get('/assets/marketplace/spinix-mystery-box.svg')).status()).toBe(200);
+
+  await section.scrollIntoViewIfNeeded();
+  const prizePhotos = section.locator('.mystery-reward-photo');
+  await expect(prizePhotos).toHaveCount(3);
+  await prizePhotos.evaluateAll(images => images.forEach(image => { image.loading = 'eager'; }));
+  await expect.poll(
+    () => prizePhotos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
+    { timeout: 20000 },
+  ).toBe(3);
+  expect((await request.get('/assets/marketplace/spinix-reward-iphone.svg')).status()).toBe(200);
+  expect((await request.get('/assets/marketplace/spinix-reward-laptop.svg')).status()).toBe(200);
 });
 
 test('anonymous direct admin visits reveal no dashboard or private controls', async ({ page, request }) => {

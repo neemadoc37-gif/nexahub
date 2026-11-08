@@ -57,8 +57,9 @@ and abstract map artwork that appeared on the homepage.
 for more appealing pictures.
 
 **How to apply:** Prefer authentic shopping, storefront, service and travel
-imagery. Keep product cards tied to published listings; do not invent catalog
-items to make the homepage look populated.
+imagery, with category photos that match each kind of business. Keep product
+cards tied to published listings; do not invent catalog items to make the
+homepage look populated.
 
 Preview checks must use the exact public address shown to the user, including
 its explicit port, rather than only localhost or the default development domain.

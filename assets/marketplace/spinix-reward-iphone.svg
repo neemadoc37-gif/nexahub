@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="320" viewBox="0 0 560 320" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="26" y1="16" x2="535" y2="306" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF8"/>
+      <stop offset=".58" stop-color="#EEE4D2"/>
+      <stop offset="1" stop-color="#D8C79F"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="242" y1="50" x2="363" y2="282" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#80B7C5"/>
+      <stop offset=".5" stop-color="#456C85"/>
+      <stop offset="1" stop-color="#122B4C"/>
+    </linearGradient>
+    <linearGradient id="titanium" x1="137" y1="67" x2="227" y2="252" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7EBD0"/>
+      <stop offset=".55" stop-color="#CBA65A"/>
+      <stop offset="1" stop-color="#9A7838"/>
+    </linearGradient>
+    <filter id="shadow" x="107" y="13" width="360" height="307" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <rect width="560" height="320" rx="24" fill="url(#bg)"/>
+  <circle cx="453" cy="70" r="64" fill="#FFFDF8" fill-opacity=".4"/>
+  <ellipse cx="292" cy="275" rx="160" ry="24" fill="#142D4C" fill-opacity=".16" filter="url(#shadow)"/>
+  <g transform="rotate(-10 194 160)">
+    <rect x="130" y="43" width="121" height="229" rx="26" fill="#15243A"/>
+    <rect x="135" y="48" width="111" height="219" rx="22" fill="url(#titanium)"/>
+    <rect x="144" y="58" width="92" height="199" rx="17" fill="#DCC79A"/>
+    <circle cx="165" cy="80" r="13" fill="#14223A"/>
+    <circle cx="165" cy="80" r="8" fill="#263954"/>
+    <circle cx="202" cy="80" r="13" fill="#14223A"/>
+    <circle cx="202" cy="80" r="8" fill="#263954"/>
+    <circle cx="165" cy="117" r="13" fill="#14223A"/>
+    <circle cx="165" cy="117" r="8" fill="#263954"/>
+    <circle cx="212" cy="116" r="4" fill="#FFF4D8"/>
+    <circle cx="212" cy="116" r="2" fill="#FFFDF8"/>
+    <path d="M140 54h101" stroke="#FFF8E7" stroke-opacity=".55" stroke-width="2"/>
+  </g>
+  <g transform="rotate(7 325 160)">
+    <rect x="260" y="20" width="147" height="282" rx="31" fill="#111A28"/>
+    <rect x="266" y="26" width="135" height="270" rx="27" fill="#F5F2EB"/>
+    <rect x="273" y="34" width="121" height="254" rx="22" fill="url(#screen)"/>
+    <path d="M273 202c35-46 54-43 81-73 16-18 25-38 40-58v217H273v-86Z" fill="#D8BB78" fill-opacity=".88"/>
+    <path d="M273 232c36-36 72-31 104-65 7-8 12-15 17-24v145H273v-56Z" fill="#F7F0E1" fill-opacity=".8"/>
+    <rect x="307" y="41" width="54" height="16" rx="8" fill="#111A28"/>
+    <circle cx="350" cy="49" r="3" fill="#314252"/>
+    <path d="M293 73h26" stroke="#FFFDF8" stroke-opacity=".75" stroke-width="3" stroke-linecap="round"/>
+    <path d="M293 83h17" stroke="#FFFDF8" stroke-opacity=".48" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <rect x="25" y="24" width="111" height="27" rx="13.5" fill="#122B4C"/>
+  <text x="80.5" y="42" fill="#F6E8C1" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.2" text-anchor="middle">LATEST IPHONE</text>
+  <text x="29" y="291" fill="#31445C" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1">ILLUSTRATIVE REWARD</text>
+</svg>
