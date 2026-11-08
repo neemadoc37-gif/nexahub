@@ -97,11 +97,12 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
   await expect(section.locator('.mystery-price strong')).toHaveText('KSh 299');
   await expect(section.locator('.mystery-box-art')).toHaveCount(1);
   await expect(section.locator('.mystery-reward')).toHaveCount(7);
-  await expect(section).toContainText('Small cash rewards (USD)');
-  await expect(section).toContainText('Larger cash prizes (KSh 1,000 note bundles)');
-  await expect(section).toContainText('Latest iPhone (illustrative)');
-  await expect(section).toContainText('Latest laptop (illustrative)');
-  await expect(section.locator('.mystery-disclaimer')).toContainText('All reward pictures are concept illustrations');
+  await expect(section).toContainText('US$100 cash bundle (concept)');
+  await expect(section).toContainText('KSh 100,000 in KSh 1,000 notes (concept)');
+  await expect(section).toContainText('iPhone 16 Pro Max (concept)');
+  await expect(section).toContainText('Samsung Galaxy S25 Ultra (concept)');
+  await expect(section).toContainText('HP Laptop 15 (concept)');
+  await expect(section.locator('.mystery-disclaimer')).toContainText('These photos illustrate possible reward types only');
   await expect(section.locator('.mystery-disclaimer')).toContainText('No prize inventory is confirmed or available');
   await expect(section.getByRole('button', { name: 'PAY & OPEN NOW' })).toBeDisabled();
   await expect(section).toContainText('No real-money entries are accepted');
@@ -116,8 +117,16 @@ test('Mystery Box remains a locked concept until rewards and approvals are ready
     () => prizePhotos.evaluateAll(images => images.filter(image => image.complete && image.naturalWidth > 0).length),
     { timeout: 20000 },
   ).toBe(7);
-  for (const asset of ['voucher', 'usd', 'ksh1000', 'iphone', 'laptop', 'watch', 'gift']) {
-    expect((await request.get(`/assets/marketplace/spinix-reward-${asset}.svg`)).status()).toBe(200);
+  for (const asset of [
+    'spinix-reward-voucher.jpg',
+    'spinix-reward-cash-usd.jpg',
+    'spinix-reward-cash-ksh.jpg',
+    'spinix-reward-iphone-16-pro-max.jpg',
+    'spinix-reward-samsung-s25-ultra.jpg',
+    'spinix-reward-hp-laptop-15.jpg',
+    'spinix-reward-smartwatch.jpg',
+  ]) {
+    expect((await request.get(`/assets/marketplace/rewards/${asset}`)).status()).toBe(200);
   }
 });
 

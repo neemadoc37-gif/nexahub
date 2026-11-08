@@ -28,13 +28,13 @@ BRAND_ASSETS = {
     "/assets/marketplace/marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "marketplace-hero.jpg", "image/jpeg"),
     "/assets/marketplace/spinix-one-marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "spinix-one-marketplace-hero.jpg", "image/jpeg"),
     "/assets/marketplace/spinix-mystery-box.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-mystery-box.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-iphone.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-iphone.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-laptop.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-laptop.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-voucher.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-voucher.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-usd.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-usd.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-ksh1000.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-ksh1000.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-watch.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-watch.svg", "image/svg+xml"),
-    "/assets/marketplace/spinix-reward-gift.svg": (INDEX.parent / "assets" / "marketplace" / "spinix-reward-gift.svg", "image/svg+xml"),
+    "/assets/marketplace/rewards/spinix-reward-voucher.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-voucher.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-cash-usd.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-cash-usd.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-cash-ksh.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-cash-ksh.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-iphone-16-pro-max.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-iphone-16-pro-max.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-samsung-s25-ultra.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-samsung-s25-ultra.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-hp-laptop-15.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-hp-laptop-15.jpg", "image/jpeg"),
+    "/assets/marketplace/rewards/spinix-reward-smartwatch.jpg": (INDEX.parent / "assets" / "marketplace" / "rewards" / "spinix-reward-smartwatch.jpg", "image/jpeg"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {
