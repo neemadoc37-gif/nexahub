@@ -21,10 +21,10 @@ for (const width of [320, 402, 1280]) {
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.getByRole('button', { name: 'Close account dialog' }).click();
-    await page.getByRole('button', { name: 'Open basket' }).click();
+    await page.getByRole('button', { name: 'Open my selections' }).click();
     await expect(page.locator('#basketCheckoutNotice')).toBeVisible();
     await expect(page.locator('#cartCount')).toHaveText('0');
-    await page.getByRole('button', { name: 'Close basket dialog' }).click();
+    await page.getByRole('button', { name: 'Close selections dialog' }).click();
   });
 }
 

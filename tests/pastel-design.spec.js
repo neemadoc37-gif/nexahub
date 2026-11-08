@@ -69,8 +69,8 @@ test('legacy demo basket entries do not appear as real products or get deleted',
   await expect(page.locator('#cartCount')).toHaveText('0');
   await expect(page.locator('#liveProducts')).not.toContainText('Wireless headphones');
   await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Open basket' }).click();
-  await expect(page.locator('#cartItems')).toHaveText('Your basket is empty.');
+  await page.getByRole('button', { name: 'Open my selections' }).click();
+  await expect(page.locator('#cartItems')).toHaveText('You have no selections yet.');
   await expect(page.locator('#basketCheckoutNotice')).toContainText('No order or payment will be submitted');
   expect(await page.evaluate(() => localStorage.getItem('nexahub.sampleBasket.v1'))).toBe(legacyEntry);
 });

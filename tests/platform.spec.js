@@ -33,10 +33,10 @@ for (const width of [402, 1280]) {
     await expect(page.locator('#platformMount')).toBeHidden();
     await expect(page.locator('.categories .cat')).toHaveCount(9);
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
-    await page.getByRole('button', { name: 'Open basket' }).click();
+    await page.getByRole('button', { name: 'Open my selections' }).click();
     await expect(page.locator('#basketCheckoutNotice')).toBeVisible();
     await expect(page.locator('#cartCount')).toHaveText('0');
-    await page.getByRole('button', { name: 'Close basket dialog' }).click();
+    await page.getByRole('button', { name: 'Close selections dialog' }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);
   });
@@ -44,7 +44,7 @@ for (const width of [402, 1280]) {
 
 for (const [route, heading] of [
   ['customer', 'Your NexaHub'],
-  ['seller', 'A clearer view of your store'],
+  ['seller', 'Sell products or offer services'],
   ['delivery', 'Track an order'],
   ['payments', 'M-PESA, not a mock checkout'],
 ]) {

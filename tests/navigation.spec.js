@@ -8,7 +8,7 @@ test('direct workspace routes reload and serve the current source build', async 
   for (const [path, heading] of [
     ['/workspaces', 'Choose your workspace'],
     ['/customer', 'Your NexaHub'],
-    ['/seller', 'A clearer view of your store'],
+    ['/seller', 'Sell products or offer services'],
     ['/rider', 'Independent work, responsibly'],
     ['/delivery', 'Track an order'],
     ['/payments', 'M-PESA, not a mock checkout'],

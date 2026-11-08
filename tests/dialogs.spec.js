@@ -18,8 +18,8 @@ const addBasketFixture = page => page.evaluate(() => window.addCart('Keyboard te
 for (const kind of ['basket', 'account']) {
   test(`${kind} traps both Tab directions and restores focus on every close`, async ({ page }) => {
     const trigger = kind === 'basket' ? basketTrigger(page) : page.locator('#accountButton');
-    const dialog = page.getByRole('dialog', { name: kind === 'basket' ? 'Your basket' : 'Welcome to NexaHub' });
-    const close = page.getByRole('button', { name: `Close ${kind} dialog` });
+    const dialog = page.getByRole('dialog', { name: kind === 'basket' ? 'Your selections' : 'Welcome to NexaHub' });
+    const close = page.getByRole('button', { name: kind === 'basket' ? 'Close selections dialog' : 'Close account dialog' });
     const last = kind === 'basket' ? close : page.locator('#resetPassword');
 
     await trigger.focus();
@@ -81,7 +81,7 @@ for (const clearAll of [false, true]) {
     await page.keyboard.press('Enter');
     await expect(page.locator('#undoBasket')).toBeFocused();
     await page.keyboard.press('Shift+Tab');
-    await expect(page.getByRole('button', { name: 'Close basket dialog' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Close selections dialog' })).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(page.locator('#undoBasket')).toBeFocused();
     await page.keyboard.press('Enter');
@@ -102,11 +102,11 @@ test('Undo expiry moves focus to close and updates the Tab boundaries', async ({
   await expect(page.locator('#undoBasket')).toBeFocused();
   await page.clock.fastForward(1);
   await expect(page.locator('#cartUndo')).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Close basket dialog' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close selections dialog' })).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('button', { name: 'Close basket dialog' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close selections dialog' })).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Close basket dialog' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close selections dialog' })).toBeFocused();
 });
 
 test('Undo expiry after closing never steals focus from the trigger', async ({ page }) => {
@@ -126,9 +126,9 @@ test('dialog itself is a safe focus fallback when no controls are usable', async
   await basketTrigger(page).click();
   await page.locator('#cartModal button').evaluateAll(buttons => buttons.forEach(button => button.disabled = true));
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('dialog', { name: 'Your basket' })).toBeFocused();
+  await expect(page.getByRole('dialog', { name: 'Your selections' })).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('dialog', { name: 'Your basket' })).toBeFocused();
+  await expect(page.getByRole('dialog', { name: 'Your selections' })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(basketTrigger(page)).toBeFocused();
 });

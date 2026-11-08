@@ -31,7 +31,7 @@
  <div class="headinner">
    <a class="logo" href="/" aria-label="NexaHub home"><img src="/assets/brand/nexahub-logo.webp" alt="NexaHub — Your World. One Hub." width="1020" height="240"></a>
    <form class="search live-search" action="/catalog" method="get" role="search" aria-label="Search the live marketplace"><label class="sr-only" for="marketplaceSearch">Search published listings</label><input id="marketplaceSearch" name="q" type="search" placeholder="What are you looking for?" autocomplete="off"><button type="submit" aria-label="Search the live catalog"><span aria-hidden="true">⌕</span><span>Search</span></button></form>
-    <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost cart-trigger" aria-label="Open basket" onclick="showCart()"><span class="bag-mark" aria-hidden="true"></span><span>Basket</span><span id="cartCount" class="cart-count">0</span></button></div>
+    <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost cart-trigger" aria-label="Open my selections" onclick="showCart()"><span class="bag-mark" aria-hidden="true"></span><span>My selections</span><span id="cartCount" class="cart-count">0</span></button></div>
  </div>
   <nav class="nav" aria-label="Marketplace categories">
       <a class="active" href="/catalog">Discover</a><a href="/catalog?category=supermarkets">Supermarkets</a><a href="/catalog?category=restaurants">Restaurants</a><a href="/catalog?category=pharmacies">Pharmacies</a><a href="/catalog?category=electronics">Electronics</a><a href="/catalog?category=fashion">Fashion</a><a href="/catalog?category=home-living">Home &amp; living</a><a href="/catalog?category=services">Professional services</a><a href="/catalog?category=digital-products">Digital products</a><a href="/catalog?category=travel">Travel &amp; experiences</a>
@@ -44,7 +44,7 @@
  <main id="platformMount" class="platform-shell" hidden aria-live="polite"></main>
 <main>
   <section class="hero">
-    <div class="hero-copy"><span class="eyebrow">A WORLD OF GOOD FINDS</span><h1>Your World.<br><em>One Hub.</em></h1><p>Meet the stores, tables, makers and experiences that make every place feel like yours.</p><div class="heroBtns"><a class="primary" href="/catalog">Explore the marketplace <span aria-hidden="true">↗</span></a><a class="ghost" href="/seller">Bring your business</a></div><div class="hero-note"><span class="note-rule"></span><span>Independent discovery, across borders.</span></div></div>
+    <div class="hero-copy"><span class="eyebrow">A WORLD OF GOOD FINDS</span><h1>Your World.<br><em>One Hub.</em></h1><p>Meet the stores, tables, makers and experiences that make every place feel like yours.</p><div class="heroBtns"><a class="primary" href="/catalog">Explore the marketplace <span aria-hidden="true">↗</span></a><a class="ghost" href="/seller">List products or services</a></div><div class="hero-note"><span class="note-rule"></span><span>Independent discovery, across borders.</span></div></div>
   <div class="heroart" role="img" aria-label="Sunlit neighborhood storefront with thoughtfully arranged local goods"><div class="hero-image"></div><div class="hero-stamp"><span class="stamp-top">DISCOVER</span><span class="stamp-mid">closer</span><span class="stamp-bottom">AND FURTHER</span></div><div class="hero-caption">A marketplace with a sense of place</div></div>
  </section>
   <section class="category-section" aria-labelledby="categoryHeading">
@@ -81,7 +81,7 @@
    <div class="business-grid" id="liveBusinesses" aria-live="polite" aria-busy="true"><div class="business-skeleton"></div><div class="business-skeleton"></div><div class="business-skeleton"></div></div>
   </section>
   <section class="why-section" aria-labelledby="whyHeading"><div class="sectionhead"><div><span class="section-kicker">A MORE THOUGHTFUL MARKETPLACE</span><h2 id="whyHeading">Clarity comes with every discovery.</h2><p>Useful features, presented honestly while NexaHub grows.</p></div></div><div class="why-grid"><article><span>01</span><h3>Published, not pretend</h3><p>Only listings returned as published by the live catalog appear as products.</p></article><article><span>02</span><h3>Your account stays yours</h3><p>Private customer pages require sign-in and request account-scoped records.</p></article><article><span>03</span><h3>Clear about what is live</h3><p>Unavailable inventory, checkout and services are not replaced with demo data.</p></article></div></section>
-  <section class="seller-section" aria-labelledby="sellerHeading"><div class="seller-copy"><span class="section-kicker">FOR INDEPENDENT BUSINESSES</span><h2 id="sellerHeading">Bring your business to a wider world.</h2><p>Build your presence on a marketplace designed for local discovery and international reach. Seller onboarding and listing changes are not yet saved in this Preview.</p><a class="primary" href="/seller">View seller workspace <span aria-hidden="true">↗</span></a></div><div class="seller-steps" aria-label="Seller journey"><div><span>01</span><strong>Introduce your business</strong></div><div><span>02</span><strong>Complete verification</strong></div><div><span>03</span><strong>Prepare your listings</strong></div><p>These are the planned steps; the application is not submitted by this page.</p></div></section>
+  <section class="seller-section" aria-labelledby="sellerHeading"><div class="seller-copy"><span class="section-kicker">FOR INDEPENDENT BUSINESSES</span><h2 id="sellerHeading">Put your products, services and experiences in view.</h2><p>Connect with customers looking for local expertise and international finds. Seller onboarding and listing changes are not yet saved in this Preview.</p><a class="primary" href="/seller">Explore seller options <span aria-hidden="true">↗</span></a></div><div class="seller-steps" aria-label="Seller journey"><div><span>01</span><strong>Introduce your shop or service</strong></div><div><span>02</span><strong>Complete verification</strong></div><div><span>03</span><strong>Prepare products or services</strong></div><p>These are planned steps; this page does not submit an application.</p></div></section>
   <section class="payment-note" id="payment-information" aria-labelledby="paymentHeading"><div class="payment-seal" aria-hidden="true">NH</div><div><span class="section-kicker">PAYMENT STATUS</span><h2 id="paymentHeading">Checkout is not enabled yet.</h2><p>M-PESA and international card payments are not being accepted in this Preview. Payment details and provider approvals must be verified before real checkout is turned on.</p></div><a href="/payments" class="payment-link">View payment readiness <span aria-hidden="true">↗</span></a></section>
  <section class="discovery-note"><span class="discovery-line"></span><p>One marketplace. Many ways to find what feels right.</p><a href="/catalog">Start exploring <span aria-hidden="true">↗</span></a></section>
 </main>
@@ -137,8 +137,8 @@
   </div>
  </section>
 </div>
-<div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">Bring your business to NexaHub</h2><p>Explore the seller application page for current information. Applications are handled separately; this page does not claim that registration is enabled.</p><button class="primary" onclick="closeModal('sellerModal');window.Platform&&Platform.go('seller')">Explore seller application</button></div></div>
- <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close basket dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your basket</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>Your basket is empty.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear basket</button><p id="basketCheckoutNotice" class="platform-notice warn">Order placement is not available yet. No order or payment will be submitted.</p></div></div>
+<div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">List products or offer services on NexaHub</h2><p>Explore seller information for shops, service providers and experience hosts. Applications are not being saved in this Preview.</p><button class="primary" onclick="closeModal('sellerModal');window.Platform&&Platform.go('seller')">Explore seller options</button></div></div>
+ <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close selections dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your selections</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>You have no selections yet.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear selections</button><p id="basketCheckoutNotice" class="platform-notice warn">This Preview can save selections in this browser, but cannot place product orders or service reservations. No order or payment will be submitted.</p></div></div>
  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
 <script>
@@ -209,28 +209,28 @@ function undoCartRemoval(){
   else restored.splice(Math.min(index,restored.length),0,{...item});
  }
  if(restored.reduce((sum,item)=>sum+item.quantity,0)>MAX_CART_ITEMS){
-  document.getElementById('cartUndoMessage').textContent='Cannot undo: your basket would exceed its 100-item limit.';
+  document.getElementById('cartUndoMessage').textContent='Cannot undo: your selections would exceed the 100-item limit.';
   return;
  }
  if(!Number.isSafeInteger(restored.reduce((sum,item)=>sum+item.price*item.quantity,0))){
-  document.getElementById('cartUndoMessage').textContent='Cannot undo: the restored basket total is too large.';
+  document.getElementById('cartUndoMessage').textContent='Cannot undo: the restored selection total is too large.';
   return;
  }
  cart=restored;dismissCartUndo();persistCart();updateCartCount();renderCart();
  document.getElementById('clearBasket').focus();
- toast('Removed items restored to your basket.');
+  toast('Removed items restored to your selections.');
 }
 function persistCart(){
  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));setCartStatus('')}
- catch(error){setCartStatus('Basket changes are available for this visit, but could not be saved in this browser.')}
+ catch(error){setCartStatus('Your selections are available for this visit, but could not be saved in this browser.')}
 }
 function loadCart(){
  let saved;
  try{saved=localStorage.getItem(CART_STORAGE_KEY)}
  catch(error){
   cart=[];
-  setCartStatus('Saved basket could not be accessed in this browser. Your basket is empty for this visit.');
-  toast('Saved basket could not be accessed. No saved data was cleared.');
+  setCartStatus('Saved selections could not be accessed in this browser. No saved items are available for this visit.');
+  toast('Saved selections could not be accessed. No saved data was cleared.');
   return;
  }
  try{
@@ -242,7 +242,7 @@ function loadCart(){
    typeof item.price==='number'&&Number.isSafeInteger(item.price)&&item.price>0&&
    (item.quantity===undefined||(Number.isSafeInteger(item.quantity)&&item.quantity>0&&item.quantity<=MAX_CART_ITEMS))
   );
-  if(!valid)throw new Error('Invalid saved basket');
+  if(!valid)throw new Error('Invalid saved selections');
   const restored=[];
   for(const item of parsed){
    const name=item.name.trim(),quantity=item.quantity===undefined?1:item.quantity;
@@ -252,18 +252,18 @@ function loadCart(){
   }
   const quantity=restored.reduce((sum,item)=>sum+item.quantity,0);
   const total=restored.reduce((sum,item)=>sum+item.price*item.quantity,0);
-  if(quantity>MAX_CART_ITEMS||!Number.isSafeInteger(total))throw new Error('Invalid saved basket');
+  if(quantity>MAX_CART_ITEMS||!Number.isSafeInteger(total))throw new Error('Invalid saved selections');
   cart=restored;
  }catch(error){
   cart=[];
   try{localStorage.removeItem(CART_STORAGE_KEY)}
   catch(removeError){
-   setCartStatus('Saved basket data was invalid, but could not be cleared in this browser. Your basket is empty for this visit.');
-   toast('Invalid saved basket data could not be cleared.');
+   setCartStatus('Saved selection data was invalid, but could not be cleared in this browser.');
+   toast('Invalid saved selection data could not be cleared.');
    return;
   }
-  setCartStatus('Saved basket data was invalid, so it was cleared. Your basket is empty.');
-  toast('Saved basket data was invalid and has been cleared.');
+  setCartStatus('Saved selection data was invalid, so it was cleared.');
+  toast('Saved selection data was invalid and has been cleared.');
  }
 }
 function renderCart(){
@@ -271,7 +271,7 @@ function renderCart(){
  const clearButton=document.getElementById('clearBasket');
  el.replaceChildren();
  clearButton.hidden=cart.length===0;
- if(!cart.length){const empty=document.createElement('p');empty.textContent='Your basket is empty.';el.appendChild(empty);return}
+ if(!cart.length){const empty=document.createElement('p');empty.textContent='You have no selections yet.';el.appendChild(empty);return}
  cart.forEach((item,index)=>{
   const row=document.createElement('div');
   row.className='basket-row';
@@ -283,7 +283,7 @@ function renderCart(){
   const quantity=document.createElement('span');quantity.className='basket-quantity';quantity.textContent=item.quantity;quantity.setAttribute('aria-label','Quantity of '+item.name);quantity.setAttribute('aria-live','polite');
   const increase=document.createElement('button');increase.type='button';increase.className='ghost';increase.textContent='+';increase.disabled=cartQuantity()>=MAX_CART_ITEMS;increase.setAttribute('aria-label','Increase quantity of '+item.name);increase.dataset.quantityControl='increase-'+index;
   increase.addEventListener('click',()=>changeCartQuantity(index,1));
-  const remove=document.createElement('button');remove.type='button';remove.className='ghost basket-remove';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+item.name+' from basket');
+  const remove=document.createElement('button');remove.type='button';remove.className='ghost basket-remove';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+item.name+' from your selections');
   remove.addEventListener('click',()=>removeCartItem(index));
   controls.append(decrease,quantity,increase,remove);
   row.append(name,price,controls);el.appendChild(row);
@@ -300,16 +300,16 @@ window.addEventListener('storage',event=>{
  dismissCartUndo();loadCart();updateCartCount();renderCart();
 });
 function addCart(name,price){
- if(cartQuantity()>=MAX_CART_ITEMS){toast('Your basket has reached its item limit.');return}
+ if(cartQuantity()>=MAX_CART_ITEMS){toast('Your selections have reached the item limit.');return}
  const existing=cart.find(item=>item.name===name&&item.price===price);
  if(existing)existing.quantity+=1;
  else cart.push({name,price,quantity:1});
- persistCart();updateCartCount();renderCart();toast(name+' added to your basket.')
+ persistCart();updateCartCount();renderCart();toast(name+' added to your selections.')
 }
 function changeCartQuantity(index,delta){
  if(!Number.isInteger(index)||index<0||index>=cart.length||(delta!==1&&delta!==-1))return;
  if(cart[index].quantity+delta<1)return;
- if(delta>0&&cartQuantity()>=MAX_CART_ITEMS){toast('Your basket has reached its item limit.');return}
+ if(delta>0&&cartQuantity()>=MAX_CART_ITEMS){toast('Your selections have reached the item limit.');return}
  const focusedControl=document.activeElement?.dataset.quantityControl;
  cart[index].quantity+=delta;
  persistCart();updateCartCount();renderCart();
@@ -329,7 +329,7 @@ function clearCart(){
  if(!cart.length)return;
  const removed=cart.map((item,index)=>({item:{...item},index}));
  cart=[];persistCart();updateCartCount();renderCart();
- offerCartUndo(removed,'Basket cleared.')
+ offerCartUndo(removed,'Selections cleared.')
 }
 function showCart(){renderCart();openModal('cartModal')}
 let activeModal=null;

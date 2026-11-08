@@ -71,3 +71,15 @@ Treating these as interchangeable caused a healthy server to appear unavailable.
 **How to apply:** Finish configuration changes before verifying the user's exact
 Preview address. Preserve that address during development; switch to the required
 single external-80 mapping deliberately when preparing the actual publication.
+
+NexaHub businesses can offer services as well as products. Customer-facing and
+seller-facing language should include service providers and avoid implying that
+the marketplace handles goods only. Do not present service booking as operational
+until it is actually connected and tested.
+
+**Why:** The user clarified that NexaHub includes service businesses and asked
+for inclusive wording such as selections instead of a goods-only basket.
+
+**How to apply:** Use inclusive terms in navigation, seller onboarding, selection
+and checkout copy while keeping unsupported booking and payment actions clearly
+disabled.

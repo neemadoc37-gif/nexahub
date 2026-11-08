@@ -234,7 +234,7 @@
     const grid = el("div", "platform-grid workspace-shortcuts");
     const entries = [
       ["customer", "Customer dashboard", "Connected readers; sign-in required", "Your profile, orders, bookings and payment records. A confirmed Supabase session is required; successful real login still needs acceptance testing."],
-      ["seller", "Seller dashboard", "Read-only account connection", "View your existing store, products and order items. Applications, listing edits, delivery requests and seller accounting are not operational."],
+      ["seller", "Seller and service-provider workspace", "Read-only account connection", "View your shop profile, products and order items. Service listings, applications, listing edits, delivery requests and accounting are not operational."],
       ["rider", "Rider registration and dashboard", "Forms only; storage unavailable", "View registration fields, account, jobs and earnings sections. Registration, verification, acceptance and earnings are not saved."],
       ["delivery", "Customer delivery tracking", "Entry form only; tracking unavailable", "Enter an order to check ownership. No real delivery milestones, rider location or secure OTP service are connected."],
       ["catalog", "Live product catalog", "Connected published-product reader", "Search published listings returned by the existing backend. An empty catalog stays empty; example storefront products are not substituted."],
@@ -257,7 +257,7 @@
     });
     accounts.appendChild(links);
     mount.appendChild(accounts);
-    mount.appendChild(panel("Not yet operational", notice("Secure digital downloads, service booking, travel and accommodation reservations, real order creation from the basket, delivery operations, seller/rider accounting and management actions are not implemented end to end. Storefront category examples are not these services.", "warn")));
+    mount.appendChild(panel("Not yet operational", notice("Secure digital downloads, service booking, travel and accommodation reservations, real order placement from saved selections, delivery operations, seller/rider accounting and management actions are not implemented end to end. Storefront category examples are not these services.", "warn")));
     const status = panel("Current server readiness", el("div", "platform-skeleton"));
     mount.appendChild(status);
     const ticket = epoch;
@@ -456,9 +456,9 @@
     return box;
   }
   async function loadSeller() {
-    addHero("SELLER DESK", "A clearer view of your store", "Your seller profile and sales-related records are loaded only from your account-scoped workspace.");
+    addHero("SELLER DESK", "Sell products or offer services", "Your shop profile and sales-related records are loaded only from your account-scoped workspace. Seller applications and listing changes are not saved in this Preview.");
     if (!requireSignIn()) {
-      mount.appendChild(formPanel("Apply to sell", "Check your application details here. Sign-in and verified write policies are required before an application can be saved.", [
+      mount.appendChild(formPanel("Apply as a seller or service provider", "This form does not submit an application yet. Sign-in and approved server-side storage must be configured first.", [
         ["Store name", "store_name", "text", true, { maxLength: 120 }]
       ], "/api/sellers/applications", (form) => ({ store_name: form.elements.store_name.value.trim() }), "seller_writes", "seller writes"));
       return;
@@ -494,7 +494,7 @@
       }, "Prepare delivery request"), "No seller order items were returned."));
       loading.replaceWith(panel("Seller overview", content));
       const grid = el("div", "platform-grid");
-      grid.appendChild(formPanel("Apply to sell", "A validated request reaches a server-side configuration gate. There is no local draft.", [
+      grid.appendChild(formPanel("Apply as a seller or service provider", "A validated request reaches a server-side configuration gate. This Preview does not save an application or local draft.", [
         ["Store name", "store_name", "text", true, { maxLength: 120 }]
       ], "/api/sellers/applications", (form) => ({ store_name: form.elements.store_name.value.trim() }), "seller_writes", "seller writes"));
       const request = panel("Request a delivery", null);
@@ -620,8 +620,8 @@
       const cards = el("div", "platform-grid");
       cards.appendChild(panel("M-PESA readiness", showReadiness(config, "payments")));
       const checkout = panel("Pay for an existing order", null);
-      checkout.appendChild(notice("The selected order is used only for a protected server request. This workspace does not create orders from the sample basket.", "warn"));
-      if (!orders.length) checkout.appendChild(empty("No real orders are available for payment. Place an order through an enabled marketplace flow first; sample basket items are not eligible."));
+      checkout.appendChild(notice("The selected order is used only for a protected server request. This workspace does not create orders from saved selections.", "warn"));
+      if (!orders.length) checkout.appendChild(empty("No real orders are available for payment. Order placement is not enabled, and saved selections are not eligible for payment."));
       else {
         const form = el("form", "platform-form");
         const choices = [["", "Choose an order"]];

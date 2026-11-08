@@ -66,9 +66,9 @@ async function expectBasket(page, items) {
 
 async function expectEmpty(page) {
   await expect(page.locator('#cartCount')).toHaveText('0');
-  await expect(page.locator('#cartItems')).toHaveText('Your basket is empty.');
+  await expect(page.locator('#cartItems')).toHaveText('You have no selections yet.');
   await expect(page.locator('.basket-row')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Clear basket', exact: true })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Clear selections', exact: true })).toBeHidden();
   await expect(page.locator('#cartItems')).not.toContainText('Total:');
 }
 
@@ -150,7 +150,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expectNoBasketOverflow(page);
 
       const undo = page.getByRole('button', { name: 'Undo', exact: true });
-      await tapMobile(page.getByRole('button', { name: `Remove ${longItem.name} from basket`, exact: true }));
+      await tapMobile(page.getByRole('button', { name: `Remove ${longItem.name} from your selections`, exact: true }));
       await expectBasket(page, [unbrokenItem]);
       await expectMobileReachable(page.locator('#cartUndo'));
       await expectNoBasketOverflow(page);
@@ -158,7 +158,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expectBasket(page, original);
       await expect(page.locator('#cartUndo')).toBeHidden();
 
-      await tapMobile(page.getByRole('button', { name: 'Clear basket', exact: true }));
+      await tapMobile(page.getByRole('button', { name: 'Clear selections', exact: true }));
       await expectEmpty(page);
       expect(await savedBasket(page)).toEqual([]);
       await expectMobileReachable(page.locator('#cartUndo'));
@@ -170,7 +170,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
 
       const checkout = page.getByRole('button', { name: /checkout|place order/i });
       await expect(page.locator('#basketCheckoutNotice')).toContainText(
-        'Order placement is not available yet. No order or payment will be submitted.');
+        'cannot place product orders or service reservations');
       await expect(checkout).toHaveCount(0);
       await expectBasket(page, original);
       await reloadAndOpen(page);
@@ -210,7 +210,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expectMobileReachable(page.getByLabel(`Quantity of ${last.name}`, { exact: true }));
       await expectMobileReachable(page.getByLabel(`Line total for ${last.name}`, { exact: true }));
 
-      await tapMobile(page.getByRole('button', { name: `Remove ${last.name} from basket`, exact: true }));
+      await tapMobile(page.getByRole('button', { name: `Remove ${last.name} from your selections`, exact: true }));
       await expectBasket(page, items.slice(0, -1));
       await expectMobileReachable(page.locator('#cartUndo'));
       await expectNoBasketOverflow(page);
@@ -218,7 +218,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expectBasket(page, items);
       await expect(increase).toBeDisabled();
       await expectMobileReachable(page.locator('#cartItems > p'));
-      await expectMobileReachable(page.getByRole('button', { name: 'Clear basket', exact: true }));
+      await expectMobileReachable(page.getByRole('button', { name: 'Clear selections', exact: true }));
       await expectMobileReachable(page.locator('#basketCheckoutNotice'));
       await expect(page.getByRole('button', { name: /checkout|place order/i })).toHaveCount(0);
       await expectBasket(page, items);
@@ -293,7 +293,7 @@ test('startup restores legacy rows as trimmed, merged items through edits and re
   await reloadAndOpen(page);
   await expectBasket(page, added);
 
-  await page.getByRole('button', { name: `Remove ${planner.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${planner.name} from your selections`, exact: true }).click();
   await expectBasket(page, [added[0]]);
   await reloadAndOpen(page);
   await expectBasket(page, [added[0]]);
@@ -388,7 +388,7 @@ test('combined 100-item limit disables every increase and recovers after a decre
   await page.locator('#cartModal .close').click();
   for (const name of [headphones.name, 'Everyday travel backpack']) {
     await addProduct(page, name);
-    await expect(page.locator('#toast')).toHaveText('Your basket has reached its item limit.');
+    await expect(page.locator('#toast')).toHaveText('Your selections have reached the item limit.');
   }
   await openBasket(page);
   await expectBasket(page, fullBasket);
@@ -420,7 +420,7 @@ test('removal updates count and total and stays removed after reload', async ({ 
   await addProduct(page, headphones.name);
   await addProduct(page, planner.name);
   await openBasket(page);
-  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
   await expect(page.locator('#cartCount')).toHaveText('1');
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
   expect(await savedBasket(page)).toEqual([planner]);
@@ -431,7 +431,7 @@ test('removal updates count and total and stays removed after reload', async ({ 
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
   await expect(page.locator('#cartCount')).toHaveText('1');
 
-  await page.getByRole('button', { name: `Remove ${planner.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${planner.name} from your selections`, exact: true }).click();
   await expectEmpty(page);
   await reloadAndOpen(page);
   await expectEmpty(page);
@@ -442,7 +442,7 @@ test('clearing a populated basket persists the empty state and allows adding aga
   await addProduct(page, headphones.name);
   await addProduct(page, planner.name);
   await openBasket(page);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await expectEmpty(page);
   expect(await savedBasket(page)).toEqual([]);
   await reloadAndOpen(page);
@@ -474,7 +474,7 @@ for (const clearAll of [false, true]) {
     await addProduct(page, headphones.name);
     await addProduct(page, planner.name);
     await openBasket(page);
-    await page.getByRole('button', { name: clearAll ? 'Clear basket' : `Remove ${headphones.name} from basket`, exact: true }).click();
+    await page.getByRole('button', { name: clearAll ? 'Clear selections' : `Remove ${headphones.name} from your selections`, exact: true }).click();
     expect(await savedBasket(page)).toEqual(clearAll ? [] : [planner]);
     await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeFocused();
     await page.keyboard.press('Enter');
@@ -487,8 +487,8 @@ for (const clearAll of [false, true]) {
     await reloadAndOpen(page);
     await expect(page.locator('#cartCount')).toHaveText('3');
     await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
-    await expect(page.locator('#basketCheckoutNotice')).toContainText(
-      'Order placement is not available yet. No order or payment will be submitted.');
+      await expect(page.locator('#basketCheckoutNotice')).toContainText(
+        'cannot place product orders or service reservations');
     await expect(page.getByRole('button', { name: /checkout|place order/i })).toHaveCount(0);
   });
 }
@@ -498,7 +498,7 @@ test('undo expires after eight seconds and cannot restore the deletion later', a
   await page.clock.pauseAt(new Date(Date.now()+1000));
   await addProduct(page, planner.name);
   await openBasket(page);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await page.clock.fastForward(7999);
   await expect(page.locator('#cartUndo')).toBeVisible();
   await page.clock.fastForward(1);
@@ -513,9 +513,9 @@ test('only the latest deletion can be undone, with its own expiry', async ({ pag
   await addProduct(page, headphones.name);
   await addProduct(page, planner.name);
   await openBasket(page);
-  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
   await page.clock.fastForward(4000);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await page.clock.fastForward(4001);
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
   expect(await savedBasket(page)).toEqual([planner]);
@@ -528,7 +528,7 @@ test('undo merges restored items without overwriting subsequent basket edits', a
   await addProduct(page, headphones.name);
   await addProduct(page, planner.name);
   await openBasket(page);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await page.locator('#cartModal .close').click();
   await addProduct(page, headphones.name);
   await addProduct(page, 'Everyday travel backpack');
@@ -549,7 +549,7 @@ test('undo refuses an over-limit restore without losing edits or the pending und
     { ...item, quantity: 100 }
   ])), { key: STORAGE_KEY, item: headphones });
   await reloadAndOpen(page);
-  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
   await page.locator('#cartModal .close').click();
   await addProduct(page, planner.name);
   await openBasket(page);
@@ -564,7 +564,7 @@ test('undo of a full basket keeps increases disabled at the limit', async ({ pag
     { ...item, quantity: 100 }
   ])), { key: STORAGE_KEY, item: planner });
   await reloadAndOpen(page);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect(page.locator('#cartCount')).toHaveText('100');
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 85,000');
@@ -578,11 +578,11 @@ test('another tab receives an undo and invalidates an older pending undo', async
   await openBasket(page);
   await openBasket(second);
   await expect(second.locator('#cartCount')).toHaveText('1');
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await expectEmpty(second);
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
   await expect(second.locator('#cartCount')).toHaveText('1');
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await expectEmpty(second);
   await second.locator('#cartModal .close').click();
   await addProduct(second, headphones.name);
@@ -681,13 +681,13 @@ test('two tabs share additions, quantity changes, removals and clearing without 
   await expect(second.locator('.basket-row')).toHaveCount(2);
   await expect(second.locator('#cartCount')).toHaveText('2');
   await expect(second.locator('#cartItems > p')).toHaveText('Total: KSh 4,349');
-  await second.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await second.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
   await openBasket(page);
   await expect(page.locator('.basket-row')).toHaveCount(1);
   await expect(page.locator('#cartCount')).toHaveText('1');
   await expect(page.locator('#cartItems')).not.toContainText(headphones.name);
   await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 850');
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await expectEmpty(second);
   await second.locator('#cartModal .close').click();
   await addProduct(second, planner.name);
@@ -741,7 +741,7 @@ async function expectVisitOnlyWarning(page) {
   await expect(notice).toBeVisible();
   await expect(notice).toHaveAttribute('role', 'alert');
   await expect(notice).toHaveText(
-    'Basket changes are available for this visit, but could not be saved in this browser.');
+    'Your selections are available for this visit, but could not be saved in this browser.');
 }
 
 async function blockBasketSaving(page, failure) {
@@ -781,7 +781,7 @@ for (const failure of ['writes fail', 'access unavailable']) {
         await blockBasketSaving(page, failure);
 
         await page.getByRole('button', {
-          name: clearAll ? 'Clear basket' : `Remove ${headphones.name} from basket`,
+          name: clearAll ? 'Clear selections' : `Remove ${headphones.name} from your selections`,
           exact: true,
         }).click();
         if (clearAll) await expectEmpty(page);
@@ -848,11 +848,11 @@ for (const failure of ['writes fail', 'access unavailable']) {
         await openBasket(page);
         await expectBasketContents(page, [{ ...headphones, quantity: 3 }, planner]);
       } else if (operation === 'remove') {
-        await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+        await page.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
         await expectBasketContents(page, [planner]);
         await expect(page.locator('#cartItems')).not.toContainText(headphones.name);
       } else {
-        await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+        await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
         await expectEmpty(page);
       }
       await expectVisitOnlyWarning(page);
@@ -911,10 +911,10 @@ test('storage unavailable at startup still allows visit-only additions, removals
   await openBasket(page);
   await expectBasketContents(page, [{ ...headphones, quantity: 1 }, planner]);
   await expectVisitOnlyWarning(page);
-  await page.getByRole('button', { name: `Remove ${headphones.name} from basket`, exact: true }).click();
+  await page.getByRole('button', { name: `Remove ${headphones.name} from your selections`, exact: true }).click();
   await expectBasketContents(page, [planner]);
   await expectVisitOnlyWarning(page);
-  await page.getByRole('button', { name: 'Clear basket', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear selections', exact: true }).click();
   await expectEmpty(page);
   await expectVisitOnlyWarning(page);
   await page.locator('#cartModal .close').click();
@@ -953,9 +953,9 @@ for (const failure of ['storage getter', 'getItem']) {
       await reloadAndOpen(page);
       await expectEmpty(page);
       await expect(page.locator('#cartNotice')).toHaveText(
-        'Saved basket could not be accessed in this browser. Your basket is empty for this visit.');
+        'Saved selections could not be accessed in this browser. No saved items are available for this visit.');
       await expect(page.locator('#toast')).toHaveText(
-        'Saved basket could not be accessed. No saved data was cleared.');
+        'Saved selections could not be accessed. No saved data was cleared.');
       expect(await page.evaluate(() => window.inspectBlockedBasket())).toEqual({ raw, removals: 0 });
     }
   });
@@ -972,8 +972,8 @@ for (const [label, raw] of [['invalid JSON', '{invalid'], ['invalid basket struc
       await reloadAndOpen(page);
       await expectEmpty(page);
       await expect(page.locator('#cartNotice')).toHaveText(
-        'Saved basket data was invalid, but could not be cleared in this browser. Your basket is empty for this visit.');
-      await expect(page.locator('#toast')).toHaveText('Invalid saved basket data could not be cleared.');
+        'Saved selection data was invalid, but could not be cleared in this browser.');
+      await expect(page.locator('#toast')).toHaveText('Invalid saved selection data could not be cleared.');
       expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(raw);
     }
     // Cleanup failing must not prevent shopping or replacing invalid data
@@ -1014,7 +1014,7 @@ for (const [label, raw] of invalidData) {
     await expectEmpty(page);
     await expect(page.locator('#cartNotice')).toBeVisible();
     await expect(page.locator('#cartNotice')).toHaveText(
-      'Saved basket data was invalid, so it was cleared. Your basket is empty.');
+      'Saved selection data was invalid, so it was cleared.');
     expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBeNull();
     await reloadAndOpen(page);
     await expectEmpty(page);
