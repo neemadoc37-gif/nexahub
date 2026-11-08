@@ -12,7 +12,7 @@ test('direct workspace routes reload and serve the current source build', async 
     ['/rider', 'Independent work, responsibly'],
     ['/delivery', 'Track an order'],
     ['/payments', 'M-PESA, not a mock checkout'],
-    ['/admin', 'Administration'],
+    ['/admin', 'This page is unavailable'],
     ['/catalog', 'Published catalog'],
   ]) {
     const response = await page.goto(path);
@@ -29,22 +29,17 @@ test('direct workspace routes reload and serve the current source build', async 
 });
 
 for (const width of [402, 1280]) {
-  test(`home and directory expose role links without horizontal navigation at ${width}px`, async ({ page }) => {
+  test(`public homepage hides internal dashboards while legacy partner routes remain usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
-    await expect(page.locator('#workspaceLinksHeading')).toBeVisible();
-    const navGeometry = await page.locator('.platform-nav').evaluate(nav => {
-      const bounds = nav.getBoundingClientRect();
-      return [...nav.querySelectorAll('a')].every(a => {
-        const rect = a.getBoundingClientRect();
-        return rect.left >= bounds.left && rect.right <= bounds.right + 1;
-      });
-    });
-    expect(navGeometry).toBe(true);
-    await page.locator('.workspace-entry').click();
+    await expect(page.locator('#categoryHeading')).toBeVisible();
+    await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
+    await expect(page.locator('.header')).not.toContainText('Workspaces');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.goto('/workspaces');
     await expect(page).toHaveURL(/\/workspaces$/);
     const directory = page.locator('#platformMount');
-    for (const path of ['/customer', '/seller', '/rider', '/delivery', '/catalog', '/payments', '/admin']) {
+    for (const path of ['/customer', '/seller', '/rider', '/delivery', '/catalog', '/payments']) {
       await expect(directory.locator(`a[href="${path}"]`)).toBeVisible();
     }
     await expect(directory).toContainText('Forms only; storage unavailable');
@@ -83,23 +78,23 @@ test('direct auth routes open real account controls without submitting anything'
 test('old workspace links stay usable and switching routes clears old record filters', async ({ page }) => {
   await page.goto('/?workspace=customer&order=11111111-1111-4111-8111-111111111111&q=old');
   await expect(page.locator('#platformMount h1')).toHaveText('Your NexaHub');
-  await page.locator('.platform-nav a[href="/seller"]').click();
+  await page.locator('.footer a[href="/seller"]').click();
   await expect(page).toHaveURL(/\/seller$/);
-  await page.locator('.platform-nav a[href="/"]').click();
+  await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
   await expect(page.locator('#productGrid')).toBeVisible();
 });
 
-test('footer categories and storefront search remain reachable from a workspace', async ({ page }) => {
+test('footer categories and live marketplace search remain reachable from a workspace', async ({ page }) => {
   await page.goto('/seller');
-  await page.locator('.footer a[href="#marketplace"]').filter({ hasText: /^Shopping$/ }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('#productGrid')).toBeVisible();
+  await page.locator('.footer a[href="/catalog?category=supermarkets"]').click();
+  await expect(page).toHaveURL(/\/catalog\?category=supermarkets$/);
+  await expect(page.locator('#platformMount h1')).toHaveText('Published catalog');
   await page.goto('/admin');
-  await page.locator('#searchInput').fill('headphones');
-  await page.locator('.search').getByRole('button', { name: 'Search', exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('#productGrid .product:visible')).toHaveCount(1);
+  await page.locator('#marketplaceSearch').fill('headphones');
+  await page.getByRole('button', { name: 'Search the live catalog', exact: true }).click();
+  await expect(page).toHaveURL(/\/catalog\?q=headphones$/);
+  await expect(page.locator('#platformMount').getByLabel('Search published products')).toHaveValue('headphones');
 });
 
 test('FIXTURE: order detail links preserve the owned order for payment and tracking', async ({ page }) => {
@@ -128,7 +123,7 @@ test('FIXTURE: order detail links preserve the owned order for payment and track
   await page.locator('#orderDetailPanel').getByRole('button', { name: 'Payment readiness', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/payments\\?order=${order.id}$`));
   await expect(page.locator('select[name="order_id"]')).toHaveValue(order.id);
-  await page.locator('.platform-nav a[href="/customer"]').click();
+  await page.locator('.footer a[href="/customer"]').click();
   await page.getByRole('button', { name: /^View order / }).click();
   await page.getByRole('button', { name: 'Track delivery', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/delivery\\?order=${order.id}$`));

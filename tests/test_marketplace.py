@@ -78,9 +78,55 @@ class APITests(unittest.TestCase):
     def test_customer_payment_rows_cannot_escape_owned_orders(self):
         client = FixtureClient({
             "/rest/v1/orders": [{"id": ORDER, "customer_id": USER}],
-            "/rest/v1/payment_transactions": [{"id": SELLER, "order_id": OTHER}],
+            "/rest/v1/payment_transactions": [{"id": SELLER, "order_id": OTHER, "customer_id": USER}],
         })
         self.api_error(MarketplaceAPI(client), "GET", "/api/customer/payments", 502, "ownership_check_failed")
+
+    def test_customer_profile_is_owned_and_uses_confirmed_columns(self):
+        client = FixtureClient({"/rest/v1/profiles": [{
+            "id": USER, "display_name": "Isolated fixture", "country_code": "KE",
+        }]})
+        result = MarketplaceAPI(client).dispatch("GET", "/api/customer/profile", AUTH)
+        self.assertEqual(result["profile"]["country_code"], "KE")
+        self.assertEqual(client.calls[-1][2]["id"], "eq." + USER)
+        self.assertIn("country_code", client.calls[-1][2]["select"])
+        client.results["/rest/v1/profiles"][0]["id"] = OTHER
+        self.api_error(MarketplaceAPI(client), "GET", "/api/customer/profile", 502, "ownership_check_failed")
+
+    def test_missing_customer_profile_is_not_fabricated(self):
+        result = MarketplaceAPI(FixtureClient()).dispatch("GET", "/api/customer/profile", AUTH)
+        self.assertIsNone(result["profile"])
+
+    def test_payment_requires_both_customer_and_order_ownership(self):
+        client = FixtureClient({
+            "/rest/v1/orders": [{"id": ORDER, "customer_id": USER}],
+            "/rest/v1/payment_transactions": [{
+                "id": SELLER, "order_id": ORDER, "customer_id": USER,
+                "provider_reference": "ISOLATED-NOT-A-REAL-PAYMENT",
+            }],
+        })
+        result = MarketplaceAPI(client).dispatch("GET", "/api/customer/payments", AUTH)
+        self.assertEqual(result["scope"], "most_recent_50_payments")
+        self.assertEqual(client.calls[-1][2]["customer_id"], "eq." + USER)
+        self.assertEqual(client.calls[-1][2]["id"], "in.(" + ORDER + ")")
+        self.assertEqual(client.calls[-2][2]["order"], "created_at.desc")
+        client.results["/rest/v1/payment_transactions"][0]["customer_id"] = OTHER
+        self.api_error(MarketplaceAPI(client), "GET", "/api/customer/payments", 502, "ownership_check_failed")
+
+    def test_catalog_filters_use_confirmed_columns_and_cannot_be_bypassed(self):
+        client = FixtureClient({"/rest/v1/products": [{
+            "id": ORDER, "status": "published", "category_id": SELLER,
+            "listing_type": "service", "title": "Isolated fixture",
+        }]})
+        api = MarketplaceAPI(client)
+        result = api.dispatch("GET", "/api/catalog?listing_type=service&category=" + SELLER)
+        self.assertEqual(len(result["products"]), 1)
+        self.assertEqual(client.calls[0][2]["listing_type"], "eq.service")
+        self.assertEqual(client.calls[0][2]["category_id"], "eq." + SELLER)
+        client.results["/rest/v1/products"][0]["listing_type"] = "digital"
+        self.api_error(api, "GET", "/api/catalog?listing_type=service", 502, "catalog_filter_check_failed")
+        self.api_error(api, "GET", "/api/catalog?category=invalid!", 400, "invalid_category")
+        self.api_error(api, "GET", "/api/catalog?listing_type=" + "x" * 81, 400, "invalid_listing_type")
 
     @patch.dict(os.environ, {"NEXAHUB_ADMIN_USER_IDS": ""})
     def test_user_editable_admin_metadata_does_not_authorize(self):
@@ -88,6 +134,46 @@ class APITests(unittest.TestCase):
         self.api_error(MarketplaceAPI(client), "GET", "/api/admin?role=admin", 403, "owner_access_required")
         self.assertEqual(len(client.calls), 1)
         self.api_error(MarketplaceAPI(client), "POST", "/api/admin/actions", 403, "owner_access_required", body={"role": "admin"})
+
+    @patch.dict(os.environ, {"NEXAHUB_ADMIN_USER_IDS": ""})
+    def test_access_discovery_does_not_trust_editable_role_metadata(self):
+        result = MarketplaceAPI(FixtureClient()).dispatch("GET", "/api/account/access", AUTH)
+        self.assertFalse(result["admin"])
+
+    @patch.dict(os.environ, {"NEXAHUB_ADMIN_USER_IDS": USER})
+    def test_access_discovery_requires_server_provisioned_owner(self):
+        result = MarketplaceAPI(FixtureClient()).dispatch("GET", "/api/account/access", AUTH)
+        self.assertTrue(result["admin"])
+
+    def test_featured_businesses_expose_only_approved_public_fields(self):
+        client = FixtureClient({
+            "/rest/v1/products": [{"id": ORDER, "seller_id": SELLER, "status": "published"}],
+            "/rest/v1/seller_profiles": [{"id": SELLER, "store_name": "Isolated fixture", "status": "approved"}],
+        })
+        api = MarketplaceAPI(client)
+        self.assertEqual(len(api.dispatch("GET", "/api/businesses")["businesses"]), 1)
+        self.assertNotIn("user_id", client.calls[-1][2]["select"])
+        self.assertEqual(client.calls[-1][2]["status"], "eq.approved")
+        client.results["/rest/v1/seller_profiles"][0]["status"] = "pending"
+        self.api_error(api, "GET", "/api/businesses", 502, "business_scope_check_failed")
+
+    def test_empty_business_section_never_invents_sellers(self):
+        client = FixtureClient()
+        self.assertEqual(MarketplaceAPI(client).dispatch("GET", "/api/businesses")["businesses"], [])
+        self.assertFalse(any(call[0].endswith("seller_profiles") for call in client.calls))
+
+    def test_category_links_resolve_real_slugs_without_creating_categories(self):
+        client = FixtureClient({
+            "/rest/v1/categories": [{"id": SELLER, "slug": "supermarkets", "name": "Supermarkets"}],
+            "/rest/v1/products": [{"id": ORDER, "category_id": SELLER, "status": "published"}],
+        })
+        result = MarketplaceAPI(client).dispatch("GET", "/api/catalog?category=supermarkets")
+        self.assertEqual(result["selected_category_id"], SELLER)
+        self.assertFalse(result["category_unavailable"])
+        self.assertEqual(client.calls[1][2]["category_id"], "eq." + SELLER)
+        missing = MarketplaceAPI(FixtureClient()).dispatch("GET", "/api/catalog?category=pharmacies")
+        self.assertEqual(missing["products"], [])
+        self.assertTrue(missing["category_unavailable"])
 
     @patch.dict(os.environ, {"NEXAHUB_ADMIN_USER_IDS": USER})
     def test_owner_admin_writes_still_cannot_enable_payouts(self):

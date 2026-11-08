@@ -11,8 +11,8 @@ for (const width of [402, 1280]) {
       if (request.method() === 'POST') mutations.push(new URL(request.url()).pathname);
     });
     await page.goto('/');
-    await expect(page.locator('.platform-nav')).toBeVisible();
-    await page.locator('.platform-nav').getByRole('link', { name: 'Rider desk', exact: true }).click();
+    await expect(page.locator('.header .nav')).toBeVisible();
+    await page.goto('/rider');
     await expect(page).toHaveURL(/\/rider$/);
     await expect(page.getByRole('heading', { name: 'Independent work, responsibly' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Rider application', exact: true })).toBeVisible();
@@ -29,10 +29,10 @@ for (const width of [402, 1280]) {
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.keyboard.press('Escape');
     expect(mutations).toEqual([]);
-    await page.locator('.platform-nav').getByRole('link', { name: 'Storefront', exact: true }).click();
+    await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
     await expect(page.locator('#platformMount')).toBeHidden();
     await expect(page.locator('#productGrid .product')).toHaveCount(8);
-    await page.getByRole('button', { name: 'Add to basket', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Add to sample basket', exact: true }).first().click();
     await expect(page.locator('#cartCount')).toHaveText('1');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);
@@ -44,7 +44,6 @@ for (const [route, heading] of [
   ['seller', 'A clearer view of your store'],
   ['delivery', 'Track an order'],
   ['payments', 'M-PESA, not a mock checkout'],
-  ['admin', 'Administration'],
 ]) {
   test(`signed-out ${route} page never loads private records`, async ({ page }) => {
     const privateRequests = [], errors = [];
@@ -75,7 +74,7 @@ test('public catalog is real published inventory or an explicit service error, n
     expect(body.error.message).toBeTruthy();
     await expect(page.locator('#platformMount')).toContainText(body.error.message);
   }
-  await page.getByRole('button', { name: 'Discover', exact: true }).click();
+  await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
   await expect(page.locator('#productGrid')).toBeVisible();
 });

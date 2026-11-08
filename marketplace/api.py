@@ -8,12 +8,13 @@ from uuid import UUID
 from .supabase_client import ApiError, SupabaseClient
 
 
-PRODUCT_FIELDS = "id,title,description,price,currency,image_url,category_id,seller_id,status"
-ORDER_FIELDS = "id,status,total_amount,currency,created_at"
+PRODUCT_FIELDS = "id,title,description,listing_type,price,currency,image_url,category_id,seller_id,status"
+ORDER_FIELDS = "id,order_number,status,total_amount,currency,created_at"
 ITEM_FIELDS = "id,order_id,seller_id,product_id,quantity,unit_price"
-SELLER_FIELDS = "id,user_id,store_name,status,created_at"
-PAYMENT_FIELDS = "id,order_id,provider,amount,currency,status"
-BOOKING_FIELDS = "id,product_id,seller_id,status,created_at"
+SELLER_FIELDS = "id,user_id,store_name,description,status,created_at"
+PAYMENT_FIELDS = "id,order_id,customer_id,provider,provider_reference,amount,currency,status,created_at"
+BOOKING_FIELDS = "id,product_id,seller_id,start_at,notes,status,created_at"
+PROFILE_FIELDS = "id,display_name,phone,country_code,created_at"
 
 
 def identifier(value):
@@ -123,30 +124,76 @@ class MarketplaceAPI:
             }
         if method == "GET" and path == "/api/delivery/estimate":
             self.blocked("delivery_fees_not_configured", "Delivery areas, charges and commission rules require approval. No fee has been quoted.")
+        if method == "GET" and path == "/api/businesses":
+            products = self.rows("products", "id,seller_id,status",
+                                 status="eq.published", order="created_at.desc")
+            if any(row.get("status") != "published" for row in products):
+                raise ApiError(502, "publication_check_failed", "Published business listings could not be verified.")
+            seller_ids = {identifier(row["seller_id"]) for row in products}
+            businesses = self.rows(
+                "seller_profiles", "id,store_name,description,status",
+                status="eq.approved", id="in.(" + ",".join(sorted(seller_ids)) + ")",
+            ) if seller_ids else []
+            if any(row.get("status") != "approved" or row.get("id") not in seller_ids for row in businesses):
+                raise ApiError(502, "business_scope_check_failed", "Business approval checks failed. No businesses were returned.")
+            return {"businesses": businesses, "limit": 50}
         if method == "GET" and (path == "/api/catalog" or path.startswith("/api/catalog/")):
             filters = {"status": "eq.published", "order": "created_at.desc"}
             if path != "/api/catalog":
                 filters["id"] = "eq." + identifier(path.rsplit("/", 1)[1])
-            products = self.rows("products", PRODUCT_FIELDS, **filters)
+            else:
+                category_unavailable = False
+                q = query.get("q", [""])[0].strip()
+                if len(q) > 120:
+                    raise ApiError(400, "invalid_search", "Search must be 120 characters or fewer.")
+                listing_type = query.get("listing_type", [""])[0].strip()
+                if len(listing_type) > 80 or any(ord(c) < 32 for c in listing_type):
+                    raise ApiError(400, "invalid_listing_type", "Choose a listing type of at most 80 characters.")
+                category = query.get("category", [""])[0].strip()
+                if category:
+                    try:
+                        category_id = identifier(category)
+                    except ApiError:
+                        if not re.fullmatch(r"[a-z0-9-]{1,80}", category):
+                            raise ApiError(400, "invalid_category", "Choose a valid marketplace category.") from None
+                        matches = self.rows("categories", "id,name,slug", slug="eq." + category)
+                        if len(matches) > 1 or any(row.get("slug") != category for row in matches):
+                            raise ApiError(502, "category_mapping_ambiguous", "The category could not be matched safely.")
+                        category_id = identifier(matches[0]["id"]) if matches else None
+                        category_unavailable = category_id is None
+                    if category_id:
+                        filters["category_id"] = "eq." + category_id
+                seller_id = query.get("seller", [""])[0].strip()
+                if seller_id:
+                    filters["seller_id"] = "eq." + identifier(seller_id)
+                if listing_type:
+                    filters["listing_type"] = "eq." + listing_type
+            products = [] if path == "/api/catalog" and category_unavailable else self.rows("products", PRODUCT_FIELDS, **filters)
             # Defense in depth: do not return drafts even if upstream filters fail.
             if any(row.get("status") != "published" for row in products):
                 raise ApiError(502, "publication_check_failed", "Publication checks failed. No catalog records were returned.")
+            if any(
+                (filters.get("category_id") and row.get("category_id") != filters["category_id"][3:])
+                or (filters.get("listing_type") and row.get("listing_type") != filters["listing_type"][3:])
+                or (filters.get("seller_id") and row.get("seller_id") != filters["seller_id"][3:])
+                for row in products
+            ):
+                raise ApiError(502, "catalog_filter_check_failed", "Catalog filters could not be verified. No listings were returned.")
             if path != "/api/catalog":
                 if not products:
                     raise ApiError(404, "product_not_found", "This published product is unavailable.")
                 if len(products) != 1 or str(products[0].get("id")) != filters["id"][3:]:
                     raise ApiError(502, "product_identity_check_failed", "The requested product could not be matched safely.")
                 return {"product": products[0]}
-            q = query.get("q", [""])[0].strip()
-            if len(q) > 120:
-                raise ApiError(400, "invalid_search", "Search must be 120 characters or fewer.")
             if q:
                 products = [p for p in products if q.casefold() in str(p.get("title", "")).casefold()]
-            return {"products": products, "categories": self.rows("categories", "id,name,slug"), "limit": 50}
+            return {"products": products, "categories": self.rows("categories", "id,name,slug"), "limit": 50,
+                    "selected_category_id": filters.get("category_id", "")[3:] or None,
+                    "category_unavailable": category_unavailable}
         if method == "POST" and path == "/api/payments/mpesa/callback":
             self.blocked("callbacks_disabled", "Payment callbacks are not configured. No payment state was changed.")
 
-        known_get = {"/api/customer/orders", "/api/customer/bookings", "/api/customer/payments",
+        known_get = {"/api/account/access", "/api/customer/profile", "/api/customer/orders", "/api/customer/bookings", "/api/customer/payments",
                      "/api/seller", "/api/rider", "/api/admin", "/api/deliveries/track"}
         known_post = {"/api/riders/applications", "/api/sellers/applications", "/api/deliveries/requests",
                       "/api/payments/mpesa/stk", "/api/deliveries/confirm", "/api/admin/actions"}
@@ -156,6 +203,13 @@ class MarketplaceAPI:
             raise ApiError(404, "route_not_found", "This API route is unavailable.")
         user_id, token = self.authenticate(authorization)
         if method == "GET":
+            if path == "/api/account/access":
+                return {"admin": user_id in self.owners()}
+            if path == "/api/customer/profile":
+                profiles = self.owned("profiles", PROFILE_FIELDS, "id", user_id, token)
+                if len(profiles) > 1:
+                    raise ApiError(502, "profile_mapping_ambiguous", "The customer profile could not be matched safely.")
+                return {"profile": profiles[0] if profiles else None}
             if path == "/api/customer/orders":
                 return {"orders": self.owned("orders", ORDER_FIELDS, "customer_id", user_id, token, order="created_at.desc"), "limit": 50}
             if is_order_detail:
@@ -163,15 +217,19 @@ class MarketplaceAPI:
                 items = self.owned("order_items", ITEM_FIELDS, "order_id", order["id"], token)
                 return {"order": order, "items": items}
             if path == "/api/customer/bookings":
-                return {"bookings": self.owned("bookings", BOOKING_FIELDS, "customer_id", user_id, token, order="created_at.desc")}
+                return {"bookings": self.owned("bookings", BOOKING_FIELDS, "customer_id", user_id, token, order="created_at.desc"), "limit": 50}
             if path == "/api/customer/payments":
-                orders = self.owned("orders", "id", "customer_id", user_id, token)
+                payments = self.owned("payment_transactions", PAYMENT_FIELDS, "customer_id", user_id, token,
+                                      order="created_at.desc")
+                # Validate parents of the returned payments, not just the first
+                # page of recent orders. An older order can have a new payment.
+                payment_order_ids = {identifier(row["order_id"]) for row in payments}
+                orders = self.owned("orders", "id", "customer_id", user_id, token,
+                                    id="in.(" + ",".join(sorted(payment_order_ids)) + ")") if payment_order_ids else []
                 order_ids = {identifier(row["id"]) for row in orders}
-                payments = self.rows("payment_transactions", PAYMENT_FIELDS, token,
-                                     order_id="in.(" + ",".join(sorted(order_ids)) + ")") if order_ids else []
-                if any(row.get("order_id") not in order_ids for row in payments):
+                if payment_order_ids != order_ids:
                     raise ApiError(502, "ownership_check_failed", "Payment ownership checks failed. No payment records were returned.")
-                return {"payments": payments}
+                return {"payments": payments, "limit": 50, "scope": "most_recent_50_payments"}
             if path == "/api/seller":
                 seller = self.seller(user_id, token)
                 return {"seller": seller,

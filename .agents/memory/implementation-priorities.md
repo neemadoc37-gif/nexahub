@@ -23,3 +23,26 @@ not substitute a different logo.
 **How to apply:** Reuse the approved artwork for the shared header, homepage,
 authentication screens, role dashboards and browser icon. Preserve its
 proportions and verify desktop and mobile rendering.
+
+Do not request repeated screenshots or schema exports. Use the information
+already provided and continue implementing the approved design directly on the
+existing website. If a missing detail is essential, identify exactly what is
+needed and why in one request. Do not create another SQL query, repeat schema
+inspection, run migrations or change database permissions without approval.
+
+**Why:** The user explicitly stopped the repeated inspection requests.
+
+**How to apply:** Work within confirmed schema information, state unverified
+security and relationship details as blockers, and seek approval before any
+further database inspection or changes.
+
+The approved customer-facing direction is “Modern International Marketplace”:
+white, warm ivory, deep navy and teal, with subtle champagne-gold accents.
+Keep the approved NexaHub logo. Admin must remain private and role-protected;
+customers must not see internal dashboards.
+
+**Why:** The user explicitly selected this direction for the existing website.
+
+**How to apply:** Preserve existing data, authentication and functionality while
+implementing the design in the actual pages. Keep privileged navigation out of
+public customer surfaces; never trust editable profile metadata for admin access.

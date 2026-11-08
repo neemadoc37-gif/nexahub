@@ -23,7 +23,7 @@ test.afterEach(async ({ page }) => {
 
 async function addProduct(page, name) {
   await page.locator('.product').filter({ has: page.getByRole('heading', { name, exact: true }) })
-    .getByRole('button', { name: 'Add to basket', exact: true }).click();
+    .getByRole('button', { name: 'Add to sample basket', exact: true }).click();
 }
 
 async function openBasket(page) {

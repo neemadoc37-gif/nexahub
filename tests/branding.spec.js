@@ -21,7 +21,7 @@ for (const width of [320, 402, 1280]) {
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.getByRole('button', { name: 'Close account dialog' }).click();
-    await page.getByRole('button', { name: 'Add to basket' }).first().click();
+    await page.getByRole('button', { name: 'Add to sample basket' }).first().click();
     await expect(page.locator('#cartCount')).toHaveText('1');
   });
 }

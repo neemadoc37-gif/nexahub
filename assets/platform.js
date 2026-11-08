@@ -7,6 +7,10 @@
   let readiness = null;
   let orders = [];
   let catalogCache = [];
+  let categoryCache = [];
+  let ownerCheckedUser = null;
+  let ownerAccess = false;
+  let ownerNavigationEpoch = 0;
   let activeRoute = null;
   let lastAuthUserId = currentUser?.id || null;
   let fieldSequence = 0;
@@ -47,6 +51,7 @@
     catch (_) { return `${currency} ${value.toLocaleString()}`; }
   };
   const date = (value) => {
+    if (value === null || value === undefined || value === "") return "Date unavailable";
     const parsed = new Date(value);
     return Number.isNaN(parsed.getTime()) ? "Date unavailable" : parsed.toLocaleString();
   };
@@ -54,9 +59,26 @@
     if (!allowed.has(route)) return;
     const url = new URL(location.href);
     url.pathname = routePaths[route];
-    ["workspace", "product", "q", "order"].forEach(key => url.searchParams.delete(key));
+    ["workspace", "product", "q", "order", "category", "listing_type", "seller"].forEach(key => url.searchParams.delete(key));
     if (productId) url.searchParams.set("product", productId);
     if (context.order) url.searchParams.set("order", context.order);
+    history.pushState({}, "", url.pathname + url.search + url.hash);
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function openCatalogProduct(productId) {
+    const url = new URL(location.href);
+    url.pathname = routePaths.catalog;
+    url.searchParams.delete("workspace");
+    url.searchParams.delete("order");
+    url.searchParams.set("product", productId);
+    history.pushState({}, "", url.pathname + url.search + url.hash);
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function returnToCatalog() {
+    const url = new URL(location.href);
+    url.searchParams.delete("product");
     history.pushState({}, "", url.pathname + url.search + url.hash);
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -74,6 +96,29 @@
       const current = link.dataset.workspace === (route || "home");
       if (current) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
+    });
+  }
+  function syncOwnerNavigation() {
+    const uid = currentUser?.id || null;
+    if (uid && ownerCheckedUser === uid) return;
+    ownerCheckedUser = uid;
+    ownerAccess = false;
+    const sequence = ++ownerNavigationEpoch;
+    document.querySelectorAll('a[href="/admin"]').forEach(link => link.remove());
+    if (!uid) return;
+    api("/api/account/access", {}, true).then(data => {
+      if (sequence !== ownerNavigationEpoch || currentUser?.id !== uid) return;
+      ownerAccess = data.admin === true;
+      if (!ownerAccess) return;
+      const destination = document.querySelector("#accountModal nav");
+      if (destination) {
+        const link = el("a", "", "Administration");
+        link.href = "/admin";
+        link.dataset.workspace = "admin";
+        destination.appendChild(link);
+      }
+    }).catch(() => {
+      // No verified server permission means no privileged navigation.
     });
   }
   function addHero(kicker, title, description) {
@@ -193,8 +238,7 @@
       ["rider", "Rider registration and dashboard", "Forms only; storage unavailable", "View registration fields, account, jobs and earnings sections. Registration, verification, acceptance and earnings are not saved."],
       ["delivery", "Customer delivery tracking", "Entry form only; tracking unavailable", "Enter an order to check ownership. No real delivery milestones, rider location or secure OTP service are connected."],
       ["catalog", "Live product catalog", "Connected published-product reader", "Search published listings returned by the existing backend. An empty catalog stays empty; example storefront products are not substituted."],
-      ["payments", "M-PESA readiness", "Collections and payouts disabled", "View configuration requirements and account-owned payment records. No live STK Push, settlement or payout is enabled."],
-      ["admin", "Admin dashboard", "Protected entry; management disabled", "Owner access must be provisioned server-side. Approvals, suspension, fees, disputes and payout actions remain unavailable."]
+      ["payments", "M-PESA readiness", "Collections and payouts disabled", "View configuration requirements and account-owned payment records. No live STK Push, settlement or payout is enabled."]
     ];
     entries.forEach(([route, title, status, description]) => {
       const card = panel(title);
@@ -234,47 +278,98 @@
     if (!requireSignIn()) return;
     const ticket = ++epoch;
     const uid = currentUser?.id;
+    orders = [];
     const intro = el("div", "platform-authbar");
     intro.append(el("span", "", `Signed in as ${currentUser?.email || "your account"}`));
     intro.append(button("Account profile", () => showAccount(), true));
+    intro.append(button("Refresh account", () => render(), true));
     mount.appendChild(intro);
-    const loading = el("div", "platform-grid");
-    for (const heading of ["Orders", "Bookings", "Payments"]) {
-      const p = panel(heading, el("div", "platform-skeleton"));
-      loading.appendChild(p);
-    }
-    mount.appendChild(loading);
-    try {
-      const [orderData, bookingData, paymentData] = await Promise.all([
-        api("/api/customer/orders", {}, true), api("/api/customer/bookings", {}, true), api("/api/customer/payments", {}, true)
-      ]);
-      if (ticket !== epoch || uid !== currentUser?.id) return;
-      orders = Array.isArray(orderData.orders) ? orderData.orders : [];
-      const grid = el("div", "platform-grid");
-      const orderRows = listRows(orders, (order) => recordRow(
-        `Order ${order.id}`, `${money(order.total_amount, order.currency)} · ${date(order.created_at)}`, order.status,
-        () => viewOrder(order.id), "View order"
-      ), "No orders have been returned for this account.");
-      grid.appendChild(panel("Orders", orderRows));
-      grid.appendChild(panel("Bookings", listRows(bookingData.bookings, (booking) => recordRow(
-        `Booking ${booking.id}`, `Product ${booking.product_id} · ${date(booking.created_at)}`, booking.status
-      ), "No bookings have been returned for this account.")));
-      grid.appendChild(panel("Payments", listRows(paymentData.payments, (payment) => recordRow(
-        `Payment ${payment.id}`, `${payment.provider || "Provider unavailable"} · ${money(payment.amount, payment.currency)}`, payment.status
-      ), "No payments have been returned for this account.")));
-      loading.replaceWith(grid);
-      const controls = el("div", "platform-actions");
-      controls.append(button("Track an order", () => go("delivery")), button("M-PESA readiness", () => go("payments"), true));
-      mount.appendChild(controls);
-      if (id) {
-        const found = orders.find((row) => row.id === id);
-        if (found) await viewOrder(id, ticket);
+    const grid = el("div", "platform-grid");
+    const profilePanel = panel("Account profile", el("div", "platform-skeleton"));
+    const orderPanel = panel("Orders", el("div", "platform-skeleton"));
+    const bookingPanel = panel("Bookings", el("div", "platform-skeleton"));
+    const paymentPanel = panel("Payments", el("div", "platform-skeleton"));
+    grid.append(profilePanel, orderPanel, bookingPanel, paymentPanel);
+    mount.appendChild(grid);
+    const controls = el("div", "platform-actions");
+    controls.append(button("Track an order", () => go("delivery")), button("M-PESA readiness", () => go("payments"), true));
+    mount.appendChild(controls);
+    if (id) viewOrder(id, ticket, uid);
+    const current = () => ticket === epoch && uid === currentUser?.id;
+    const setProfile = (data, error) => {
+      if (!current()) return;
+      const content = el("div");
+      if (error) content.appendChild(notice(`Profile details could not be loaded. ${error.message}`, "error"));
+      else if (!data?.profile) content.appendChild(empty("No profile record was returned for this signed-in account."));
+      else {
+        const profile = data.profile;
+        content.append(el("p", "", profile.display_name || "Name not provided"),
+          el("p", "platform-meta", `Country code: ${profile.country_code || "Not provided"}`),
+          el("p", "platform-meta", `Phone: ${profile.phone || "Not provided"}`),
+          el("p", "platform-meta", `Account record created ${date(profile.created_at)}`));
       }
-    } catch (error) {
-      if (ticket === epoch && uid === currentUser?.id) setError(error.message, () => render());
+      const refresh = button(error ? "Retry profile" : "Refresh profile", refreshProfile, true);
+      content.appendChild(refresh);
+      profilePanel.replaceChildren(el("h2", "", "Account profile"), content);
+    };
+    async function refreshProfile() {
+      if (!current()) return;
+      profilePanel.replaceChildren(el("h2", "", "Account profile"), el("div", "platform-skeleton"));
+      try {
+        const data = await api("/api/customer/profile", {}, true);
+        if (current()) setProfile(data);
+      } catch (error) {
+        if (current()) setProfile(null, error);
+      }
     }
+    const ordersPromise = api("/api/customer/orders", {}, true);
+    const bookingsPromise = api("/api/customer/bookings", {}, true);
+    const paymentsPromise = api("/api/customer/payments", {}, true);
+    api("/api/customer/profile", {}, true).then(data => setProfile(data)).catch(error => setProfile(null, error));
+    ordersPromise.then((data) => {
+      if (!current()) return;
+      orders = Array.isArray(data.orders) ? data.orders : [];
+      const rows = listRows(orders, (order) => recordRow(
+        `Order ${order.order_number || order.id}`, `${money(order.total_amount, order.currency)} · ${date(order.created_at)}`, order.status,
+        () => viewOrder(order.id, ticket, uid), "View order"
+      ), "No orders have been returned for this account.");
+      if (Number.isFinite(data.limit)) rows.prepend(notice(`Showing up to ${data.limit} most recent orders returned by the account service.`, "warn"));
+      orderPanel.replaceChildren(el("h2", "", "Orders"), rows);
+    }).catch((error) => {
+      if (current()) orderPanel.replaceChildren(el("h2", "", "Orders"), notice(`Orders could not be loaded. ${error.message}`, "error"), button("Retry orders", () => render(), true));
+    });
+    bookingsPromise.then((data) => {
+      if (!current()) return;
+      const rows = listRows(data.bookings, (booking) => {
+        const row = el("li");
+        const copy = el("div");
+        copy.append(el("strong", "", `Booking ${booking.id}`),
+          el("div", "platform-meta", `Starts ${date(booking.start_at)} · Created ${date(booking.created_at)}`));
+        if (booking.notes) copy.appendChild(el("div", "platform-meta", `Notes: ${booking.notes}`));
+        row.append(copy, el("span", "platform-status", booking.status || "Status unavailable"));
+        if (booking.product_id) row.appendChild(button("View product", () => go("catalog", booking.product_id), true));
+        return row;
+      }, "No bookings have been returned for this account.");
+      if (Number.isFinite(data.limit)) rows.prepend(notice(`Showing up to ${data.limit} bookings returned by the account service.`, "warn"));
+      bookingPanel.replaceChildren(el("h2", "", "Bookings"), rows);
+    }).catch((error) => {
+      if (current()) bookingPanel.replaceChildren(el("h2", "", "Bookings"), notice(`Bookings could not be loaded. ${error.message}`, "error"), button("Retry bookings", () => render(), true));
+    });
+    paymentsPromise.then((data) => {
+      if (!current()) return;
+      const rows = listRows(data.payments, (payment) => {
+        const detail = `${payment.provider || "Provider unavailable"} · ${money(payment.amount, payment.currency)} · Created ${date(payment.created_at)}${payment.provider_reference ? ` · Reference ${payment.provider_reference}` : ""}`;
+        return recordRow(`Payment ${payment.id}`, detail, payment.status,
+          payment.order_id ? () => viewOrder(payment.order_id, ticket, uid) : null, "View associated order");
+      }, "No payment records have been returned for this account.");
+      rows.prepend(notice("These are account payment records, not independent confirmation of provider settlement.", "warn"));
+      if (Number.isFinite(data.limit)) rows.appendChild(notice(`Showing up to ${data.limit} most recent payment records. Each record’s linked order is checked separately.`, "warn"));
+      paymentPanel.replaceChildren(el("h2", "", "Payments"), rows);
+    }).catch((error) => {
+      if (current()) paymentPanel.replaceChildren(el("h2", "", "Payments"), notice(`Payments could not be loaded. ${error.message}`, "error"), button("Retry payments", () => render(), true));
+    });
   }
-  async function viewOrder(id, expectedTicket = epoch) {
+  async function viewOrder(id, expectedTicket = epoch, expectedUser = currentUser?.id) {
     const url = new URL(location.href);
     url.searchParams.set("order", id);
     history.replaceState({}, "", url.pathname + url.search + url.hash);
@@ -285,18 +380,19 @@
     mount.appendChild(pending);
     try {
       const detail = await api(`/api/customer/orders/${encodeURIComponent(id)}`, {}, true);
-      if (expectedTicket !== epoch || !currentUser) return;
+      if (expectedTicket !== epoch || !currentUser || expectedUser !== currentUser?.id) return;
       const box = el("div");
-      box.append(el("p", "", `Order ${detail.order?.id || id}`), el("span", "platform-status", detail.order?.status || "Status unavailable"));
+      box.append(el("p", "", `Order ${detail.order?.order_number || detail.order?.id || id}`), el("span", "platform-status", detail.order?.status || "Status unavailable"));
       box.appendChild(listRows(detail.items, (item) => recordRow(
-        `Product ${item.product_id}`, `Quantity ${item.quantity} · ${money(item.unit_price, detail.order?.currency)}`, null
+        `Product ${item.product_id}`, `Quantity ${item.quantity} · ${money(item.unit_price, detail.order?.currency)}`, null,
+        () => go("catalog", item.product_id), "View product"
       ), "This order has no returned line items."));
       const actions = el("div", "platform-actions");
       actions.append(button("Payment readiness", () => go("payments", null, { order: id })), button("Track delivery", () => go("delivery", null, { order: id }), true));
       box.appendChild(actions);
       pending.replaceChildren(el("h2", "", "Order details"), box);
     } catch (error) {
-      if (expectedTicket !== epoch) return;
+      if (expectedTicket !== epoch || expectedUser !== currentUser?.id) return;
       pending.replaceChildren(el("h2", "", "Order details"), notice(error.message, "error"));
     }
   }
@@ -377,11 +473,17 @@
       if (!data.seller) content.appendChild(empty("No seller profile is available for this account. Submit an application below; this request is not saved unless the server confirms otherwise."));
       else {
         content.append(el("p", "", data.seller.store_name || "Store name unavailable"), el("span", "platform-status", data.seller.status || "Status unavailable"));
+        if (data.seller.description) content.appendChild(el("p", "", data.seller.description));
         content.appendChild(el("p", "platform-meta", `Created ${date(data.seller.created_at)}`));
       }
       content.appendChild(notice("Seller accounting is not enabled. No revenue, earnings or order totals are inferred.", "warn"));
       content.appendChild(el("h3", "", "Products"));
-      content.appendChild(listRows(data.products, (product) => recordRow(product.title || `Product ${product.id}`, product.status || "Status unavailable", product.status), "No seller products were returned."));
+      content.appendChild(listRows(data.products, (product) => {
+        const listing = product.listing_type || "Listing type not returned";
+        const price = product.price === null || product.price === undefined || product.price === ""
+          ? "Price unavailable" : `${product.price} ${product.currency || "Currency not returned"}`;
+        return recordRow(product.title || `Product ${product.id}`, `${listing} · ${price} · ${product.status || "Status unavailable"}`, product.status);
+      }, "No seller products were returned."));
       content.appendChild(el("h3", "", "Order items"));
       content.appendChild(listRows(data.items, (item) => recordRow(`Order ${item.order_id}`, `Product ${item.product_id} · Qty ${item.quantity} · ${money(item.unit_price)}`, null, () => {
         const requestForm = mount.querySelector('form [name="pickup_address"]')?.form;
@@ -559,11 +661,14 @@
     } catch (error) { if (ticket === epoch && uid === currentUser?.id) setError(error.message, () => render()); }
   }
   async function loadAdmin() {
-    addHero("RESTRICTED AREA", "Administration", "Access is decided by the server, never by a selected UI role or profile metadata.");
-    mount.appendChild(panel("Owner management", notice("Customer, seller, rider, order, booking, delivery, fee, dispute and payout controls require a provisioned owner account. Live payouts and all admin writes remain disabled.", "warn")));
-    if (!requireSignIn()) return;
+    const unavailable = () => {
+      mount.replaceChildren();
+      addHero("NEXAHUB", "This page is unavailable", "Return to the marketplace or access your own customer account.");
+      mount.appendChild(button("Back to marketplace", goHome));
+    };
+    if (!currentUser) { unavailable(); return; }
     const ticket = ++epoch, uid = currentUser?.id;
-    mount.appendChild(panel("Owner access check", el("div", "platform-skeleton")));
+    mount.appendChild(el("div", "platform-skeleton"));
     try {
       const data = await api("/api/admin", {}, true);
       if (ticket !== epoch || uid !== currentUser?.id) return;
@@ -584,7 +689,7 @@
       ], "/api/admin/actions", (form) => ({ action: form.elements.action.value.trim(), record_id: form.elements.record_id.value.trim() }), null, "admin actions");
       grid.appendChild(actionForm);
       mount.appendChild(grid);
-    } catch (error) { if (ticket === epoch && uid === currentUser?.id) setError(error.message, () => render()); }
+    } catch (error) { if (ticket === epoch && uid === currentUser?.id) unavailable(); }
   }
   function renderCatalogCards(products) {
     catalogCache = Array.isArray(products) ? products : [];
@@ -606,10 +711,12 @@
           }
         } catch (_) { /* Invalid image URL is omitted safely. */ }
       }
-      if (product.category_id) card.appendChild(el("span", "platform-kicker", `CATEGORY ${product.category_id}`));
+      const category = categoryCache.find(item => item.id === product.category_id);
+      if (category) card.appendChild(el("span", "platform-kicker", category.name || category.slug || "Category"));
+      card.appendChild(el("span", "platform-status", product.listing_type || "Listing type not returned"));
       card.append(el("h3", "", product.title || "Untitled product"), el("p", "", product.description || "No description supplied."));
       card.appendChild(el("strong", "", money(product.price, product.currency)));
-      card.appendChild(button("View details", () => go("catalog", product.id), true));
+      card.appendChild(button("View details", () => openCatalogProduct(product.id), true));
       grid.appendChild(card);
     });
     return grid;
@@ -618,27 +725,50 @@
     const params = new URLSearchParams(location.search);
     const productId = params.get("product");
     addHero("LIVE MARKETPLACE", productId ? "Product details" : "Published catalog", "Only products published through NexaHub’s live catalog endpoint appear here.");
-    const form = el("form", "platform-form");
-    const search = formField(form, "Search published products", "q", "search", false, { maxLength: 120 });
-    search.value = params.get("q") || "";
-    const submit = document.createElement("button"); submit.type = "submit"; submit.className = "platform-btn secondary"; submit.textContent = "Search catalog";
-    form.appendChild(submit);
-    const searchPanel = panel("Find something", form);
-    mount.appendChild(searchPanel);
+    let form = null, categorySelect = null, listingSelect = null;
+    if (!productId) {
+      const urlCategory = params.get("category") || "";
+      form = el("form", "platform-form platform-catalog-filters");
+      const search = formField(form, "Search published products", "q", "search", false, { maxLength: 120 });
+      search.value = params.get("q") || "";
+      categorySelect = formField(form, "Category", "category", "select", false, { select: [["", "All categories"]] });
+      listingSelect = formField(form, "Listing type", "listing_type", "select", false, { select: [["", "All listing types"]] });
+      const actions = el("div", "platform-actions");
+      const submit = document.createElement("button");
+      submit.type = "submit"; submit.className = "platform-btn"; submit.textContent = "Apply filters";
+      const clear = button("Clear filters", () => {
+        const url = new URL(location.href);
+        ["q", "category", "listing_type", "product", "seller"].forEach(key => url.searchParams.delete(key));
+        history.pushState({}, "", url.pathname + url.search + url.hash);
+        render();
+      }, true);
+      actions.append(submit, clear);
+      form.appendChild(actions);
+      const searchPanel = panel("Find something", form);
+      mount.appendChild(searchPanel);
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const url = new URL(location.href);
+        const selectedCategory = categorySelect.value || (urlCategory &&
+          !Array.from(categorySelect.options).some(option => option.value === urlCategory) ? urlCategory : "");
+        const values = { q: search.value.trim(), category: selectedCategory, listing_type: listingSelect.value };
+        Object.entries(values).forEach(([key, value]) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key));
+        url.searchParams.delete("product");
+        history.pushState({}, "", url.pathname + url.search + url.hash);
+        render();
+      });
+    }
     const result = panel(productId ? "Product" : "Published products", el("div", "platform-skeleton"));
     mount.appendChild(result);
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const url = new URL(location.href);
-      if (search.value.trim()) url.searchParams.set("q", search.value.trim()); else url.searchParams.delete("q");
-      history.pushState({}, "", url.pathname + url.search + url.hash);
-      render();
-    });
     const ticket = ++epoch;
     try {
       if (productId) {
-        const response = await api(`/api/catalog/${encodeURIComponent(productId)}`);
+        const [response, catalog] = await Promise.all([
+          api(`/api/catalog/${encodeURIComponent(productId)}`),
+          api("/api/catalog").catch(error => ({ categories: [], categoryError: error.message }))
+        ]);
         if (ticket !== epoch) return;
+        categoryCache = Array.isArray(catalog.categories) ? catalog.categories : [];
         const product = response.product;
         const detail = el("div");
         if (response.product?.image_url) {
@@ -653,20 +783,50 @@
           } catch (_) { /* Invalid image URL is omitted safely. */ }
         }
         detail.append(el("h2", "", product?.title || "Product"), el("p", "", product?.description || "No description supplied."));
-        detail.append(el("p", "platform-meta", `Published listing · ${product?.status || "status unavailable"}`), el("strong", "", money(product?.price, product?.currency)));
-        result.replaceChildren(el("h2", "", "Product"), detail, button("Back to catalog", () => go("catalog"), true));
+        const detailCategory = categoryCache.find(item => item.id === product?.category_id);
+        detail.append(el("p", "platform-meta", `Listing type: ${product?.listing_type || "Not returned"} · Category: ${detailCategory?.name || detailCategory?.slug || "Not returned"} · Status: ${product?.status || "status unavailable"}`),
+          el("strong", "", money(product?.price, product?.currency)));
+        if (catalog.categoryError) detail.appendChild(notice(`Category names could not be loaded. ${catalog.categoryError}`, "warn"));
+        result.replaceChildren(el("h2", "", "Product"), detail, button("Back to catalog", returnToCatalog, true));
       } else {
-        const query = params.get("q");
-        const response = await api(`/api/catalog${query ? `?q=${encodeURIComponent(query.slice(0, 120))}` : ""}`);
+        const query = new URLSearchParams();
+        const q = (params.get("q") || "").slice(0, 120);
+        const categoryId = params.get("category") || "";
+        const listingType = params.get("listing_type") || "";
+        const sellerId = params.get("seller") || "";
+        if (q) query.set("q", q);
+        if (categoryId) query.set("category", categoryId);
+        if (listingType) query.set("listing_type", listingType);
+        if (sellerId) query.set("seller", sellerId);
+        const queryString = query.toString();
+        const response = await api(`/api/catalog${queryString ? `?${queryString}` : ""}`);
         if (ticket !== epoch) return;
-        const productGrid = renderCatalogCards(response.products);
-        result.replaceChildren(el("h2", "", "Published products"), productGrid);
         const categories = Array.isArray(response.categories) ? response.categories : [];
-        if (categories.length) {
-          const list = el("div", "platform-actions");
-          categories.forEach((category) => list.appendChild(el("span", "platform-status", category.name || category.slug || "Category")));
-          mount.appendChild(panel("Categories", list));
+        const products = Array.isArray(response.products) ? response.products : [];
+        const selectedCategoryId = response.selected_category_id || categoryId;
+        categoryCache = categories;
+        if (categorySelect) {
+          categories.forEach(category => {
+            const option = el("option", "", category.name || category.slug || "Category");
+            option.value = category.id;
+            categorySelect.appendChild(option);
+          });
+          if (categories.some(category => category.id === selectedCategoryId)) categorySelect.value = selectedCategoryId;
+          else if (categoryId) form.appendChild(notice("This link includes a category filter that is not in the current category list. Use Clear filters to remove it.", "warn"));
+          const listingTypes = [...new Set(products.map(product => product.listing_type).filter(Boolean))];
+          if (listingType && !listingTypes.includes(listingType)) listingTypes.push(listingType);
+          listingTypes.forEach(type => {
+            const option = el("option", "", type);
+            option.value = type;
+            listingSelect.appendChild(option);
+          });
+          listingSelect.value = listingType;
         }
+        const productGrid = renderCatalogCards(products);
+        result.replaceChildren(el("h2", "", "Published products"), productGrid);
+        if (response.category_unavailable) result.prepend(notice("This category is not configured in the live catalog yet. No sample listings have been substituted.", "warn"));
+        if (sellerId) result.prepend(notice("Showing published listings from the selected business. Clear filters to browse all businesses."));
+        if (Number.isFinite(response.limit)) result.appendChild(notice(`Showing up to ${response.limit} products returned by the catalog service. Listing-type choices reflect returned listings; clear filters to discover other types.`, "warn"));
       }
     } catch (error) {
       if (ticket !== epoch) return;
@@ -674,6 +834,7 @@
     }
   }
   async function render() {
+    syncOwnerNavigation();
     const route = routeFromUrl();
     activeRoute = route;
     syncNavigation(route);
@@ -701,6 +862,7 @@
     const nextUserId = user?.id || null;
     if (nextUserId === lastAuthUserId) return;
     lastAuthUserId = nextUserId;
+    syncOwnerNavigation();
     if (!activeRoute || activeRoute === "catalog" || activeRoute === "workspaces") return;
     epoch++;
     orders = [];

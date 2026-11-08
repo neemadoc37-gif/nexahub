@@ -21,6 +21,9 @@ BRAND_ASSETS = {
     "/favicon.ico": (BRAND / "favicon.png", "image/png"),
     "/assets/platform.css": (INDEX.parent / "assets" / "platform.css", "text/css; charset=utf-8"),
     "/assets/platform.js": (INDEX.parent / "assets" / "platform.js", "text/javascript; charset=utf-8"),
+    "/assets/marketplace.css": (INDEX.parent / "assets" / "marketplace.css", "text/css; charset=utf-8"),
+    "/assets/storefront.js": (INDEX.parent / "assets" / "storefront.js", "text/javascript; charset=utf-8"),
+    "/assets/marketplace/marketplace-hero.jpg": (INDEX.parent / "assets" / "marketplace" / "marketplace-hero.jpg", "image/jpeg"),
 }
 API = MarketplaceAPI()
 PAGE_ROUTES = {
