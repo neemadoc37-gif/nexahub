@@ -46,3 +46,13 @@ customers must not see internal dashboards.
 **How to apply:** Preserve existing data, authentication and functionality while
 implementing the design in the actual pages. Keep privileged navigation out of
 public customer surfaces; never trust editable profile metadata for admin access.
+
+Preview checks must use the exact public address shown to the user, including
+its explicit port, rather than only localhost or the default development domain.
+
+**Why:** A local screenshot and the default public address worked while the
+user's explicit-port Preview returned a proxy 502.
+
+**How to apply:** Check the page, assets and API through that precise public
+address before declaring Preview fixed. Account for external port mappings,
+not only the server's internal listening port.
