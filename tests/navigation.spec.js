@@ -33,9 +33,14 @@ for (const width of [402, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await expect(page.locator('#categoryHeading')).toBeVisible();
+    const joinSeller = page.getByRole('link', { name: 'JOIN AS A SELLER', exact: true }).first();
+    await expect(joinSeller).toBeVisible();
     await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
     await expect(page.locator('.header')).not.toContainText('Workspaces');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await joinSeller.click();
+    await expect(page).toHaveURL(/\/seller$/);
+    await expect(page.locator('#platformMount')).toContainText('Seller applications and listing changes are not saved in this Preview');
     await page.goto('/workspaces');
     await expect(page).toHaveURL(/\/workspaces$/);
     const directory = page.locator('#platformMount');
