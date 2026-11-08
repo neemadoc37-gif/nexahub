@@ -26,7 +26,6 @@
 <link rel="stylesheet" href="/assets/marketplace.css">
 </head>
 <body>
-<div class="topbar">SPINIX ONE <b>Connecting Businesses. Empowering People.</b></div>
 <header class="header">
  <div class="headinner">
     <a class="logo" href="/" aria-label="Spinix One home"><img src="/assets/brand/spinix-one-logo.svg" alt="Spinix One — Connecting Businesses. Empowering People." width="420" height="96"></a>
@@ -34,21 +33,38 @@
     <div class="headactions"><button id="accountButton" class="ghost" onclick="showAccount()">Sign in</button><button class="ghost cart-trigger" aria-label="Open my selections" onclick="showCart()"><span class="bag-mark" aria-hidden="true"></span><span>My selections</span><span id="cartCount" class="cart-count">0</span></button></div>
  </div>
   <nav class="nav" aria-label="Marketplace categories">
-      <a class="active" href="/catalog">Discover</a><a href="/catalog?category=supermarkets">Supermarkets</a><a href="/catalog?category=restaurants">Restaurants</a><a href="/catalog?category=pharmacies">Pharmacies</a><a href="/catalog?category=electronics">Electronics</a><a href="/catalog?category=fashion">Fashion</a><a href="/catalog?category=home-living">Home &amp; living</a><a href="/catalog?category=services">Professional services</a><a href="/catalog?category=digital-products">Digital products</a><a href="/catalog?category=travel">Travel &amp; experiences</a>
+      <a href="/catalog?category=supermarkets">Supermarkets</a><a href="/catalog?category=restaurants">Restaurants</a><a href="/catalog?category=pharmacies">Pharmacies</a><a href="/catalog?category=electronics">Electronics</a><a href="/catalog?category=fashion">Fashion</a><a href="/catalog?category=home-living">Home &amp; living</a><a href="/catalog?category=services">Professional services</a><a href="/catalog?category=digital-products">Digital products</a><a href="/catalog?category=travel">Travel &amp; experiences</a>
  </nav>
 </header>
  <nav class="platform-nav" aria-label="Spinix One pages">
-   <a href="/" data-workspace="home">Home</a><a href="/catalog" data-workspace="catalog">Shop the catalog</a><a href="/about" data-workspace="about">About us</a><a href="/seller" data-workspace="seller">For sellers</a><a href="/rider" data-workspace="rider">For riders</a><a href="/customer" data-workspace="customer">My account</a><a href="/payments" data-workspace="payments">Payment information</a>
+   <a href="/" data-workspace="home">Home</a><a href="/about" data-workspace="about">About us</a><a href="/catalog" data-workspace="catalog">Shop the catalog</a><a href="/seller" data-workspace="seller">For sellers</a><a href="/rider" data-workspace="rider">For riders</a><a href="/customer" data-workspace="customer">My account</a><a href="/payments" data-workspace="payments">Payment information</a>
  </nav>
  <div class="preview-build" id="previewBuild" role="status">Checking this Preview’s build…</div>
  <main id="platformMount" class="platform-shell" hidden aria-live="polite"></main>
 <main>
   <section class="hero">
-    <div class="hero-copy"><span class="eyebrow">A WORLD OF GOOD FINDS</span><h1>Welcome to<br><span>Spinix <em>One</em></span></h1><p>Shop products, discover services and explore digital products from businesses around the world.</p><div class="heroBtns"><a class="primary" href="/catalog">Shop the marketplace <span aria-hidden="true">↗</span></a><a class="ghost" href="/catalog?category=services">Explore services</a></div><div class="hero-note"><span class="note-rule"></span><span>Connecting Businesses. Empowering People.</span></div></div>
+    <div class="hero-copy"><span class="eyebrow">A WORLD OF GOOD FINDS</span><h1>Welcome to<br><span>Spinix <em>One</em></span></h1><p>Shop products, discover services and explore digital products from businesses around the world.</p><div class="heroBtns"><a class="primary" href="/catalog">Shop the catalog <span aria-hidden="true">↗</span></a><a class="ghost" href="#about">About us</a></div><div class="hero-note"><span class="note-rule"></span><span>Connecting Businesses. Empowering People.</span></div></div>
   <div class="heroart" role="img" aria-label="Spinix One product collection with fresh groceries, a branded shopping bag, electronics and accessories"><div class="hero-image"></div></div>
  </section>
-  <section class="category-section" aria-labelledby="categoryHeading">
-    <div class="sectionhead"><div><span class="section-kicker">DISCOVER SPINIX ONE</span><h2 id="categoryHeading">Find your kind of place.</h2><p>Browse useful goods, trusted services and experiences around the world.</p></div><a class="textlink" href="/catalog">Explore all categories <span aria-hidden="true">↗</span></a></div>
+  <section class="about-section" id="about" aria-labelledby="aboutHeading">
+   <div class="about-heading">
+    <div><span class="section-kicker">ABOUT SPINIX ONE</span><h2 id="aboutHeading">About <span>SPINIX ONE</span></h2></div>
+   </div>
+   <div class="about-content">
+    <div class="about-story">
+     <p>SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.</p>
+     <p>We connect customers with businesses, independent sellers and digital creators, giving sellers an opportunity to reach new markets while helping customers discover products and services they need.</p>
+     <p>Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products, SPINIX ONE makes it easier to find what you are looking for.</p>
+    </div>
+    <div class="about-audience">
+     <article><span>FOR SELLERS</span><p>Showcase products and services, build an online presence and connect with potential customers.</p></article>
+     <article><span>FOR CUSTOMERS</span><p>Discover a convenient range of products and services from businesses around the world.</p></article>
+    </div>
+   </div>
+   <a class="about-more-link" href="/about" data-workspace="about">Explore our vision, mission and values <span aria-hidden="true">↗</span></a>
+  </section>
+   <section class="category-section" aria-labelledby="categoryHeading">
+     <div class="sectionhead"><div><span class="section-kicker">SHOP SPINIX ONE</span><h2 id="categoryHeading">Explore products and services.</h2><p>Browse businesses, products and experiences from around the world.</p></div><a class="textlink" href="/catalog">Shop the full catalog <span aria-hidden="true">↗</span></a></div>
     <div class="categories">
       <a class="cat" href="/catalog?category=supermarkets"><img class="cat-photo" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Supermarkets</strong><small>Everyday essentials</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
       <a class="cat" href="/catalog?category=restaurants"><img class="cat-photo" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&amp;fit=crop&amp;w=760&amp;h=430&amp;q=80" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="760" height="430"><strong>Restaurants</strong><small>Made for the table</small><span class="cat-arrow" aria-hidden="true">↗</span></a>
@@ -68,29 +84,6 @@
     </div>
     <p class="category-note">Pharmacy listings require appropriate verification. Category links show only live listings configured for Spinix One.</p>
  </section>
-  <section class="about-section" id="about" aria-labelledby="aboutHeading">
-   <div class="about-heading">
-    <div><span class="section-kicker">ABOUT SPINIX ONE</span><h2 id="aboutHeading">Welcome to <span>SPINIX ONE</span></h2></div>
-    <p class="about-tagline">Connecting Businesses. Empowering People.</p>
-   </div>
-   <div class="about-content">
-    <div class="about-story">
-     <p>SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.</p>
-     <p>We connect customers with businesses, independent sellers and digital creators, giving sellers an opportunity to reach new markets while helping customers discover products and services they need.</p>
-     <p>Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products, SPINIX ONE makes it easier to find what you are looking for.</p>
-    </div>
-    <div class="about-audience">
-     <article><span>FOR SELLERS</span><p>For sellers, we provide an opportunity to showcase products, build an online presence and connect with potential customers.</p></article>
-     <article><span>FOR CUSTOMERS</span><p>For customers, we aim to create a convenient, reliable and enjoyable marketplace experience.</p></article>
-    </div>
-   </div>
-   <p class="about-signoff">SPINIX ONE <span>– Connecting Businesses. Empowering People.</span></p>
-   <a class="about-more-link" href="/about" data-workspace="about">Explore our vision, mission and values <span aria-hidden="true">↗</span></a>
-  </section>
-   <section class="nearby-section" aria-labelledby="nearbyHeading">
-   <div class="nearby-copy"><span class="section-kicker">A MARKETPLACE FOR EVERY DAY</span><h2 id="nearbyHeading">More than shopping.</h2><p>A home for everyday essentials, professional services and memorable experiences. Browse published listings across the marketplace.</p><a class="nearby-link" href="/catalog">Browse the marketplace <span aria-hidden="true">↗</span></a></div>
-   <div class="marketplace-scene" role="img" aria-label="A sunlit independent storefront on a leafy shopping lane"></div>
-  </section>
   <section class="live-section" id="liveMarketplace" aria-labelledby="liveHeading">
     <div class="sectionhead"><div><span class="section-kicker">FROM THE LIVE CATALOG</span><h2 id="liveHeading">A good place to start.</h2><p>Real listings currently available on Spinix One. Browse the full catalog for more.</p></div><a class="textlink" href="/catalog">View the catalog <span aria-hidden="true">↗</span></a></div>
    <div class="live-products" id="liveProducts" aria-live="polite" aria-busy="true"><div class="live-skeleton"></div><div class="live-skeleton"></div><div class="live-skeleton"></div><div class="live-skeleton"></div></div>
@@ -100,7 +93,7 @@
    <div class="business-grid" id="liveBusinesses" aria-live="polite" aria-busy="true"><div class="business-skeleton"></div><div class="business-skeleton"></div><div class="business-skeleton"></div></div>
   </section>
   <section class="why-section" aria-labelledby="whyHeading"><div class="sectionhead"><div><span class="section-kicker">A MORE THOUGHTFUL MARKETPLACE</span><h2 id="whyHeading">Clarity comes with every discovery.</h2><p>Useful features, presented honestly while Spinix One grows.</p></div></div><div class="why-grid"><article><span>01</span><h3>Published, not pretend</h3><p>Only listings returned as published by the live catalog appear as products.</p></article><article><span>02</span><h3>Your account stays yours</h3><p>Private customer pages require sign-in and request account-scoped records.</p></article><article><span>03</span><h3>Clear about what is live</h3><p>Unavailable inventory, checkout and services are not replaced with demo data.</p></article></div></section>
-  <section class="seller-section" aria-labelledby="sellerHeading"><div class="seller-copy"><span class="section-kicker">CONNECTING BUSINESSES. EMPOWERING PEOPLE.</span><h2 id="sellerHeading">Put your products, services and experiences in view.</h2><p>SPINIX ONE helps independent sellers, businesses and digital creators showcase their offerings and connect with potential customers. Seller onboarding and listing changes are not yet saved in this Preview.</p><a class="primary" href="/seller" data-workspace="seller">Explore seller options <span aria-hidden="true">↗</span></a></div><div class="seller-steps" aria-label="Seller journey"><div><span>01</span><strong>Introduce your shop or service</strong></div><div><span>02</span><strong>Complete verification</strong></div><div><span>03</span><strong>Prepare products or services</strong></div><p>These are planned steps; this page does not submit an application.</p></div></section>
+   <section class="seller-section" aria-labelledby="sellerHeading"><div class="seller-copy"><span class="section-kicker">SELLER OPPORTUNITIES</span><h2 id="sellerHeading">Put your products, services and experiences in view.</h2><p>SPINIX ONE helps independent sellers, businesses and digital creators showcase their offerings and connect with potential customers. Seller onboarding and listing changes are not yet saved in this Preview.</p><a class="primary" href="/seller" data-workspace="seller">Explore seller options <span aria-hidden="true">↗</span></a></div><div class="seller-steps" aria-label="Seller journey"><div><span>01</span><strong>Introduce your shop or service</strong></div><div><span>02</span><strong>Complete verification</strong></div><div><span>03</span><strong>Prepare products or services</strong></div><p>These are planned steps; this page does not submit an application.</p></div></section>
   <section class="payment-note" id="payment-information" aria-labelledby="paymentHeading"><div class="payment-seal" aria-hidden="true">NH</div><div><span class="section-kicker">PAYMENT STATUS</span><h2 id="paymentHeading">Checkout is not enabled yet.</h2><p>M-PESA and international card payments are not being accepted in this Preview. Payment details and provider approvals must be verified before real checkout is turned on.</p></div><a href="/payments" class="payment-link">View payment readiness <span aria-hidden="true">↗</span></a></section>
  <section class="discovery-note"><span class="discovery-line"></span><p>One marketplace. Many ways to find what feels right.</p><a href="/catalog">Start exploring <span aria-hidden="true">↗</span></a></section>
   <section class="mystery-section" id="mystery-box" aria-labelledby="mysteryHeading">
@@ -251,7 +244,7 @@
  </section>
 </div>
 <div class="modalback" id="sellerModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="sellerHeading" tabindex="-1"><button class="close" type="button" aria-label="Close seller dialog" onclick="closeModal('sellerModal')">×</button><h2 id="sellerHeading">List products or offer services on Spinix One</h2><p>Explore seller information for shops, service providers and experience hosts. Applications are not being saved in this Preview.</p><button class="primary" onclick="closeModal('sellerModal');window.Platform&&Platform.go('seller')">Explore seller options</button></div></div>
- <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close selections dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your selections</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>You have no selections yet.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear selections</button><p id="basketCheckoutNotice" class="platform-notice warn">This Preview can save selections in this browser, but cannot place product orders or service reservations. No order or payment will be submitted.</p></div></div>
+  <div class="modalback" id="cartModal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cartHeading" tabindex="-1"><button class="close" type="button" aria-label="Close selections dialog" onclick="closeModal('cartModal')">×</button><h2 id="cartHeading">Your selections</h2><p id="cartNotice" role="alert" style="display:none;color:#a33;background:#fff3f1;border-radius:9px;padding:10px"></p><div id="cartItems"><p>You have no selections yet.</p></div><div id="cartUndo" hidden style="margin:10px 0;padding:10px;background:#edf5ff;border-radius:9px"><span id="cartUndoMessage" role="status" aria-live="polite"></span> <button id="undoBasket" type="button" class="ghost" onclick="undoCartRemoval()">Undo</button></div><button id="clearBasket" class="ghost" onclick="clearCart()" style="width:100%;margin:0 0 10px" hidden>Clear selections</button><p id="basketCheckoutNotice" class="platform-notice warn">Browse and save published products as a guest. Guest checkout is not enabled yet: selections stay in this browser, and no order, booking, payment, receipt or download will be created.</p></div></div>
  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
 <script>
@@ -297,6 +290,34 @@ function showAuthReturnFailure(){
 function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function setCartStatus(message){cartStatus=message;const notice=document.getElementById('cartNotice');notice.textContent=message;notice.style.display=message?'block':'none'}
 function cartQuantity(){return cart.reduce((sum,item)=>sum+item.quantity,0)}
+function cartCurrency(item){return item.currency||'KES'}
+function validCurrencyCode(value){
+ if(typeof value!=='string'||!/^[A-Z]{3}$/.test(value))return false;
+ try{new Intl.NumberFormat(undefined,{style:'currency',currency:value});return true}catch(error){return false}
+}
+function validCartPrice(value,currency='KES'){
+ if(typeof value!=='number'||!Number.isFinite(value)||value<=0||value>Number.MAX_SAFE_INTEGER||!validCurrencyCode(currency))return false;
+ const digits=new Intl.NumberFormat(undefined,{style:'currency',currency}).resolvedOptions().maximumFractionDigits;
+ const scale=10**digits,rounded=Math.round(value*scale)/scale;
+ return Number.isSafeInteger(Math.round(value*scale))&&Math.abs(value-rounded)<1e-8;
+}
+function formatCartMoney(value,currency='KES'){
+ if(currency==='KES')return 'KSh '+Number(value).toLocaleString('en-KE',{maximumFractionDigits:2});
+ return new Intl.NumberFormat(undefined,{style:'currency',currency}).format(value);
+}
+function sameCartItem(left,right){
+ return left.name===right.name&&left.price===right.price&&
+  (left.productId||'')===(right.productId||'')&&cartCurrency(left)===cartCurrency(right);
+}
+function validCartTotals(items){
+ const totals=new Map();
+ for(const item of items){
+  const currency=cartCurrency(item),total=(totals.get(currency)||0)+item.price*item.quantity;
+  if(!Number.isFinite(total)||total>Number.MAX_SAFE_INTEGER)return false;
+  totals.set(currency,total);
+ }
+ return true;
+}
 function updateCartCount(){document.getElementById('cartCount').textContent=cartQuantity()}
 function dismissCartUndo(){
  clearTimeout(cartUndoTimer);cartUndoTimer=null;cartUndo=null;
@@ -317,7 +338,7 @@ function undoCartRemoval(){
  if(Date.now()>=cartUndo.expiresAt){dismissCartUndo();return}
  const restored=cart.map(item=>({...item}));
  for(const {item,index} of cartUndo.removed){
-  const existing=restored.find(row=>row.name===item.name&&row.price===item.price);
+   const existing=restored.find(row=>sameCartItem(row,item));
   if(existing)existing.quantity+=item.quantity;
   else restored.splice(Math.min(index,restored.length),0,{...item});
  }
@@ -325,7 +346,7 @@ function undoCartRemoval(){
   document.getElementById('cartUndoMessage').textContent='Cannot undo: your selections would exceed the 100-item limit.';
   return;
  }
- if(!Number.isSafeInteger(restored.reduce((sum,item)=>sum+item.price*item.quantity,0))){
+  if(!validCartTotals(restored)){
   document.getElementById('cartUndoMessage').textContent='Cannot undo: the restored selection total is too large.';
   return;
  }
@@ -352,20 +373,24 @@ function loadCart(){
   const valid=Array.isArray(parsed)&&parsed.length<=MAX_CART_ITEMS&&parsed.every(item=>
    item&&typeof item==='object'&&!Array.isArray(item)&&
    typeof item.name==='string'&&item.name.trim().length>0&&item.name.length<=120&&
-   typeof item.price==='number'&&Number.isSafeInteger(item.price)&&item.price>0&&
+    validCartPrice(item.price,item.currency||'KES')&&
+    (item.productId===undefined||/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.productId))&&
+    (item.currency===undefined||validCurrencyCode(item.currency))&&
    (item.quantity===undefined||(Number.isSafeInteger(item.quantity)&&item.quantity>0&&item.quantity<=MAX_CART_ITEMS))
   );
   if(!valid)throw new Error('Invalid saved selections');
   const restored=[];
   for(const item of parsed){
    const name=item.name.trim(),quantity=item.quantity===undefined?1:item.quantity;
-   const existing=restored.find(row=>row.name===name&&row.price===item.price);
+    const normalized={name,price:item.price,quantity};
+    if(item.productId!==undefined)normalized.productId=item.productId;
+    if(item.currency!==undefined)normalized.currency=item.currency;
+    const existing=restored.find(row=>sameCartItem(row,normalized));
    if(existing)existing.quantity+=quantity;
-   else restored.push({name,price:item.price,quantity});
+    else restored.push(normalized);
   }
   const quantity=restored.reduce((sum,item)=>sum+item.quantity,0);
-  const total=restored.reduce((sum,item)=>sum+item.price*item.quantity,0);
-  if(quantity>MAX_CART_ITEMS||!Number.isSafeInteger(total))throw new Error('Invalid saved selections');
+   if(quantity>MAX_CART_ITEMS||!validCartTotals(restored))throw new Error('Invalid saved selections');
   cart=restored;
  }catch(error){
   cart=[];
@@ -389,7 +414,7 @@ function renderCart(){
   const row=document.createElement('div');
   row.className='basket-row';
   const name=document.createElement('span');name.className='basket-name';name.textContent=item.name;
-  const price=document.createElement('b');price.textContent='KSh '+(item.price*item.quantity).toLocaleString();price.setAttribute('aria-label','Line total for '+item.name);
+   const price=document.createElement('b');price.textContent=formatCartMoney(item.price*item.quantity,cartCurrency(item));price.setAttribute('aria-label','Line total for '+item.name);
   const controls=document.createElement('div');controls.className='basket-controls';
   const decrease=document.createElement('button');decrease.type='button';decrease.className='ghost';decrease.textContent='−';decrease.disabled=item.quantity<=1;decrease.setAttribute('aria-label','Decrease quantity of '+item.name);decrease.dataset.quantityControl='decrease-'+index;
   decrease.addEventListener('click',()=>changeCartQuantity(index,-1));
@@ -401,9 +426,11 @@ function renderCart(){
   controls.append(decrease,quantity,increase,remove);
   row.append(name,price,controls);el.appendChild(row);
  });
- const total=document.createElement('p');
+  const totals=new Map();
+  cart.forEach(item=>{const currency=cartCurrency(item);totals.set(currency,(totals.get(currency)||0)+item.price*item.quantity)});
+  const total=document.createElement('p');
  const totalLabel=document.createElement('b');
- totalLabel.textContent='Total: KSh '+cart.reduce((sum,item)=>sum+item.price*item.quantity,0).toLocaleString();
+  totalLabel.textContent='Total: '+[...totals].map(([currency,amount])=>formatCartMoney(amount,currency)).join(' · ');
  total.appendChild(totalLabel);el.appendChild(total);
 }
 window.addEventListener('storage',event=>{
@@ -412,11 +439,17 @@ window.addEventListener('storage',event=>{
  // Loading does not save again or dismiss a local storage-error notice.
  dismissCartUndo();loadCart();updateCartCount();renderCart();
 });
-function addCart(name,price){
+function addCart(name,price,productId=null,currency='KES'){
  if(cartQuantity()>=MAX_CART_ITEMS){toast('Your selections have reached the item limit.');return}
- const existing=cart.find(item=>item.name===name&&item.price===price);
+  if(typeof name!=='string'||!name.trim()||name.length>120||!validCartPrice(price,currency)||
+   (productId!==null&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId))){
+   toast('This listing could not be added. Check its live listing details.');return;
+  }
+  const incoming={name:name.trim(),price,quantity:1};
+  if(productId!==null){incoming.productId=productId;incoming.currency=currency}
+  const existing=cart.find(item=>sameCartItem(item,incoming));
  if(existing)existing.quantity+=1;
- else cart.push({name,price,quantity:1});
+  else cart.push(incoming);
  persistCart();updateCartCount();renderCart();toast(name+' added to your selections.')
 }
 function changeCartQuantity(index,delta){

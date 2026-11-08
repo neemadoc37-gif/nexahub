@@ -696,6 +696,32 @@
       mount.appendChild(grid);
     } catch (error) { if (ticket === epoch && uid === currentUser?.id) unavailable(); }
   }
+  function canAddListingToSelections(product) {
+    if (!product || product.status !== "published" || typeof product.id !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(product.id) ||
+        typeof product.title !== "string" || !product.title.trim()) return false;
+    const type = String(product.listing_type || "").toLowerCase();
+    if (/service|booking|accommodation|experience|travel/.test(type)) return false;
+    const price = Number(product.price), currency = String(product.currency || "").toUpperCase();
+    if (!Number.isFinite(price) || price <= 0 || !/^[A-Z]{3}$/.test(currency)) return false;
+    try { new Intl.NumberFormat(undefined, { style: "currency", currency }); }
+    catch (_) { return false; }
+    return true;
+  }
+  function listingSelectionControl(product) {
+    const type = String(product?.listing_type || "").toLowerCase();
+    if (/service|booking|accommodation|experience|travel/.test(type)) {
+      return notice("Service bookings are not enabled yet. No booking record will be created.", "warn");
+    }
+    if (!canAddListingToSelections(product)) {
+      return notice("This listing needs a valid published price and currency before it can be selected.", "warn");
+    }
+    const add = button("Add to selections", () => {
+      window.addCart(product.title, Number(product.price), product.id, String(product.currency).toUpperCase());
+    }, true);
+    add.setAttribute("aria-label", `Add ${product.title} to selections`);
+    return add;
+  }
   function renderCatalogCards(products) {
     catalogCache = Array.isArray(products) ? products : [];
     const grid = el("div", "platform-products");
@@ -727,6 +753,7 @@
       card.append(el("h3", "", product.title || "Untitled product"), el("p", "", product.description || "No description supplied."));
       card.appendChild(el("strong", "", money(product.price, product.currency)));
       card.appendChild(button("View details", () => openCatalogProduct(product.id), true));
+      card.appendChild(listingSelectionControl(product));
       grid.appendChild(card);
     });
     return grid;
@@ -813,7 +840,13 @@
         detail.append(el("p", "platform-meta", `Listing type: ${product?.listing_type || "Not returned"} · Category: ${detailCategory?.name || detailCategory?.slug || "Not returned"} · Status: ${product?.status || "status unavailable"}`),
           el("strong", "", money(product?.price, product?.currency)));
         if (catalog.categoryError) detail.appendChild(notice(`Category names could not be loaded. ${catalog.categoryError}`, "warn"));
-        result.replaceChildren(el("h2", "", "Product"), detail, button("Back to catalog", returnToCatalog, true));
+        const controls = el("div", "platform-actions");
+        controls.append(listingSelectionControl(product), button("Back to catalog", returnToCatalog, true));
+        if (/digital/.test(String(product?.listing_type || "").toLowerCase())) {
+          controls.appendChild(notice("Secure digital delivery is not enabled. Saving this selection does not grant download access.", "warn"));
+        }
+        detail.appendChild(controls);
+        result.replaceChildren(el("h2", "", "Product"), detail);
       } else {
         const query = new URLSearchParams();
         const q = (params.get("q") || "").slice(0, 120);

@@ -19,7 +19,7 @@ for (const width of [320, 402, 1280]) {
     const theme = await page.evaluate(() => {
       const color = selector => getComputedStyle(document.querySelector(selector)).backgroundColor;
       return {
-        topbar: color('.topbar'),
+        hasTopbar: document.querySelector('.topbar') !== null,
         header: color('.header'),
         page: color('body'),
         hero: getComputedStyle(document.querySelector('.hero-image')).backgroundImage,
@@ -27,7 +27,7 @@ for (const width of [320, 402, 1280]) {
         fits: document.documentElement.scrollWidth <= innerWidth,
       };
     });
-    expect(theme.topbar).toBe('rgb(11, 43, 91)');
+    expect(theme.hasTopbar).toBe(false);
     expect(theme.header).toBe('rgb(255, 255, 255)');
     expect(theme.page).toBe('rgb(255, 250, 242)');
     expect(theme.hero).toContain('spinix-one-marketplace-hero.jpg');
@@ -39,8 +39,12 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/spinix-one-logo.svg');
     await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
     await expect(page.locator('.categories .cat-photo')).toHaveCount(categories.length);
-    await expect(page.locator('#nearbyHeading')).toHaveText('More than shopping.');
-    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Browse published listings across the marketplace');
+    await expect(page.locator('.nearby-section, .marketplace-scene')).toHaveCount(0);
+    await expect(page.getByText('A MARKETPLACE FOR EVERY DAY')).toHaveCount(0);
+    const firstSections = await page.locator('body > main:not(#platformMount) > section').evaluateAll(nodes => nodes.slice(0, 3).map(node => node.classList[0]));
+    expect(firstSections).toEqual(['hero', 'about-section', 'category-section']);
+    const pageNav = await page.locator('.platform-nav a').allTextContents();
+    expect(pageNav.slice(0, 3).map(label => label.trim())).toEqual(['Home', 'About us', 'Shop the catalog']);
     await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
     await expect(page.locator('#payment-information')).toContainText('not being accepted in this Preview');
     await expect(page.locator('.platform-nav a[href="/admin"]')).toHaveCount(0);
@@ -72,7 +76,7 @@ test('legacy demo basket entries do not appear as real products or get deleted',
   await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
   await page.getByRole('button', { name: 'Open my selections' }).click();
   await expect(page.locator('#cartItems')).toHaveText('You have no selections yet.');
-  await expect(page.locator('#basketCheckoutNotice')).toContainText('No order or payment will be submitted');
+  await expect(page.locator('#basketCheckoutNotice')).toContainText('Guest checkout is not enabled yet');
   expect(await page.evaluate(() => localStorage.getItem('nexahub.sampleBasket.v1'))).toBe(legacyEntry);
 });
 

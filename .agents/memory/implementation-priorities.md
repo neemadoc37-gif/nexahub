@@ -24,6 +24,14 @@ navy-and-gold visual reference.
 homepage, authentication screens, role dashboards and browser icon. Preserve
 their proportions and verify desktop and mobile rendering.
 
+Keep homepage content ordered from welcome to About to catalog, and avoid
+repeating the same slogan or promotional message across adjacent sections.
+
+**Why:** The user asked for a clearer homepage arrangement without repeated copy.
+
+**How to apply:** Keep the welcome hero, About summary and catalog discovery
+distinct. Avoid reinstating the removed “A marketplace for every day” banner.
+
 Do not request repeated screenshots or schema exports. Use the information
 already provided and continue implementing the approved design directly on the
 existing website. If a missing detail is essential, identify exactly what is

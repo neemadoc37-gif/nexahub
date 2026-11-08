@@ -19,7 +19,6 @@ for (const width of [320, 402, 1280]) {
       'Digital products', 'Travel & experiences',
     ]);
     await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
-    await expect(page.locator('#nearbyHeading').locator('..')).toContainText('Browse published listings across the marketplace');
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -36,8 +35,14 @@ test('homepage shows marketplace photography without the old Discover closer bad
   await expect(page.locator('.heroart')).toHaveAttribute('aria-label', /fresh groceries.*electronics/i);
   await expect(page.locator('.hero-stamp, .hero-caption')).toHaveCount(0);
   await expect(page.locator('.hero-image')).toHaveCSS('background-image', /spinix-one-marketplace-hero\.jpg/);
-  await expect(page.getByText('A MARKETPLACE FOR EVERY DAY')).toBeVisible();
-  await expect(page.locator('.marketplace-scene')).toBeVisible();
+  await expect(page.locator('.nearby-section, .marketplace-scene')).toHaveCount(0);
+  await expect(page.getByText('A MARKETPLACE FOR EVERY DAY')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'More than shopping.' })).toHaveCount(0);
+  const sections = await page.locator('body > main:not(#platformMount) > section').evaluateAll(nodes => nodes.slice(0, 3).map(node => node.classList[0]));
+  expect(sections).toEqual(['hero', 'about-section', 'category-section']);
+  const pageLinks = await page.locator('.platform-nav a').allTextContents();
+  expect(pageLinks.slice(0, 3).map(label => label.trim())).toEqual(['Home', 'About us', 'Shop the catalog']);
+  await expect(page.locator('.nav a[href="/catalog"]')).toHaveCount(0);
   expect((await request.get('/assets/marketplace/spinix-one-marketplace-hero.jpg')).status()).toBe(200);
 });
 
@@ -52,18 +57,18 @@ test('each marketplace category has a matching photo that loads', async ({ page 
   ).toBe(9);
 });
 
-test('homepage displays the About Spinix One story and tagline', async ({ page }) => {
+test('homepage presents the About story once after the welcome hero', async ({ page }) => {
   await page.goto('/#about');
   const section = page.locator('#about');
-  await expect(section.getByRole('heading', { level: 2 })).toHaveText('Welcome to SPINIX ONE');
-  await expect(section).toContainText('Connecting Businesses. Empowering People.');
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText('About SPINIX ONE');
+  await expect(section).not.toContainText('Connecting Businesses. Empowering People.');
   await expect(section).toContainText('SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.');
   await expect(section).toContainText('We connect customers with businesses, independent sellers and digital creators');
   await expect(section).toContainText('Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products');
-  await expect(section).toContainText('For sellers, we provide an opportunity to showcase products, build an online presence and connect with potential customers.');
-  await expect(section).toContainText('For customers, we aim to create a convenient, reliable and enjoyable marketplace experience.');
+  await expect(section).toContainText('Showcase products and services, build an online presence and connect with potential customers.');
+  await expect(section).toContainText('Discover a convenient range of products and services from businesses around the world.');
   await expect(page.locator('.hero-note')).toContainText('Connecting Businesses. Empowering People.');
-  await expect(page.locator('.seller-section')).toContainText(/Connecting Businesses\. Empowering People\./i);
+  await expect(page.locator('.seller-section')).not.toContainText(/Connecting Businesses\. Empowering People\./i);
   await expect(page.locator('.footer')).toContainText('Connecting Businesses. Empowering People.');
 });
 

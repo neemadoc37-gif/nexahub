@@ -170,7 +170,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
 
       const checkout = page.getByRole('button', { name: /checkout|place order/i });
       await expect(page.locator('#basketCheckoutNotice')).toContainText(
-        'cannot place product orders or service reservations');
+        'Guest checkout is not enabled yet');
       await expect(checkout).toHaveCount(0);
       await expectBasket(page, original);
       await reloadAndOpen(page);
@@ -488,7 +488,7 @@ for (const clearAll of [false, true]) {
     await expect(page.locator('#cartCount')).toHaveText('3');
     await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
       await expect(page.locator('#basketCheckoutNotice')).toContainText(
-        'cannot place product orders or service reservations');
+        'Guest checkout is not enabled yet');
     await expect(page.getByRole('button', { name: /checkout|place order/i })).toHaveCount(0);
   });
 }
