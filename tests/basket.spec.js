@@ -1,8 +1,9 @@
 const { test, expect } = require('@playwright/test');
 
-const STORAGE_KEY = 'nexahub.sampleBasket.v1';
+const STORAGE_KEY = 'nexahub.marketplaceBasket.v2';
 const headphones = { name: 'Wireless headphones', price: 3499, quantity: 2 };
 const planner = { name: 'Business planner template', price: 850, quantity: 1 };
+const testPrices = { [headphones.name]: headphones.price, [planner.name]: planner.price, 'Everyday travel backpack': 2750 };
 
 test.beforeEach(async ({ page }) => {
   // Exercise the real storefront, but basket checks must not depend on
@@ -22,8 +23,12 @@ test.afterEach(async ({ page }) => {
 });
 
 async function addProduct(page, name) {
-  await page.locator('.product').filter({ has: page.getByRole('heading', { name, exact: true }) })
-    .getByRole('button', { name: 'Add to sample basket', exact: true }).click();
+  const price = testPrices[name];
+  if (!price) throw new Error(`Missing isolated basket fixture price for ${name}.`);
+  await page.evaluate(({ itemName, itemPrice }) => window.addCart(itemName, itemPrice), {
+    itemName: name,
+    itemPrice: price,
+  });
 }
 
 async function openBasket(page) {
@@ -163,18 +168,17 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expectNoBasketOverflow(page);
       await expectMobileReachable(page.locator('#cartItems > p'));
 
-      const checkout = page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true });
-      await expect(page.locator('#cartModal')).toContainText(
-        'Sample basket only. Checkout is a preview; no payment will be collected.');
-      await tapMobile(checkout);
-      await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+      const checkout = page.getByRole('button', { name: /checkout|place order/i });
+      await expect(page.locator('#basketCheckoutNotice')).toContainText(
+        'Order placement is not available yet. No order or payment will be submitted.');
+      await expect(checkout).toHaveCount(0);
       await expectBasket(page, original);
       await reloadAndOpen(page);
       await expectBasket(page, original);
       await expectNoBasketOverflow(page);
     });
 
-    test('a full large basket scrolls to controls, recovery, totals and preview checkout', async ({ page }) => {
+    test('a full large basket scrolls to controls, recovery and totals without offering fake checkout', async ({ page }) => {
       await page.clock.install();
       await page.clock.pauseAt(new Date(Date.now() + 1000));
       // Twenty distinct rows reach the existing combined 100-item cap.
@@ -215,8 +219,8 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
       await expect(increase).toBeDisabled();
       await expectMobileReachable(page.locator('#cartItems > p'));
       await expectMobileReachable(page.getByRole('button', { name: 'Clear basket', exact: true }));
-      await tapMobile(page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true }));
-      await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+      await expectMobileReachable(page.locator('#basketCheckoutNotice'));
+      await expect(page.getByRole('button', { name: /checkout|place order/i })).toHaveCount(0);
       await expectBasket(page, items);
       await expectNoBasketOverflow(page);
       // Scroll back from the footer: earlier rows must remain usable too.
@@ -384,7 +388,7 @@ test('combined 100-item limit disables every increase and recovers after a decre
   await page.locator('#cartModal .close').click();
   for (const name of [headphones.name, 'Everyday travel backpack']) {
     await addProduct(page, name);
-    await expect(page.locator('#toast')).toHaveText('Your sample basket has reached its item limit.');
+    await expect(page.locator('#toast')).toHaveText('Your basket has reached its item limit.');
   }
   await openBasket(page);
   await expectBasket(page, fullBasket);
@@ -483,9 +487,9 @@ for (const clearAll of [false, true]) {
     await reloadAndOpen(page);
     await expect(page.locator('#cartCount')).toHaveText('3');
     await expect(page.locator('#cartItems > p')).toHaveText('Total: KSh 7,848');
-    await expect(page.locator('#cartModal')).toContainText('Sample basket only. Checkout is a preview; no payment will be collected.');
-    await page.getByRole('button', { name: 'Continue to checkout (preview)', exact: true }).click();
-    await expect(page.locator('#toast')).toHaveText('Checkout is a preview only. No payment will be collected.');
+    await expect(page.locator('#basketCheckoutNotice')).toContainText(
+      'Order placement is not available yet. No order or payment will be submitted.');
+    await expect(page.getByRole('button', { name: /checkout|place order/i })).toHaveCount(0);
   });
 }
 

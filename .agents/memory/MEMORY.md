@@ -1,4 +1,5 @@
 - [Basket undo decisions](basket-undo.md) — merge removed quantities without discarding later edits; dismiss recovery after another tab changes the basket.
+- [Basket inventory integrity](basket-inventory-integrity.md) — never turn old demo basket values into real marketplace listings or customer orders.
 - [Mobile geometry checks](mobile-geometry.md) — multiline inline text needs different hit-testing from buttons.
 - [Booking sources](booking-sources.md) — bookings must support both NexaHub sellers and external suppliers.
 - [NexaHub Delivery](delivery-scope.md) — independent verified riders, seller requests, order links, tracking/OTP and admin oversight; approval before changes.

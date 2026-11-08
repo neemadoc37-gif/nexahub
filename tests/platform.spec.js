@@ -31,9 +31,12 @@ for (const width of [402, 1280]) {
     expect(mutations).toEqual([]);
     await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
     await expect(page.locator('#platformMount')).toBeHidden();
-    await expect(page.locator('#productGrid .product')).toHaveCount(8);
-    await page.getByRole('button', { name: 'Add to sample basket', exact: true }).first().click();
-    await expect(page.locator('#cartCount')).toHaveText('1');
+    await expect(page.locator('.categories .cat')).toHaveCount(8);
+    await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Open basket' }).click();
+    await expect(page.locator('#basketCheckoutNotice')).toBeVisible();
+    await expect(page.locator('#cartCount')).toHaveText('0');
+    await page.getByRole('button', { name: 'Close basket dialog' }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);
   });
@@ -76,7 +79,7 @@ test('public catalog is real published inventory or an explicit service error, n
   }
   await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
-  await expect(page.locator('#productGrid')).toBeVisible();
+  await expect(page.locator('#liveProducts')).toBeVisible();
 });
 
 test('API refuses unverified sessions and unconfigured financial callbacks', async ({ request }) => {

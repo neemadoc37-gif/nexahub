@@ -82,7 +82,7 @@ test('old workspace links stay usable and switching routes clears old record fil
   await expect(page).toHaveURL(/\/seller$/);
   await page.getByRole('link', { name: 'NexaHub home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
-  await expect(page.locator('#productGrid')).toBeVisible();
+  await expect(page.locator('#liveProducts')).toBeVisible();
 });
 
 test('footer categories and live marketplace search remain reachable from a workspace', async ({ page }) => {

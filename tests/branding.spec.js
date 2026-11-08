@@ -17,12 +17,14 @@ for (const width of [320, 402, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/assets/brand/favicon.png');
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/assets/brand/apple-touch-icon.png');
-    await expect(page.locator('#productGrid .product')).toHaveCount(8);
+    await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.getByRole('button', { name: 'Close account dialog' }).click();
-    await page.getByRole('button', { name: 'Add to sample basket' }).first().click();
-    await expect(page.locator('#cartCount')).toHaveText('1');
+    await page.getByRole('button', { name: 'Open basket' }).click();
+    await expect(page.locator('#basketCheckoutNotice')).toBeVisible();
+    await expect(page.locator('#cartCount')).toHaveText('0');
+    await page.getByRole('button', { name: 'Close basket dialog' }).click();
   });
 }
 

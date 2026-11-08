@@ -1,55 +1,75 @@
 const { test, expect } = require('@playwright/test');
 
+const categories = [
+  ['supermarkets', 'Supermarkets'],
+  ['restaurants', 'Restaurants'],
+  ['pharmacies', 'Pharmacies'],
+  ['electronics', 'Electronics'],
+  ['fashion', 'Fashion'],
+  ['services', 'Services'],
+  ['digital-products', 'Digital products'],
+  ['travel', 'Travel'],
+];
+
 for (const width of [320, 402, 1280]) {
-  test(`pastel storefront keeps public actions usable at ${width}px`, async ({ page }) => {
+  test(`premium storefront and eight categories fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     const theme = await page.evaluate(() => {
       const color = selector => getComputedStyle(document.querySelector(selector)).backgroundColor;
       return {
+        topbar: color('.topbar'),
         header: color('.header'),
         page: color('body'),
-        categories: [...document.querySelectorAll('.cat')].map(node => {
-          const style = getComputedStyle(node);
-          return style.backgroundColor + style.backgroundImage;
-        }),
+        hero: getComputedStyle(document.querySelector('.hero-image')).backgroundImage,
+        categoryCards: [...document.querySelectorAll('.cat')].map(node => getComputedStyle(node).backgroundColor),
         fits: document.documentElement.scrollWidth <= innerWidth,
       };
     });
-    const channels = color => (color.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
-    expect(Math.max(...channels(theme.header))).toBeLessThan(100);
-    expect(Math.min(...channels(theme.page))).toBeGreaterThanOrEqual(245);
-    expect(new Set(theme.categories).size).toBeGreaterThanOrEqual(4);
+    expect(theme.topbar).toBe('rgb(20, 37, 63)');
+    expect(theme.header).toBe('rgba(255, 253, 248, 0.97)');
+    expect(theme.page).toBe('rgb(246, 242, 233)');
+    expect(theme.hero).toContain('marketplace-hero.jpg');
+    expect(theme.hero).not.toContain('nexahub-editorial-stilllife');
+    expect(new Set(theme.categoryCards)).toEqual(new Set(['rgb(255, 253, 248)']));
     expect(theme.fits).toBe(true);
-    await expect(page.locator('.header a[href="/admin"]')).toHaveCount(0);
+
     await expect(page.locator('.hero h1')).toContainText('Your World.');
     await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/nexahub-logo.webp');
+    await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
+    for (const [slug, label] of categories) {
+      await expect(page.locator(`.categories a[href="/catalog?category=${slug}"]`)).toContainText(label);
+      await expect(page.locator(`.nav a[href="/catalog?category=${slug}"]`)).toContainText(label);
+    }
+    await expect(page.locator('a[href="/admin"]')).toHaveCount(0);
+    await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/SAMPLE|NOT FOR SALE|Add to sample basket/i);
 
     await page.locator('#accountButton').click();
     await expect(page.locator('#accountModal')).toBeVisible();
     await page.getByRole('button', { name: 'Close account dialog' }).click();
-    await page.locator('#marketplaceSearch').fill('pastel journey check');
+    await page.locator('#marketplaceSearch').fill('premium journey check');
     await page.locator('.live-search button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/catalog\?q=pastel(?:\+|%20)journey(?:\+|%20)check/);
+    await expect(page).toHaveURL(/\/catalog\?q=premium(?:\+|%20)journey(?:\+|%20)check/);
     await expect(page.locator('#platformMount')).toBeVisible();
   });
 }
 
-test('redesign does not turn illustrative stock into real inventory or enable collections', async ({ page, request }) => {
-  await page.route('**/api/catalog', route => route.fulfill({
-    contentType: 'application/json', body: JSON.stringify({ products: [], categories: [] }),
-  }));
-  await page.route('**/api/businesses', route => route.fulfill({
-    contentType: 'application/json', body: JSON.stringify({ businesses: [] }),
-  }));
+test('legacy demo basket entries do not appear as real products or get deleted', async ({ page }) => {
+  const legacyEntry = JSON.stringify([{ name: 'Wireless headphones', price: 3499, quantity: 1 }]);
   await page.goto('/');
-  await expect(page.locator('#liveProducts .market-card')).toHaveCount(0);
-  await expect(page.locator('#marketplace')).toContainText('not for sale');
-  await page.getByRole('button', { name: 'Add to sample basket' }).first().click();
-  await expect(page.locator('#cartCount')).toHaveText('1');
-  const callback = await request.post('/api/payments/mpesa/callback', {
-    data: { ResultCode: 0, paid: true },
-  });
-  expect(callback.status()).toBe(503);
-  expect((await callback.json()).error.code).toBe('callbacks_disabled');
+  await page.evaluate(value => localStorage.setItem('nexahub.sampleBasket.v1', value), legacyEntry);
+  await page.reload();
+  await expect(page.locator('#cartCount')).toHaveText('0');
+  await expect(page.locator('#liveProducts')).not.toContainText('Wireless headphones');
+  await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Open basket' }).click();
+  await expect(page.locator('#cartItems')).toHaveText('Your basket is empty.');
+  await expect(page.locator('#basketCheckoutNotice')).toContainText('No order or payment will be submitted');
+  expect(await page.evaluate(() => localStorage.getItem('nexahub.sampleBasket.v1'))).toBe(legacyEntry);
+});
+
+test('the retired staged product image is no longer publicly served', async ({ request }) => {
+  expect((await request.get('/assets/marketplace/marketplace-hero.jpg')).status()).toBe(200);
+  expect((await request.get('/assets/marketplace/nexahub-editorial-stilllife.jpg')).status()).toBe(404);
 });

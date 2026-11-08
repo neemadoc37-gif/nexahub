@@ -76,9 +76,9 @@
       card.href = target.pathname + target.search;
       card.setAttribute("aria-label", `View ${product.title} in the live catalog`);
 
-      const art = element("div", "market-card-art");
       const imageUrl = safeImageUrl(product.image_url);
       if (imageUrl) {
+        const art = element("div", "market-card-art");
         const image = element("img");
         image.src = imageUrl;
         image.alt = "";
@@ -86,6 +86,7 @@
         image.decoding = "async";
         image.addEventListener("error", () => image.remove(), { once: true });
         art.appendChild(image);
+        card.appendChild(art);
       }
 
       const copy = element("div", "market-card-copy");
@@ -96,7 +97,7 @@
       if (product.description) copy.appendChild(element("p", "market-card-description", product.description));
       copy.appendChild(element("div", "market-card-price", moneyLabel(product.price, product.currency)));
       copy.appendChild(element("span", "market-card-link", "View listing"));
-      card.append(art, copy);
+      card.appendChild(copy);
       return card;
     });
     productHost.replaceChildren(...cards);
@@ -145,7 +146,7 @@
     } catch (_) {
       productHost.replaceChildren(makeState(
         "Live listings could not be loaded.",
-        "Check your connection and try again. Sample items are kept separate below.",
+        "Check your connection and try again. No substitute listings will be shown.",
         loadProducts
       ));
     } finally {

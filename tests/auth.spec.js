@@ -34,7 +34,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 402, height: 874 
     await expect(page.locator('#authMessage')).toContainText('Enter your email address first');
     await page.getByRole('button', { name: 'Close account dialog' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
-    await expect(page.locator('#productGrid .product')).toHaveCount(8);
+    await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     expect(authMutations).toEqual([]);
     expect(pageErrors).toEqual([]);
   });
