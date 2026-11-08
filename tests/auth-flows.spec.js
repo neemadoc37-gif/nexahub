@@ -27,17 +27,21 @@ test('LIVE: Preview sends invalid login to Supabase and shows the provider rejec
 
 test('LIVE diagnostic: Google button sends the configured client and callback (not a completed login)', async ({ page }) => {
   let googleURL;
+  let authorizeURL;
   page.on('request', request => {
     const url = new URL(request.url());
     if (url.hostname === 'accounts.google.com' && url.searchParams.has('redirect_uri')) googleURL = url;
+    if (url.hostname === new URL(project).hostname && url.pathname === '/auth/v1/authorize') authorizeURL = url;
   });
   await page.goto('/');
   await page.locator('#accountButton').click();
+  const appOrigin = await page.evaluate(() => window.location.origin);
   await page.locator('#googleSignIn').click();
   await expect.poll(() => googleURL?.hostname, { timeout: 20000 }).toBe('accounts.google.com');
   expect(googleURL.searchParams.get('client_id')).toBe(
     '786403845062-9tuamqbe2ngfu729tk3e2jrc6c3p6qcf.apps.googleusercontent.com');
   expect(googleURL.searchParams.get('redirect_uri')).toBe(`${project}/auth/v1/callback`);
+  expect(authorizeURL?.searchParams.get('redirect_to')).toBe(appOrigin);
 });
 
 async function fixtures(page, { missing = false, denied = false } = {}) {
