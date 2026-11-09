@@ -69,7 +69,7 @@ test('FIXTURE: profile, order number, booking details and payment reference are 
   await expect(mount).toContainText(order.order_number);
   await expect(mount).toContainText('<strong>Literal booking note</strong>');
   await expect(mount).toContainText('FIXTURE-REFERENCE-NOT-SETTLED');
-  const bookingDate = await page.evaluate(() => new Date('2026-12-03T09:15:00Z').toLocaleString());
+  const bookingDate = await page.evaluate(() => new Date('2026-12-03T09:15:00Z').toLocaleString('en-KE'));
   await expect(mount).toContainText(bookingDate);
   await expect(mount.locator('strong').filter({ hasText: 'Literal booking note' })).toHaveCount(0);
   expect(mutations).toEqual([]);

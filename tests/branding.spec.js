@@ -30,6 +30,7 @@ for (const width of [320, 402, 1280]) {
 
 test('brand assets support GET/HEAD without exposing workspace files', async ({ request }) => {
   for (const [path, type] of [
+    ['/assets/brand/spinix-one-logo.png', 'image/png'],
     ['/assets/brand/spinix-one-logo.svg', 'image/svg+xml'],
     ['/assets/brand/spinix-one-icon.svg', 'image/svg+xml'],
     ['/favicon.ico', 'image/svg+xml'],
@@ -55,7 +56,7 @@ for (const width of [320, 402, 1280]) {
     page.on('request', request => {
       if (request.method() === 'POST') writes.push(new URL(request.url()).pathname);
     });
-    const approved = '/assets/brand/spinix-one-logo.svg';
+    const approved = '/assets/brand/spinix-one-logo.png';
     for (const route of ['/sign-in', '/customer', '/seller', '/rider', '/admin']) {
       await page.goto(route);
       const headerLogo = page.locator(`.header img[src="${approved}"]`);
@@ -64,7 +65,7 @@ for (const width of [320, 402, 1280]) {
         : page.locator(`#platformMount .platform-hero img[src="${approved}"]`);
       for (const logo of [headerLogo, pageLogo]) {
         if (route !== '/sign-in' || logo === pageLogo) await expect(logo).toBeVisible();
-        await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth)).toBe(420);
+        await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth)).toBe(2172);
         const geometry = await logo.evaluate(img => {
           const rect = img.getBoundingClientRect();
           return { ratio: rect.width / rect.height, expectedRatio: img.naturalWidth / img.naturalHeight,

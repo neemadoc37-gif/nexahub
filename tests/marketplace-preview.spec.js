@@ -13,6 +13,9 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('.header')).not.toContainText('dashboard');
     await expect(page.locator('.header')).not.toContainText('Workspaces');
     await expect(page.locator('.categories .cat')).toHaveCount(9);
+    await expect(page.locator('.hero .eyebrow')).toHaveText('SHOP • BOOK • DISCOVER');
+    await expect(page.locator('.hero')).toContainText('one convenient destination');
+    await expect(page.locator('body')).not.toContainText(/Kenya First|Kenyan market|starting in Kenya|Kenyan customers|expand to other markets/i);
     await expect(page.locator('#liveMarketplace')).toBeHidden();
     await expect(page.locator('#businessShowcase')).toBeHidden();
     await expect(page.locator('.why-section')).toHaveCount(0);
@@ -31,7 +34,7 @@ for (const width of [320, 402, 1280]) {
     await expect(page.locator('#productGrid, .sample-section')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/SAMPLE|Add to sample basket/i);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.svg', '/assets/marketplace/marketplace-hero.jpg', '/assets/marketplace/spinix-one-marketplace-hero.jpg']) {
+    for (const path of ['/assets/marketplace.css', '/assets/storefront.js', '/assets/brand/spinix-one-logo.png', '/assets/marketplace/marketplace-hero.jpg', '/assets/marketplace/spinix-one-marketplace-hero.jpg']) {
       expect((await request.get(path)).status()).toBe(200);
     }
     expect((await request.get('/assets/marketplace/nexahub-editorial-stilllife.jpg')).status()).toBe(404);
@@ -78,11 +81,11 @@ test('homepage presents the About story once after the welcome hero', async ({ p
   const section = page.locator('#about');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText('About SPINIX ONE');
   await expect(section).not.toContainText('Connecting Businesses. Empowering People.');
-  await expect(section).toContainText('SPINIX ONE is a global marketplace designed to bring shopping, services and digital products together in one convenient destination.');
-  await expect(section).toContainText('We connect customers with businesses, independent sellers and digital creators');
-  await expect(section).toContainText('Whether you are shopping for everyday essentials, exploring new brands, booking a service or discovering digital products');
-  await expect(section).toContainText('Showcase products and services, build an online presence and connect with potential customers.');
-  await expect(section).toContainText('Discover a convenient range of products and services from businesses around the world.');
+  await expect(section).toContainText('SPINIX ONE brings shopping, services, digital products and travel experiences together in one convenient destination.');
+  await expect(section).toContainText('We connect customers with businesses, independent sellers and digital creators.');
+  await expect(section).toContainText('Explore everyday essentials, professional services and digital products in one marketplace.');
+  await expect(section).toContainText('Showcase your products and services and connect with customers.');
+  await expect(section).toContainText('Discover products, services and digital experiences from businesses and creators.');
   await expect(page.locator('.hero-note')).toContainText('Connecting Businesses. Empowering People.');
   await expect(page.locator('.seller-section')).not.toContainText(/Connecting Businesses\. Empowering People\./i);
   await expect(page.locator('.footer')).toContainText('Connecting Businesses. Empowering People.');
@@ -92,6 +95,9 @@ test('dedicated About page presents brand principles and seller invitation', asy
   await page.goto('/about');
   const about = page.locator('#platformMount .about-page');
   await expect(about.getByRole('heading', { level: 1, name: 'Welcome to SPINIX ONE' })).toBeVisible();
+  await expect(about).toContainText('Build a trusted marketplace for everyone.');
+  await expect(about).toContainText('SHOP • BOOK • DISCOVER');
+  await expect(about).not.toContainText(/Kenya|expand to other markets/i);
   await expect(about).toContainText(/Connecting Businesses\. ?Empowering People\./);
   await expect(about.locator('.about-vision')).toContainText('OUR VISION');
   await expect(about.locator('.about-mission')).toContainText('OUR MISSION');
@@ -99,10 +105,10 @@ test('dedicated About page presents brand principles and seller invitation', asy
   await expect(about.locator('.about-value')).toHaveCount(6);
   await expect(about.locator('.about-seller-invitation')).toContainText(/empower/i);
   await expect(page.locator('.platform-nav a[data-workspace="about"]')).toHaveAttribute('aria-current', 'page');
-  await expect(page.locator('.footer')).toContainText('SPINIX ONE connects customers with businesses');
+  await expect(page.locator('.footer')).toContainText('A marketplace for products, services, travel and digital experiences.');
 
   await page.goto('/seller');
-  await expect(page.locator('.platform-hero')).toContainText('Connecting Businesses. Empowering People.');
+  await expect(page.locator('.platform-hero')).toContainText('Public products and businesses can be browsed without an account.');
 });
 
 test('Mystery Box remains a locked concept until rewards and approvals are ready', async ({ page, request }) => {
@@ -235,9 +241,11 @@ test('FIXTURE: homepage uses only published listings and their genuine media', a
   await expect(page.locator('#liveProducts b')).toHaveCount(0);
   const imageCard = page.locator(`#liveProducts a[href="/catalog?product=${product}"]`);
   await expect(imageCard.locator('.market-card-art img')).toHaveAttribute('src', /spinix-one-icon\.svg$/);
-  await expect(imageCard).toContainText('Ksh');
+  await expect(imageCard).toContainText('KSh');
+  await expect(imageCard.locator('.market-card-price')).toHaveText('KSh 50');
   const noImageCard = page.locator(`#liveProducts a[href="/catalog?product=${textOnlyProduct}"]`);
   await expect(noImageCard).toContainText('19.99');
+  await expect(noImageCard.locator('.market-card-price')).toContainText('USD');
   await expect(noImageCard.locator('.market-card-art')).toHaveCount(0);
   await expect(page.locator('#liveBusinesses .business-card')).toHaveCount(1);
   await expect(page.locator('#liveBusinesses')).not.toContainText('Pending fixture');

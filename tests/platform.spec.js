@@ -72,14 +72,15 @@ test('public catalog is real published inventory or an explicit service error, n
   if (result.ok()) {
     expect(Array.isArray(body.products)).toBe(true);
     expect(body.products.every(product => product.status === 'published')).toBe(true);
-    if (!body.products.length) await expect(page.locator('#platformMount')).toContainText('No published products');
+    if (!body.products.length) await expect(page.locator('#platformMount')).toContainText('No published listings');
   } else {
     expect(body.error.message).toBeTruthy();
     await expect(page.locator('#platformMount')).toContainText(body.error.message);
   }
   await page.getByRole('link', { name: 'Spinix One home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
-  await expect(page.locator('#liveProducts')).toBeVisible();
+  await expect(page.locator('#categoryHeading')).toBeVisible();
+  await expect(page.locator('#liveProducts')).toBeHidden();
 });
 
 test('API refuses unverified sessions and unconfigured financial callbacks', async ({ request }) => {

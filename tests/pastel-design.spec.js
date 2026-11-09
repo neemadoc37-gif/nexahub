@@ -36,7 +36,7 @@ for (const width of [320, 402, 1280]) {
     expect(theme.fits).toBe(true);
 
     await expect(page.locator('.hero h1')).toContainText('Spinix One');
-    await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/spinix-one-logo.svg');
+    await expect(page.locator('.header .logo img')).toHaveAttribute('src', '/assets/brand/spinix-one-logo.png');
     await expect(page.locator('.categories .cat')).toHaveCount(categories.length);
     await expect(page.locator('.categories .cat-photo')).toHaveCount(categories.length);
     await expect(page.locator('.nearby-section, .marketplace-scene')).toHaveCount(0);
@@ -45,8 +45,8 @@ for (const width of [320, 402, 1280]) {
     expect(firstSections).toEqual(['hero', 'about-section', 'category-section']);
     const pageNav = await page.locator('.platform-nav a').allTextContents();
     expect(pageNav.slice(0, 3).map(label => label.trim())).toEqual(['Home', 'About us', 'Shop the catalog']);
-    await expect(page.locator('#paymentHeading')).toContainText('Checkout is not enabled yet');
-    await expect(page.locator('#payment-information')).toContainText('not being accepted in this Preview');
+    await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Payment information' })).toBeVisible();
+    await expect(page.locator('#payment-information')).toHaveCount(0);
     await expect(page.locator('.platform-nav a[href="/admin"]')).toHaveCount(0);
     for (const [slug, label] of categories) {
       await expect(page.locator(`.categories a[href="/catalog?category=${slug}"]`)).toContainText(label);

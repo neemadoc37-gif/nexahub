@@ -55,7 +55,7 @@ test('guests can add published products to a persistent, currency-aware basket w
   await expect(page.locator('#basketCheckoutNotice')).toContainText('Guest checkout is not enabled yet');
   await expect(page.locator('#cartItems')).toContainText('Guest fixture kettle');
   await expect(page.locator('#cartItems')).toContainText('KSh 1,250');
-  const usd = await page.evaluate(() => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(12.5));
+  const usd = await page.evaluate(() => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'USD', currencyDisplay: 'code' }).format(12.5));
   await expect(page.locator('#cartItems')).toContainText(usd);
   await expect(page.locator('#cartItems')).toContainText('Total:');
 

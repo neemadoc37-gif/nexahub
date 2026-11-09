@@ -18,6 +18,7 @@ BRAND_ASSETS = {
     "/assets/brand/nexahub-logo.webp": (BRAND / "nexahub-logo.webp", "image/webp"),
     "/assets/brand/favicon.png": (BRAND / "favicon.png", "image/png"),
     "/assets/brand/apple-touch-icon.png": (BRAND / "apple-touch-icon.png", "image/png"),
+    "/assets/brand/spinix-one-logo.png": (BRAND / "spinix-one-logo.png", "image/png"),
     "/assets/brand/spinix-one-logo.svg": (BRAND / "spinix-one-logo.svg", "image/svg+xml"),
     "/assets/brand/spinix-one-icon.svg": (BRAND / "spinix-one-icon.svg", "image/svg+xml"),
     "/favicon.ico": (BRAND / "spinix-one-icon.svg", "image/svg+xml"),
@@ -39,7 +40,7 @@ BRAND_ASSETS = {
 API = MarketplaceAPI()
 PAGE_ROUTES = {
     "/", "/index.html", "/workspaces", "/catalog", "/about", "/customer", "/seller",
-    "/rider", "/delivery", "/payments", "/admin", "/sign-in", "/register",
+    "/rider", "/delivery", "/payments", "/admin", "/terms", "/sign-in", "/register",
     "/forgot-password",
 }
 

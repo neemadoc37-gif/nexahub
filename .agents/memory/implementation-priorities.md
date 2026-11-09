@@ -44,19 +44,24 @@ inspection, run migrations or change database permissions without approval.
 security and relationship details as blockers, and seek approval before any
 further database inspection or changes.
 
-The current customer-facing direction is a premium international marketplace:
-white and warm ivory with deep navy and champagne gold. Keep the Spinix One name
-and “Everything You Need. All in One Place.” tagline. Use one consistent theme
-across shopping, account, seller and rider surfaces.
+Use location-neutral public marketing copy. Do not state launch-market sequencing
+or expansion plans on the homepage, About page, metadata or footer. Keep the
+Spinix One name and premium white, deep navy and champagne-gold design across
+shopping, account, seller and rider surfaces. Use white instead of cream or ivory
+backgrounds.
 Admin must remain private and role-protected; customers must not see internal
 dashboards.
 
-**Why:** The user supplied a new Spinix One marketplace reference and requested
-its palette and design for the existing website.
+**Why:** The user asked not to disclose market-priority messaging publicly and
+asked to replace cream backgrounds with white.
 
-**How to apply:** Preserve data, authentication and working behavior while
-updating the existing pages. Keep privileged navigation out of public surfaces;
-never trust editable profile metadata for admin access.
+**How to apply:** Use neutral marketplace copy. Keep location or currency details
+only where needed for accurate functionality, compliance or pricing. Use white
+rather than cream/ivory surface colors, retaining navy and champagne accents.
+Keep recorded listing currencies unchanged; never invent exchange rates or imply
+delivery coverage or live payment methods that are not configured. Preserve data,
+authentication and working behavior. Keep privileged navigation private and
+server-authorized.
 
 Use relevant marketplace photography rather than the “Discover closer” badge
 and abstract map artwork that appeared on the homepage.

@@ -17,7 +17,7 @@
   const routePaths = {
     workspaces: "/workspaces", about: "/about", customer: "/customer", seller: "/seller",
     rider: "/rider", delivery: "/delivery", payments: "/payments",
-    admin: "/admin", catalog: "/catalog"
+    admin: "/admin", catalog: "/catalog", terms: "/terms"
   };
   const allowed = new Set(Object.keys(routePaths));
   const authPaths = new Set(["/sign-in", "/register", "/forgot-password"]);
@@ -46,14 +46,16 @@
     if (amount === null || amount === undefined || amount === "") return "Amount unavailable";
     const value = Number(amount);
     if (!Number.isFinite(value)) return "Amount unavailable";
-    if (!currency) return `${value.toLocaleString()} (currency not returned)`;
-    try { return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(value); }
-    catch (_) { return `${currency} ${value.toLocaleString()}`; }
+    const code = String(currency || "").toUpperCase();
+    if (!code) return `${value.toLocaleString("en-KE")} (currency not returned)`;
+    if (code === "KES") return `KSh ${value.toLocaleString("en-KE", { maximumFractionDigits: 2 })}`;
+    try { return new Intl.NumberFormat("en-KE", { style: "currency", currency: code, currencyDisplay: "code" }).format(value); }
+    catch (_) { return `${code} ${value.toLocaleString("en-KE")}`; }
   };
   const date = (value) => {
     if (value === null || value === undefined || value === "") return "Date unavailable";
     const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? "Date unavailable" : parsed.toLocaleString();
+    return Number.isNaN(parsed.getTime()) ? "Date unavailable" : parsed.toLocaleString("en-KE");
   };
   function go(route, productId, context = {}) {
     if (!allowed.has(route)) return;
@@ -84,10 +86,12 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function routeFromUrl() {
+    // Auth routes keep the public storefront shell, even if an old link carries
+    // a private-workspace query parameter.
+    if (authPaths.has(normalizedPath())) return null;
     const params = new URLSearchParams(location.search);
     const requested = params.get("workspace");
     if (allowed.has(requested)) return requested; // Preserve existing shared links.
-    if (authPaths.has(normalizedPath())) return "customer";
     return Object.keys(routePaths).find(key => routePaths[key] === normalizedPath()) || null;
   }
   function syncNavigation(route) {
@@ -127,10 +131,10 @@
     copy.append(el("div", "platform-kicker", kicker), el("h1", "", title), el("p", "", description));
     const brandPlate = el("div", "platform-hero-brandplate");
     const brand = el("img", "platform-hero-brand");
-    brand.src = "/assets/brand/spinix-one-logo.svg";
-    brand.alt = "Spinix One — Connecting Businesses. Empowering People.";
-    brand.width = 420;
-    brand.height = 96;
+    brand.src = "/assets/brand/spinix-one-logo.png";
+    brand.alt = "SPINIX ONE logo — Shop, Book, Travel, Play, Earn";
+    brand.width = 2172;
+    brand.height = 724;
     brandPlate.appendChild(brand);
     hero.append(copy, brandPlate);
     mount.appendChild(hero);
@@ -138,6 +142,11 @@
   function loadAbout() {
     const template = document.getElementById("aboutPageTemplate");
     if (!template) throw new Error("The SPINIX ONE brand information could not be loaded.");
+    mount.appendChild(template.content.cloneNode(true));
+  }
+  function loadTerms() {
+    const template = document.getElementById("termsPageTemplate");
+    if (!template) throw new Error("The SPINIX ONE terms page could not be loaded.");
     mount.appendChild(template.content.cloneNode(true));
   }
   function stateBox(text, type = "") {
@@ -183,7 +192,7 @@
   function requireSignIn() {
     if (currentUser) return true;
     const box = el("div", "platform-authbar");
-    box.append(el("span", "", "This workspace is private. Sign in to load account-owned information."));
+    box.append(el("span", "", "Sign in to view records belonging to your account. Public listings can be browsed without signing in."));
     box.appendChild(button("Sign in", () => showAccount()));
     const register = el("a", "", "Create an account");
     register.href = "/register";
@@ -193,7 +202,7 @@
   }
   function setError(message, retry) {
     mount.replaceChildren();
-    addHero("NEXAHUB WORKSPACE", "We couldn’t load this view", "Your private information has not been replaced with sample data.");
+    addHero("SPINIX ONE", "We couldn’t load this view", "Try again to load the requested information.");
     const box = notice(message, "error");
     box.appendChild(document.createTextNode(" "));
     box.appendChild(button("Retry", retry, true));
@@ -235,15 +244,15 @@
     return wrap;
   }
   async function loadWorkspaces() {
-    addHero("NEXAHUB WORKSPACES", "Choose your workspace", "Every link opens this application. Availability below distinguishes connected readers from operations that are not yet implemented.");
+    addHero("SPINIX ONE", "Explore or manage your account", "Browse public listings without signing in. Sign in only when you need information linked to your account.");
     const grid = el("div", "platform-grid workspace-shortcuts");
     const entries = [
-      ["customer", "Customer dashboard", "Connected readers; sign-in required", "Your profile, orders, bookings and payment records. A confirmed Supabase session is required; successful real login still needs acceptance testing."],
-      ["seller", "Seller and service-provider workspace", "Read-only account connection", "View your shop profile, products and order items. Service listings, applications, listing edits, delivery requests and accounting are not operational."],
-      ["rider", "Rider registration and dashboard", "Forms only; storage unavailable", "View registration fields, account, jobs and earnings sections. Registration, verification, acceptance and earnings are not saved."],
-      ["delivery", "Customer delivery tracking", "Entry form only; tracking unavailable", "Enter an order to check ownership. No real delivery milestones, rider location or secure OTP service are connected."],
-      ["catalog", "Live product catalog", "Connected published-product reader", "Search published listings returned by the existing backend. An empty catalog stays empty; example storefront products are not substituted."],
-      ["payments", "M-PESA readiness", "Collections and payouts disabled", "View configuration requirements and account-owned payment records. No live STK Push, settlement or payout is enabled."]
+      ["customer", "Customer account", "Sign in required", "View your own profile, orders, bookings and payment records."],
+      ["seller", "Seller and service-provider account", "Sign in required", "View seller records associated with your own account. Seller applications are not currently accepting submissions."],
+      ["rider", "Rider information", "Registration not open", "Rider applications and job management are not currently available."],
+      ["delivery", "Delivery tracking", "Order-linked", "View delivery updates for an order associated with your account when tracking is available."],
+      ["catalog", "Shop the catalog", "Browse without signing in", "Search products and services that have been published for customers."],
+      ["payments", "Payment information", "No live payments", "Review account-linked payment information. This website is not currently accepting live payments."]
     ];
     entries.forEach(([route, title, status, description]) => {
       const card = panel(title);
@@ -255,28 +264,13 @@
       grid.appendChild(card);
     });
     mount.appendChild(grid);
-    const accounts = panel("Real customer authentication", el("p", "", "These routes use the existing Supabase project. Email confirmation and permitted return URLs are required. Google still requires a successful provider callback test."));
+    const accounts = panel("Your account", el("p", "", "Create an account or sign in to see information connected to you."));
     const links = el("div", "platform-actions");
     [["/sign-in", "Sign in"], ["/register", "Create an account"], ["/forgot-password", "Reset password"]].forEach(([path, label]) => {
       const link = el("a", "platform-btn secondary workspace-directory-link", label); link.href = path; links.appendChild(link);
     });
     accounts.appendChild(links);
     mount.appendChild(accounts);
-    mount.appendChild(panel("Not yet operational", notice("Secure digital downloads, service booking, travel and accommodation reservations, real order placement from saved selections, delivery operations, seller/rider accounting and management actions are not implemented end to end. Storefront category examples are not these services.", "warn")));
-    const status = panel("Current server readiness", el("div", "platform-skeleton"));
-    mount.appendChild(status);
-    const ticket = epoch;
-    try {
-      const data = await readinessData();
-      if (ticket !== epoch) return;
-      const content = el("div", "platform-actions");
-      for (const [key, label] of [["seller_writes", "Seller applications"], ["rider_registration", "Rider applications"], ["delivery", "Delivery"], ["payments", "Payments"]]) {
-        content.appendChild(el("span", "platform-status", `${label}: ${data[key]?.enabled === true ? "configured; acceptance tests required" : "disabled"}`));
-      }
-      status.replaceChildren(el("h2", "", "Current server readiness"), content);
-    } catch (error) {
-      if (ticket === epoch) status.replaceChildren(el("h2", "", "Current server readiness"), notice(error.message, "error"));
-    }
   }
   async function loadCustomer(id) {
     addHero("CUSTOMER ACCOUNT", "Your Spinix One", "Orders, bookings and payments associated with your signed-in account.");
@@ -461,27 +455,25 @@
     return box;
   }
   async function loadSeller() {
-    addHero("SELLER DESK", "Sell products or offer services", "Connecting Businesses. Empowering People. Your shop profile and sales-related records are loaded only from your account-scoped workspace. Seller applications and listing changes are not saved in this Preview.");
+    addHero("SELLER DESK", "Sell products or offer services", "Sign in to view your own seller profile, listings and sales records. Public products and businesses can be browsed without an account.");
     if (!requireSignIn()) {
-      mount.appendChild(formPanel("Apply as a seller or service provider", "This form does not submit an application yet. Sign-in and approved server-side storage must be configured first.", [
-        ["Store name", "store_name", "text", true, { maxLength: 120 }]
-      ], "/api/sellers/applications", (form) => ({ store_name: form.elements.store_name.value.trim() }), "seller_writes", "seller writes"));
+      mount.appendChild(panel("Seller applications", notice("Applications are not accepting submissions yet. No application details are collected on this page.", "warn")));
       return;
     }
     const ticket = ++epoch, uid = currentUser?.id;
     const loading = panel("Seller overview", el("div", "platform-skeleton"));
     mount.appendChild(loading);
     try {
-      const [data, config] = await Promise.all([api("/api/seller", {}, true), readinessData()]);
+      const data = await api("/api/seller", {}, true);
       if (ticket !== epoch || uid !== currentUser?.id) return;
       const content = el("div");
-      if (!data.seller) content.appendChild(empty("No seller profile is available for this account. Submit an application below; this request is not saved unless the server confirms otherwise."));
+      if (!data.seller) content.appendChild(empty("No seller profile is available for this account."));
       else {
         content.append(el("p", "", data.seller.store_name || "Store name unavailable"), el("span", "platform-status", data.seller.status || "Status unavailable"));
         if (data.seller.description) content.appendChild(el("p", "", data.seller.description));
         content.appendChild(el("p", "platform-meta", `Created ${date(data.seller.created_at)}`));
       }
-      content.appendChild(notice("Seller accounting is not enabled. No revenue, earnings or order totals are inferred.", "warn"));
+      content.appendChild(notice("Earnings and account balances are unavailable until verified sales are recorded.", "warn"));
       content.appendChild(el("h3", "", "Products"));
       content.appendChild(listRows(data.products, (product) => {
         const listing = product.listing_type || "Listing type not returned";
@@ -499,9 +491,7 @@
       }, "Prepare delivery request"), "No seller order items were returned."));
       loading.replaceWith(panel("Seller overview", content));
       const grid = el("div", "platform-grid");
-      grid.appendChild(formPanel("Apply as a seller or service provider", "A validated request reaches a server-side configuration gate. This Preview does not save an application or local draft.", [
-        ["Store name", "store_name", "text", true, { maxLength: 120 }]
-      ], "/api/sellers/applications", (form) => ({ store_name: form.elements.store_name.value.trim() }), "seller_writes", "seller writes"));
+      grid.appendChild(panel("Seller applications", notice("Applications are not accepting submissions yet. No application details are collected on this page.", "warn")));
       const request = panel("Request a delivery", null);
       request.appendChild(notice("Only request delivery for an order that belongs to this seller. Pickup and delivery details are private and are never stored in this browser.", "warn"));
       request.appendChild(formPanel("Delivery request", "", [
@@ -514,12 +504,11 @@
         delivery_address: form.elements.delivery_address.value.trim()
       }), "delivery", "delivery requests"));
       grid.appendChild(request);
-      grid.appendChild(panel("Seller readiness", showReadiness(config, "seller_writes")));
       mount.appendChild(grid);
     } catch (error) { if (ticket === epoch && uid === currentUser?.id) setError(error.message, () => render()); }
   }
   async function loadRider() {
-    addHero("RIDER DESK", "Independent work, responsibly", "Rider access requires backend approval. Registration documents, jobs, location and earnings are not simulated.");
+    addHero("RIDER DESK", "Independent work, responsibly", "Rider registration and delivery assignments are not currently available.");
     const signedIn = requireSignIn();
     const ticket = ++epoch, uid = currentUser?.id;
     const status = panel("Rider account", el("div", "platform-skeleton"));
@@ -580,7 +569,7 @@
       } catch (error) {
         if (ticket !== epoch || uid !== currentUser?.id) return;
         output.className = "platform-route-message platform-notice warn";
-        output.textContent = `Tracking unavailable. No delivery status, map or location has been invented. ${error.message}`;
+        output.textContent = `Delivery tracking is not available for this order yet. ${error.message}`;
       }
     });
     wrap.appendChild(form); mount.appendChild(wrap);
@@ -668,7 +657,7 @@
   async function loadAdmin() {
     const unavailable = () => {
       mount.replaceChildren();
-      addHero("NEXAHUB", "This page is unavailable", "Return to the marketplace or access your own customer account.");
+      addHero("SPINIX ONE", "This page is unavailable", "Return to the marketplace or access your own customer account.");
       mount.appendChild(button("Back to marketplace", goHome));
     };
     if (!currentUser) { unavailable(); return; }
@@ -704,7 +693,7 @@
     if (/service|booking|accommodation|experience|travel/.test(type)) return false;
     const price = Number(product.price), currency = String(product.currency || "").toUpperCase();
     if (!Number.isFinite(price) || price <= 0 || !/^[A-Z]{3}$/.test(currency)) return false;
-    try { new Intl.NumberFormat(undefined, { style: "currency", currency }); }
+    try { new Intl.NumberFormat("en-KE", { style: "currency", currency }); }
     catch (_) { return false; }
     return true;
   }
@@ -727,7 +716,7 @@
     const grid = el("div", "platform-products");
     if (!catalogCache.length) {
       const state = el("div", "catalog-empty");
-      state.appendChild(empty("No published products are currently available. This catalog is live and does not use the storefront preview cards as fallback inventory."));
+      state.appendChild(empty("No published listings are available right now."));
       const sellerLink = el("a", "platform-btn secondary", "Seller information");
       sellerLink.href = "/seller";
       state.appendChild(sellerLink);
@@ -885,7 +874,7 @@
         }
         const productGrid = renderCatalogCards(products);
         result.replaceChildren(el("h2", "", "Published products"), productGrid);
-        if (response.category_unavailable) result.prepend(notice("This category is not configured in the live catalog yet. No sample listings have been substituted.", "warn"));
+        if (response.category_unavailable) result.prepend(notice("There are no listings in this category right now.", "warn"));
         if (sellerId) result.prepend(notice("Showing published listings from the selected business. Clear filters to browse all businesses."));
         if (Number.isFinite(response.limit)) result.appendChild(notice(`Showing up to ${response.limit} products returned by the catalog service. Listing-type choices reflect returned listings; clear filters to discover other types.`, "warn"));
       }
@@ -911,6 +900,7 @@
     try {
       if (route === "workspaces") await loadWorkspaces();
       else if (route === "about") loadAbout();
+      else if (route === "terms") loadTerms();
       else if (route === "catalog") await loadCatalog();
       else if (route === "customer") await loadCustomer(new URLSearchParams(location.search).get("order"));
       else if (route === "seller") await loadSeller();
@@ -973,10 +963,4 @@
   window.Platform = { go, home: goHome, render, authChanged };
   render();
   openAccountRoute();
-  api("/api/build").then(data => {
-    document.getElementById("previewBuild").textContent = `Preview build ${data.build_id} · Existing Supabase authentication · Live payments and payouts disabled`;
-    document.getElementById("previewBuild").dataset.buildId = data.build_id;
-  }).catch(() => {
-    document.getElementById("previewBuild").textContent = "Preview build could not be verified. Reload before testing account features.";
-  });
 })();

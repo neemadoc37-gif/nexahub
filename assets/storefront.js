@@ -32,11 +32,14 @@
     const amount = Number(price);
     if (!Number.isFinite(amount)) return "Price not provided";
     const code = textValue(currency);
-    if (!code) return amount.toLocaleString();
+    if (!code) return amount.toLocaleString("en-KE");
+    if (code.toUpperCase() === "KES") {
+      return `KSh ${amount.toLocaleString("en-KE", { maximumFractionDigits: 2 })}`;
+    }
     try {
-      return new Intl.NumberFormat(undefined, { style: "currency", currency: code }).format(amount);
+      return new Intl.NumberFormat("en-KE", { style: "currency", currency: code.toUpperCase(), currencyDisplay: "code" }).format(amount);
     } catch (_) {
-      return `${code} ${amount.toLocaleString()}`;
+      return `${code.toUpperCase()} ${amount.toLocaleString("en-KE")}`;
     }
   };
 

@@ -629,3 +629,55 @@ body{background:#fffaf2;color:var(--ink)}
 .seller-offerings span{display:flex;align-items:center;min-height:58px;padding:12px;border:1px solid rgba(231,216,179,.36);background:rgba(255,253,248,.06);color:#fffdf8;font-size:11px;font-weight:650}
 @media(max-width:850px){.experience-section{grid-template-columns:1fr;gap:18px}.experience-intro p{max-width:620px}.seller-section{grid-template-columns:1fr}.seller-offerings{max-width:520px}}
 @media(max-width:600px){.experience-section{margin-top:10px;padding:16px}.experience-grid{grid-template-columns:1fr}.experience-card{min-height:175px}.experience-card-copy{right:13px;bottom:13px;left:13px}.experience-card-copy strong{font-size:15px}.seller-section{gap:18px;margin-top:42px;padding:23px 18px}.seller-offerings span{min-height:52px;padding:10px;font-size:10px}}
+
+/* White storefront surfaces replace the former cream/ivory canvas. */
+:root{--bg:#fff;--white:#fff;--brand-ivory:#fff}
+body{background:#fff}
+.header,.platform-nav,.platform-panel,.platform-product,.modal,.auth-branding,
+.dashboard-card,.trust-strip,.trust-mark,.live-empty,.live-error,.business-card,
+.market-card-art,.platform-empty,.catalog-category-rail,.catalog-category-link,
+.catalog-empty,.heroart,.platform-form input,.platform-form select,
+.platform-form textarea,.platform-catalog-filters input,.platform-catalog-filters select,
+.platform-json,.platform-hero-brandplate,.mystery-box-panel,.mystery-lock,
+.mystery-reward-photo,.mystery-wheel-summary li,.mystery-wheel-hub,.payment-note{
+  background:#fff;
+}
+.header{background:rgba(255,255,255,.97)}
+.search,.live-search,.eyebrow,.ghost,.trust div,.cat,.product,.service,
+.chip,.add,.modal input,.auth-google,.platform-product{background:#fff}
+.hero{background:linear-gradient(112deg,#fff 0%,#fff 62%,#f5f7f9 100%)}
+.orb{background:radial-gradient(circle at 34% 28%,#fff,#dce2e5)}
+.chip.selected,.platform-nav a:hover,.platform-nav a[aria-current="page"],
+.platform-btn.secondary,.platform-status,.platform-authbar{
+  background:#fff;
+  border-color:#d8c49e;
+}
+.promo,.experience-section{background:linear-gradient(110deg,#fff,#f5f7f9)}
+.serviceicon{background:#fff}
+.auth-message,.platform-notice,.platform-notice.warn{
+  background:#fff;
+  border:1px solid #e4dac7;
+}
+.platform-skeleton,.live-skeleton,.business-skeleton{
+  background:linear-gradient(100deg,#eef1f4 25%,#f8f9fa 45%,#eef1f4 65%);
+  background-size:200% 100%;
+}
+.platform-product-image,.platform-detail-image{background:#fff}
+.about-section{background:#fff}
+.about-page-brand-art,.about-page-section,.about-seller-invitation a{background:#fff}
+.about-seller-invitation a{border:1px solid #d8c49e}
+.mystery-section,.mystery-box-panel{background:#fff}
+.mystery-congrats-card{background:rgba(255,255,255,.96)}
+.legal-page{max-width:860px;margin:0 auto;padding:clamp(22px,4vw,48px);background:#fff;color:#25364d}
+.legal-page-heading{padding-bottom:22px;border-bottom:1px solid #e7e0d5}
+.legal-kicker{color:#8c6b30;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.legal-page-heading h1{margin:9px 0;font-size:clamp(30px,4vw,44px);color:#14253f}
+.legal-page-heading p{margin:0;color:#687382;font-size:14px}
+.legal-disclaimer,.legal-current-state{margin:22px 0;padding:17px 20px;border:1px solid #d8c49e;border-left:4px solid #b89458;border-radius:10px;background:#fff;font-size:14px;line-height:1.65}
+.legal-current-state h2{margin:0 0 8px;font-size:17px;color:#14253f}
+.legal-current-state p{margin:0}
+.legal-section{padding:18px 0;border-bottom:1px solid #ece8e1}
+.legal-section h2{margin:0 0 8px;font-size:18px;color:#14253f}
+.legal-section p{margin:0;color:#526174;font-size:14px;line-height:1.75}
+.legal-page-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+@media(max-width:600px){.legal-page{padding:22px 17px}.legal-disclaimer,.legal-current-state{padding:14px}.legal-section{padding:15px 0}.legal-section p{font-size:13px}}

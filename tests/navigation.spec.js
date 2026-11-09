@@ -6,7 +6,7 @@ test('direct workspace routes reload and serve the current source build', async 
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   for (const [path, heading] of [
-    ['/workspaces', 'Choose your workspace'],
+    ['/workspaces', 'Explore or manage your account'],
     ['/customer', 'Your Spinix One'],
     ['/seller', 'Sell products or offer services'],
     ['/rider', 'Independent work, responsibly'],
@@ -14,12 +14,13 @@ test('direct workspace routes reload and serve the current source build', async 
     ['/payments', 'M-PESA, not a mock checkout'],
     ['/admin', 'This page is unavailable'],
     ['/catalog', 'Published catalog'],
+    ['/terms', 'Terms & Conditions'],
   ]) {
     const response = await page.goto(path);
     expect(response.status()).toBe(200);
     expect(response.headers()['x-nexahub-build']).toBe(build.build_id);
     await expect(page.locator('#platformMount h1')).toHaveText(heading);
-    await expect(page.locator('#previewBuild')).toHaveAttribute('data-build-id', build.build_id);
+    await expect(page.locator('#previewBuild')).toHaveCount(0);
     await page.reload();
     await expect(page.locator('#platformMount h1')).toHaveText(heading);
   }
@@ -40,18 +41,18 @@ for (const width of [402, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await joinSeller.click();
     await expect(page).toHaveURL(/\/seller$/);
-    await expect(page.locator('#platformMount')).toContainText('Seller applications and listing changes are not saved in this Preview');
+    await expect(page.locator('#platformMount')).toContainText('Applications are not accepting submissions yet');
     await page.goto('/workspaces');
     await expect(page).toHaveURL(/\/workspaces$/);
     const directory = page.locator('#platformMount');
     for (const path of ['/customer', '/seller', '/rider', '/delivery', '/catalog', '/payments']) {
       await expect(directory.locator(`a[href="${path}"]`)).toBeVisible();
     }
-    await expect(directory).toContainText('Forms only; storage unavailable');
+    await expect(directory).toContainText('Registration not open');
     await directory.locator('a[href="/rider"]').click();
     await expect(page.getByRole('heading', { name: 'Rider application', exact: true })).toBeVisible();
     await page.goBack();
-    await expect(directory.locator('h1')).toHaveText('Choose your workspace');
+    await expect(directory.locator('h1')).toHaveText('Explore or manage your account');
     await page.goForward();
     await expect(directory.locator('h1')).toHaveText('Independent work, responsibly');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -63,12 +64,15 @@ test('direct auth routes open real account controls without submitting anything'
   page.on('request', request => {
     if (request.method() === 'POST') mutations.push(new URL(request.url()).pathname);
   });
-  for (const path of ['/register', '/sign-in', '/forgot-password']) {
+  for (const path of ['/register', '/register?workspace=customer', '/sign-in', '/forgot-password']) {
     await page.goto(path);
     await expect(page.locator('#accountModal')).toBeVisible();
+    await expect(page.locator('#platformMount')).toBeHidden();
+    await expect(page.locator('body')).not.toContainText('This workspace is private');
+    await expect(page.locator('#categoryHeading')).toBeVisible();
     await expect.poll(() => page.evaluate(() => typeof nexahubSupabase?.auth?.signInWithPassword)).toBe('function');
     await expect(page.locator('#accountIntro')).not.toContainText('Authentication is a preview');
-    if (path === '/register') {
+    if (path.startsWith('/register')) {
       await expect(page.locator('#authName')).toBeVisible();
       await expect(page.locator('#authSubmit')).toHaveText('Create account');
     } else {
@@ -80,6 +84,41 @@ test('direct auth routes open real account controls without submitting anything'
   expect(mutations).toEqual([]);
 });
 
+test('public product and business endpoints load without an account', async ({ request }) => {
+  const [catalogResponse, businessResponse] = await Promise.all([
+    request.get('/api/catalog'),
+    request.get('/api/businesses'),
+  ]);
+  expect(catalogResponse.status()).toBe(200);
+  expect(businessResponse.status()).toBe(200);
+  const catalog = await catalogResponse.json();
+  const businesses = await businessResponse.json();
+  expect(Array.isArray(catalog.products)).toBe(true);
+  expect(Array.isArray(catalog.categories)).toBe(true);
+  expect(Array.isArray(businesses.businesses)).toBe(true);
+  expect(catalog.products.every(item => item.status === 'published')).toBe(true);
+  expect(businesses.businesses.every(item => item.status === 'approved')).toBe(true);
+});
+
+test('seller page does not collect application details when secure storage is unavailable', async ({ page }) => {
+  await page.goto('/seller');
+  await expect(page.locator('#platformMount')).toContainText('Applications are not accepting submissions yet');
+  await expect(page.locator('#platformMount input[name="store_name"]')).toHaveCount(0);
+  await expect(page.locator('#platformMount')).not.toContainText('Preview');
+});
+
+test('footer terms link opens the public draft terms page without sign-in', async ({ page }) => {
+  await page.goto('/');
+  const terms = page.locator('.footer a[href="/terms"]');
+  await expect(terms).toBeVisible();
+  await terms.click();
+  await expect(page).toHaveURL(/\/terms$/);
+  await expect(page.locator('.legal-page h1')).toHaveText('Terms & Conditions');
+  await expect(page.locator('.legal-disclaimer')).toContainText('not legal advice');
+  await expect(page.locator('.legal-current-state')).toContainText('not currently accepting orders');
+  await expect(page.locator('#accountModal')).toBeHidden();
+});
+
 test('old workspace links stay usable and switching routes clears old record filters', async ({ page }) => {
   await page.goto('/?workspace=customer&order=11111111-1111-4111-8111-111111111111&q=old');
   await expect(page.locator('#platformMount h1')).toHaveText('Your Spinix One');
@@ -87,7 +126,8 @@ test('old workspace links stay usable and switching routes clears old record fil
   await expect(page).toHaveURL(/\/seller$/);
   await page.getByRole('link', { name: 'Spinix One home', exact: true }).click();
   await expect(page.locator('#platformMount')).toBeHidden();
-  await expect(page.locator('#liveProducts')).toBeVisible();
+  await expect(page.locator('#categoryHeading')).toBeVisible();
+  await expect(page.locator('#liveProducts')).toBeHidden();
 });
 
 test('footer categories and live marketplace search remain reachable from a workspace', async ({ page }) => {

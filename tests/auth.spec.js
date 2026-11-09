@@ -26,6 +26,8 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 402, height: 874 
     await page.locator('#authModeToggle').click();
     await expect(page.locator('#authName')).toBeVisible();
     await expect(page.locator('#authSubmit')).toHaveText('Create account');
+    await expect(page.locator('#accountIntro')).toHaveText('Create your account with your email address and password.');
+    await expect(page.locator('#resendConfirmation')).toBeHidden();
     await page.locator('#authSubmit').click();
     expect(await page.locator('#authName').evaluate(input => input.validity.valueMissing)).toBe(true);
     await page.locator('#authModeToggle').click();
@@ -39,6 +41,62 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 402, height: 874 
     expect(pageErrors).toEqual([]);
   });
 }
+
+test('FIXTURE: immediate Supabase session signs the new customer in without an email step', async ({ page }) => {
+  await page.goto('/register');
+  await page.evaluate(() => {
+    if (window.Platform) window.Platform.authChanged = () => {};
+    const user = {
+      id: '11111111-1111-4111-8111-111111111111',
+      email: 'fixture@example.invalid',
+      user_metadata: { display_name: 'Fixture Customer' },
+    };
+    nexahubSupabase = {
+      auth: {
+        signUp: async () => ({ data: { user, session: { user } }, error: null }),
+      },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            maybeSingle: async () => ({
+              data: { display_name: 'Fixture Customer', phone: null },
+              error: null,
+            }),
+          }),
+        }),
+      }),
+    };
+  });
+  await page.locator('#authName').fill('Fixture Customer');
+  await page.locator('#authEmail').fill('fixture@example.invalid');
+  await page.locator('#authPassword').fill('FixturePass123');
+  await page.locator('#authSubmit').click();
+  await expect(page.locator('#accountButton')).toHaveText('My account');
+  await expect(page.locator('#dashboardPanel')).toBeVisible();
+  await expect(page.locator('#authMessage')).toContainText('Your customer profile is ready.');
+});
+
+test('FIXTURE: no session never claims registration or sign-in succeeded', async ({ page }) => {
+  await page.goto('/register');
+  await page.evaluate(() => {
+    nexahubSupabase = {
+      auth: {
+        signUp: async () => ({
+          data: { user: { id: '22222222-2222-4222-8222-222222222222' }, session: null },
+          error: null,
+        }),
+      },
+    };
+  });
+  await page.locator('#authName').fill('Fixture Customer');
+  await page.locator('#authEmail').fill('fixture@example.invalid');
+  await page.locator('#authPassword').fill('FixturePass123');
+  await page.locator('#authSubmit').click();
+  await expect(page.locator('#authMessage')).toContainText('Supabase returned no sign-in session');
+  await expect(page.locator('#authMessage')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#accountButton')).toHaveText('Sign in');
+  await expect(page.locator('#dashboardPanel')).toBeHidden();
+});
 
 // Error URLs exercise local error handling only, never a successful login.
 for (const scenario of [
